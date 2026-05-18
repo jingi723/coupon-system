@@ -64,4 +64,9 @@ public class Coupon {
     public void increaseIssuedQuantity() {
         issuedQuantity += 1;
     }
+
+    public void resetIssuedQuantity() {
+        this.issuedQuantity = 0;
+        this.status = Status.ACTIVE;
+    }
 }
