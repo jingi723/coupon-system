@@ -31,13 +31,13 @@ public class IssuedCoupon {
 
     private LocalDateTime usedAt;
 
-    public IssuedCoupon issue(Coupon coupon, Long userId) {
+    public static IssuedCoupon issue(Coupon coupon, Long userId) {
         IssuedCoupon issuedCoupon = new IssuedCoupon();
         issuedCoupon.coupon = coupon;
         issuedCoupon.userId = userId;
         issuedCoupon.status = IssuedCouponStatus.ISSUED;
         issuedCoupon.issuedAt = LocalDateTime.now();
-        issuedCoupon.expiredAt = issuedAt.plusDays(coupon.getValidDays());
+        issuedCoupon.expiredAt = issuedCoupon.issuedAt.plusDays(coupon.getValidDays());
         return issuedCoupon;
     }
 }
