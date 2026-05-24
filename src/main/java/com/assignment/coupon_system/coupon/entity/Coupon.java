@@ -24,6 +24,8 @@ public class Coupon {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    private Integer discountValue;
+
     private Integer minOrderAmount;
 
     private Integer maxDiscountAmount;
@@ -68,5 +70,20 @@ public class Coupon {
     public void resetIssuedQuantity() {
         this.issuedQuantity = 0;
         this.status = Status.ACTIVE;
+    }
+
+    public boolean isAvailable() {
+        LocalDateTime now = LocalDateTime.now();
+        return this.status == Status.ACTIVE
+                && now.isAfter(this.startDateTime)
+                && now.isBefore(this.endDateTime);
+    }
+
+    public boolean isExhausted() {
+        return this.issuedQuantity >= this.totalQuantity;
+    }
+
+    public void markAsExhausted() {
+        this.status = Status.EXHAUSTED;
     }
 }
