@@ -22,7 +22,7 @@ public class IssuedCoupon {
 
     private Long userId;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private IssuedCouponStatus status;
 
     private LocalDateTime issuedAt;
@@ -39,5 +39,10 @@ public class IssuedCoupon {
         issuedCoupon.issuedAt = LocalDateTime.now();
         issuedCoupon.expiredAt = issuedCoupon.issuedAt.plusDays(coupon.getValidDays());
         return issuedCoupon;
+    }
+
+    public void use() {
+        this.status = IssuedCouponStatus.USED;
+        this.usedAt = LocalDateTime.now();
     }
 }

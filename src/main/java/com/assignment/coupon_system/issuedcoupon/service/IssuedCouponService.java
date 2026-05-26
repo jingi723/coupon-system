@@ -38,7 +38,7 @@ public class IssuedCouponService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        if(now.isBefore(coupon.getStartDateTime()) || now.isAfter(coupon.getEndDateTime())) {
+        if(now.isBefore(coupon.getStartDate()) || now.isAfter(coupon.getEndDate())) {
             throw new CouponNotAvailableException();
         }
 
