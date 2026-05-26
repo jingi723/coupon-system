@@ -1,12 +1,14 @@
+server:
+  port: 8080
+
 spring:
   application:
     name: coupon-system
   datasource:
     url: jdbc:mysql://localhost:13306/coupon_db
-    username: root
-    password: rlawlsrl723
+    username: coupon
+    password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
