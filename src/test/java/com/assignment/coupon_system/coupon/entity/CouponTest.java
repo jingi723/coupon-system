@@ -17,7 +17,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CouponTest {
 
     private Coupon createCoupon(int totalQuantity, LocalDateTime start, LocalDateTime end) {
-        return new Coupon(
+        return Coupon.create(
+                "10% 할인 쿠폰",
                 "10% 할인 쿠폰",
                 CouponType.PERCENTAGE,
                 1000,
@@ -38,7 +39,7 @@ class CouponTest {
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(30));
 
-        assertThat(coupon.getStatus()).isEqualTo(Status.ACTIVE);
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.ACTIVE);
         assertThat(coupon.getIssuedQuantity()).isZero();
     }
 
@@ -66,7 +67,7 @@ class CouponTest {
         coupon.resetIssuedQuantity();
 
         assertThat(coupon.getIssuedQuantity()).isZero();
-        assertThat(coupon.getStatus()).isEqualTo(Status.ACTIVE);
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.ACTIVE);
     }
 
     // ───────── 구현 필요 (RED) ─────────
@@ -144,6 +145,6 @@ class CouponTest {
 
         coupon.markAsExhausted();
 
-        assertThat(coupon.getStatus()).isEqualTo(Status.EXHAUSTED);
+        assertThat(coupon.getStatus()).isEqualTo(CouponStatus.EXHAUSTED);
     }
 }

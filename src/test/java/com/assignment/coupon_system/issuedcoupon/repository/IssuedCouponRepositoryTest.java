@@ -36,7 +36,8 @@ class IssuedCouponRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        savedCoupon = couponRepository.save(new Coupon(
+        savedCoupon = couponRepository.save(Coupon.create(
+                "테스트 쿠폰",
                 "테스트 쿠폰",
                 CouponType.FIXED_AMOUNT,
                 1000,
@@ -49,7 +50,7 @@ class IssuedCouponRepositoryTest {
     }
 
     private IssuedCoupon issueFor(Long userId) {
-        return issuedCouponRepository.save(new IssuedCoupon().issue(savedCoupon, userId));
+        return issuedCouponRepository.save(IssuedCoupon.issue(savedCoupon, userId));
     }
 
     @Test

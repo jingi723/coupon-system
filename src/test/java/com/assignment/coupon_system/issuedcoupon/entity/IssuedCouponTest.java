@@ -25,7 +25,8 @@ class IssuedCouponTest {
     private static final int VALID_DAYS = 7;
 
     private Coupon createCoupon() {
-        return new Coupon(
+        return Coupon.create(
+                "테스트 쿠폰",
                 "테스트 쿠폰",
                 CouponType.FIXED_AMOUNT,
                 1000,
@@ -46,7 +47,7 @@ class IssuedCouponTest {
 
         // 현재 코드: issuedAt.plusDays(...) 에서 this.issuedAt = null → NPE
         // 수정 방법: issuedCoupon.issuedAt.plusDays(...) 으로 변경
-        IssuedCoupon issuedCoupon = new IssuedCoupon().issue(coupon, 1L);
+        IssuedCoupon issuedCoupon = IssuedCoupon.issue(coupon, 1L);
 
         assertThat(issuedCoupon).isNotNull();
     }
@@ -57,7 +58,7 @@ class IssuedCouponTest {
         Coupon coupon = createCoupon();
         Long userId = 42L;
 
-        IssuedCoupon issuedCoupon = new IssuedCoupon().issue(coupon, userId);
+        IssuedCoupon issuedCoupon = IssuedCoupon.issue(coupon, userId);
 
         assertThat(issuedCoupon.getCoupon()).isEqualTo(coupon);
         assertThat(issuedCoupon.getUserId()).isEqualTo(userId);
@@ -71,7 +72,7 @@ class IssuedCouponTest {
     void issue_setsExpiredAtFromIssuedAt() {
         Coupon coupon = createCoupon();
 
-        IssuedCoupon issuedCoupon = new IssuedCoupon().issue(coupon, 1L);
+        IssuedCoupon issuedCoupon = IssuedCoupon.issue(coupon, 1L);
 
         assertThat(issuedCoupon.getExpiredAt())
                 .isCloseTo(
@@ -87,7 +88,7 @@ class IssuedCouponTest {
     @DisplayName("[RED] use() 호출 시 상태가 USED로 변경되고 usedAt이 기록된다")
     void use_changesStatusToUsedAndSetsUsedAt() {
         Coupon coupon = createCoupon();
-        IssuedCoupon issuedCoupon = new IssuedCoupon().issue(coupon, 1L);
+        IssuedCoupon issuedCoupon = IssuedCoupon.issue(coupon, 1L);
 
         issuedCoupon.use();
 

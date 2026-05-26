@@ -2,7 +2,7 @@ package com.assignment.coupon_system.coupon.repository;
 
 import com.assignment.coupon_system.coupon.entity.Coupon;
 import com.assignment.coupon_system.coupon.entity.CouponType;
-import com.assignment.coupon_system.coupon.entity.Status;
+import com.assignment.coupon_system.coupon.entity.CouponStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * TDD - CouponRepository 통합 테스트 (@DataJpaTest + H2)
  *
- * [RED] findByStatusAndStartDateTimeLessThanAndEndDateTimeGreaterThan() 미구현
+ * [RED] findByStatusAndStartDateLessThanAndEndDateGreaterThan() 미구현
  *       → CouponRepository에 해당 메서드 추가 필요
  */
 @DataJpaTest
@@ -27,8 +27,9 @@ class CouponRepositoryTest {
     @Autowired
     private CouponRepository couponRepository;
 
-    private Coupon saveCoupon(Status status, LocalDateTime start, LocalDateTime end) {
-        Coupon coupon = new Coupon(
+    private Coupon saveCoupon(CouponStatus status, LocalDateTime start, LocalDateTime end) {
+        Coupon coupon = Coupon.create(
+                "테스트 쿠폰",
                 "테스트 쿠폰",
                 CouponType.FIXED_AMOUNT,
                 1000,
@@ -39,7 +40,7 @@ class CouponRepositoryTest {
                 end
         );
         Coupon saved = couponRepository.save(coupon);
-        if (status == Status.EXHAUSTED) {
+        if (status == CouponStatus.EXHAUSTED) {
             saved.markAsExhausted(); // RED: markAsExhausted() 미구현 시 컴파일 오류
             couponRepository.save(saved);
         }
@@ -51,7 +52,8 @@ class CouponRepositoryTest {
     @Test
     @DisplayName("저장한 쿠폰을 ID로 조회할 수 있다")
     void saveAndFindById() {
-        Coupon coupon = new Coupon(
+        Coupon coupon = Coupon.create(
+                "조회 테스트 쿠폰",
                 "조회 테스트 쿠폰",
                 CouponType.PERCENTAGE,
                 500,
@@ -67,7 +69,7 @@ class CouponRepositoryTest {
 
         assertThat(found).isPresent();
         assertThat(found.get().getDescription()).isEqualTo("조회 테스트 쿠폰");
-        assertThat(found.get().getStatus()).isEqualTo(Status.ACTIVE);
+        assertThat(found.get().getStatus()).isEqualTo(CouponStatus.ACTIVE);
     }
 
     @Test
@@ -79,22 +81,22 @@ class CouponRepositoryTest {
     }
 
     // ───────── 구현 필요 (RED) ─────────
-    // 아래 테스트는 CouponRepository에 findByStatusAndStartDateTimeLessThanAndEndDateTimeGreaterThan() 추가 필요
+    // 아래 테스트는 CouponRepository에 findByStatusAndStartDateLessThanAndEndDateGreaterThan() 추가 필요
 
     @Test
     @DisplayName("[RED] 현재 발급 가능한(ACTIVE + 기간 내) 쿠폰만 조회된다")
     void findAvailableCoupons_returnsOnlyActiveAndWithinPeriod() {
         LocalDateTime now = LocalDateTime.now();
-        saveCoupon(Status.ACTIVE, now.minusDays(1), now.plusDays(30));  // 발급 가능
-        saveCoupon(Status.ACTIVE, now.plusDays(1), now.plusDays(30));   // 시작 전 → 제외
-        saveCoupon(Status.ACTIVE, now.minusDays(30), now.minusDays(1)); // 종료 후 → 제외
+        saveCoupon(CouponStatus.ACTIVE, now.minusDays(1), now.plusDays(30));  // 발급 가능
+        saveCoupon(CouponStatus.ACTIVE, now.plusDays(1), now.plusDays(30));   // 시작 전 → 제외
+        saveCoupon(CouponStatus.ACTIVE, now.minusDays(30), now.minusDays(1)); // 종료 후 → 제외
 
         List<Coupon> available = couponRepository
-                .findByStatusAndStartDateTimeLessThanAndEndDateTimeGreaterThan(
-                        Status.ACTIVE, now, now);
+                .findByStatusAndStartDateLessThanAndEndDateGreaterThan(
+                        CouponStatus.ACTIVE, now, now);
 
         assertThat(available).hasSize(1);
-        assertThat(available.get(0).getStatus()).isEqualTo(Status.ACTIVE);
+        assertThat(available.get(0).getStatus()).isEqualTo(CouponStatus.ACTIVE);
     }
 
     @Test
@@ -103,8 +105,8 @@ class CouponRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
 
         List<Coupon> available = couponRepository
-                .findByStatusAndStartDateTimeLessThanAndEndDateTimeGreaterThan(
-                        Status.ACTIVE, now, now);
+                .findByStatusAndStartDateLessThanAndEndDateGreaterThan(
+                        CouponStatus.ACTIVE, now, now);
 
         assertThat(available).isEmpty();
     }
