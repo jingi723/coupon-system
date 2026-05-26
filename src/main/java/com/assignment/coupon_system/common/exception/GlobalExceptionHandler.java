@@ -17,4 +17,30 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(ApiResponse.fail(e.getMessage()));
     }
+
+    @ExceptionHandler(CouponExhaustedException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCouponExhausted(
+            CouponExhaustedException e
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(ApiResponse.fail(e.getMessage()));
+    }
+
+    @ExceptionHandler(CouponNotAvailableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleCouponNotAvailable(
+            CouponNotAvailableException e
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.fail(e.getMessage()));
+    }
+
+    @ExceptionHandler(DuplicateCouponIssueException.class)
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateCouponIssue(
+            DuplicateCouponIssueException e
+    ) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(ApiResponse.fail(e.getMessage()));
+    }
 }

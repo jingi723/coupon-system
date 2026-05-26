@@ -1,7 +1,6 @@
 package com.assignment.coupon_system.common.response;
 
 import lombok.Getter;
-import org.apache.kafka.shaded.com.google.protobuf.Api;
 
 @Getter
 public class ApiResponse<T> {
