@@ -16,13 +16,15 @@ public class Coupon {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String name;
+
     private String description;
 
     @Enumerated(EnumType.STRING)
     private CouponType couponType;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private CouponStatus status;
 
     private Integer discountValue;
 
@@ -36,12 +38,13 @@ public class Coupon {
 
     private Integer validDays;
 
-    private LocalDateTime startDateTime;
+    private LocalDateTime startDate;
 
-    private LocalDateTime endDateTime;
+    private LocalDateTime endDate;
 
 
-    public  Coupon(
+    public static Coupon create(
+            String name,
             String description,
             CouponType couponType,
             Integer minOrderAmount,
@@ -51,16 +54,20 @@ public class Coupon {
             LocalDateTime startDateTime,
             LocalDateTime endDateTime
     ) {
-        this.description = description;
-        this.couponType = couponType;
-        this.status = Status.ACTIVE;
-        this.minOrderAmount = minOrderAmount;
-        this.maxDiscountAmount = maxDiscountAmount;
-        this.totalQuantity = totalQuantity;
-        this.issuedQuantity = 0;
-        this.validDays = validDays;
-        this.startDateTime = startDateTime;
-        this.endDateTime = endDateTime;
+        Coupon coupon = new Coupon();
+        coupon.name = name;
+        coupon.description = description;
+        coupon.couponType = couponType;
+        coupon.status = CouponStatus.ACTIVE;
+        coupon.minOrderAmount = minOrderAmount;
+        coupon.maxDiscountAmount = maxDiscountAmount;
+        coupon.totalQuantity = totalQuantity;
+        coupon.issuedQuantity = 0;
+        coupon.validDays = validDays;
+        coupon.startDate = startDateTime;
+        coupon.endDate = endDateTime;
+
+        return coupon;
     }
 
     public void increaseIssuedQuantity() {
@@ -69,14 +76,14 @@ public class Coupon {
 
     public void resetIssuedQuantity() {
         this.issuedQuantity = 0;
-        this.status = Status.ACTIVE;
+        this.status = CouponStatus.ACTIVE;
     }
 
     public boolean isAvailable() {
         LocalDateTime now = LocalDateTime.now();
-        return this.status == Status.ACTIVE
-                && now.isAfter(this.startDateTime)
-                && now.isBefore(this.endDateTime);
+        return this.status == CouponStatus.ACTIVE
+                && now.isAfter(this.startDate)
+                && now.isBefore(this.endDate);
     }
 
     public boolean isExhausted() {
@@ -84,6 +91,6 @@ public class Coupon {
     }
 
     public void markAsExhausted() {
-        this.status = Status.EXHAUSTED;
+        this.status = CouponStatus.EXHAUSTED;
     }
 }

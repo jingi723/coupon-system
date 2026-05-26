@@ -1,13 +1,16 @@
 package com.assignment.coupon_system.coupon.service;
 
-import com.assignment.coupon_system.CouponSystemApplication;
+import com.assignment.coupon_system.common.exception.CouponNotFoundException;
 import com.assignment.coupon_system.coupon.dto.CouponResponse;
 import com.assignment.coupon_system.coupon.dto.CreateCouponRequest;
 import com.assignment.coupon_system.coupon.entity.Coupon;
+import com.assignment.coupon_system.coupon.entity.CouponStatus;
 import com.assignment.coupon_system.coupon.repository.CouponRepository;
-import com.assignment.coupon_system.issuedcoupon.dto.IssueCouponRequest;
-import com.assignment.coupon_system.issuedcoupon.dto.IssuedCouponResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class CouponService {
@@ -17,8 +20,9 @@ public class CouponService {
         this.couponRepository = couponRepository;
     }
 
-    public Long createCoupon(CreateCouponRequest request) {
-        Coupon coupon = new Coupon(
+    public CouponResponse createCoupon(CreateCouponRequest request) {
+        Coupon coupon = Coupon.create(
+                request.getName(),
                 request.getDescription(),
                 request.getCouponType(),
                 request.getMinOrderAmount(),
@@ -31,6 +35,32 @@ public class CouponService {
 
         Coupon savedCoupon = couponRepository.save(coupon);
 
-        return savedCoupon.getId();
+        return CouponResponse.from(savedCoupon);
     }
+
+    public List<CouponResponse> getAvailableCoupons() {
+        LocalDateTime now = LocalDateTime.now();
+        return couponRepository.findByStatusAndStartDateLessThanAndEndDateGreaterThan(
+                        CouponStatus.ACTIVE, now, now)
+                .stream()
+                .map(CouponResponse::from)
+                .toList();
+    }
+
+    public Integer getCouponStock(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(CouponNotFoundException::new);
+        return coupon.getTotalQuantity() - coupon.getIssuedQuantity();
+    }
+
+    @Transactional
+    public Integer initStock(Long couponId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                .orElseThrow(CouponNotFoundException::new);
+
+        coupon.resetIssuedQuantity();
+
+        return coupon.getTotalQuantity();
+    }
+
 }

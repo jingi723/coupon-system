@@ -1,7 +1,6 @@
 package com.assignment.coupon_system.coupon.dto;
 
 import com.assignment.coupon_system.coupon.entity.CouponType;
-import com.assignment.coupon_system.coupon.entity.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class CreateCouponRequest {
 
+    private String name;
     private String description;
     private CouponType couponType;
     private Integer discountValue;
