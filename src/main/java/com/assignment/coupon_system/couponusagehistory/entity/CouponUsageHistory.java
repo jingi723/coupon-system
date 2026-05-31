@@ -28,7 +28,7 @@ public class CouponUsageHistory {
 
     private LocalDateTime usedAt;
 
-    public static CouponUsageHistory save(
+    public static CouponUsageHistory create(
             IssuedCoupon issuedCoupon,
             Long orderId,
             Integer discountAmount
