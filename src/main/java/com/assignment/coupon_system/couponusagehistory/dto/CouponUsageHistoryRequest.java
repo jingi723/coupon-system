@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class CouponUsageHistoryRequest {
 
-    private IssuedCoupon issuedCoupon;
     private Long orderId;
+    private Integer orderAmount;
 
 }
