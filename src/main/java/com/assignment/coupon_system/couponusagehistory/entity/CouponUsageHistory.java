@@ -1,11 +1,15 @@
 package com.assignment.coupon_system.couponusagehistory.entity;
 
+import com.assignment.coupon_system.coupon.entity.Coupon;
+import com.assignment.coupon_system.couponusagehistory.dto.CouponUsageHistoryRequest;
+import com.assignment.coupon_system.couponusagehistory.dto.CouponUsageHistoryResponse;
 import com.assignment.coupon_system.issuedcoupon.entity.IssuedCoupon;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -41,5 +45,4 @@ public class CouponUsageHistory {
 
         return couponUsageHistory;
     }
-
 }
