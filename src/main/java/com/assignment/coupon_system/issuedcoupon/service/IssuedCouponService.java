@@ -13,6 +13,7 @@ import com.assignment.coupon_system.issuedcoupon.entity.IssuedCoupon;
 import com.assignment.coupon_system.issuedcoupon.entity.IssuedCouponStatus;
 import com.assignment.coupon_system.issuedcoupon.repository.IssuedCouponRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,30 +49,28 @@ public class IssuedCouponService {
     }
 
     @Transactional
-    public IssuedCouponResponse issueCoupon(
-            Long couponId,
-            IssueCouponRequest request
-    ) {
+    public IssuedCouponResponse issueCoupon(Long couponId, IssueCouponRequest request) {
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(CouponNotFoundException::new);
 
         LocalDateTime now = LocalDateTime.now();
-        if(now.isBefore(coupon.getStartDate()) || now.isAfter(coupon.getEndDate())) {
+        if (now.isBefore(coupon.getStartDate()) || now.isAfter(coupon.getEndDate())) {
             throw new CouponNotAvailableException();
         }
 
-        if(issuedCouponRepository.existsByCouponIdAndUserId(couponId, request.getUserId())) {
-            throw new DuplicateCouponIssueException();
-        }
-
-        int update = couponRepository.tryIncreaseIssueQuantity(couponId, CouponStatus.ACTIVE);
-        if(update == 0) {
+        int updated = couponRepository.tryIncreaseIssueQuantity(couponId, CouponStatus.ACTIVE);
+        if (updated == 0) {
             throw new CouponExhaustedException();
         }
 
         IssuedCoupon issuedCoupon = IssuedCoupon.issue(coupon, request.getUserId());
-        IssuedCoupon savedIssueCoupon = issuedCouponRepository.save(issuedCoupon);
-
-        return IssuedCouponResponse.from(savedIssueCoupon);
+        try {
+            // 충돌 시 감지
+            IssuedCoupon saved = issuedCouponRepository.saveAndFlush(issuedCoupon);
+            return IssuedCouponResponse.from(saved);
+        } catch (DataIntegrityViolationException e) {
+            // (쿠폰, 유저) 유니크 제약
+            throw new DuplicateCouponIssueException();
+        }
     }
 }
