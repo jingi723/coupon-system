@@ -73,4 +73,12 @@ public class IssuedCouponService {
             throw new DuplicateCouponIssueException();
         }
     }
+
+    @Transactional
+    public void createIssued(Long couponId, Long userId) {
+        Coupon coupon = couponRepository.findById(couponId)
+                        .orElseThrow(() -> new IllegalArgumentException("coupon not found"));
+
+        issuedCouponRepository.save(IssuedCoupon.issue(coupon, userId));
+    }
 }

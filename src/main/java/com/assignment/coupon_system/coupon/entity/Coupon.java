@@ -71,7 +71,10 @@ public class Coupon {
     }
 
     public void increaseIssuedQuantity() {
-        issuedQuantity += 1;
+        if(this.issuedQuantity >= this.totalQuantity) {
+            throw new IllegalArgumentException("sold out");
+        }
+        this.issuedQuantity += 1;
     }
 
     public void resetIssuedQuantity() {
@@ -93,4 +96,5 @@ public class Coupon {
     public void markAsExhausted() {
         this.status = CouponStatus.EXHAUSTED;
     }
+
 }
