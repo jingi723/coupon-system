@@ -2,6 +2,8 @@ services:
   mysql:
     image: mysql:8.0
     container_name: coupon-mysql
+    mem_limit: 1g
+    cpus: 1.0
     ports:
       - "13306:3306"
     environment:
@@ -17,6 +19,8 @@ services:
   redis:
     image: redis:7-alpine
     container_name: coupon-redis
+    mem_limit: 256m
+    cpus: 0.5
     ports:
       - "6379:6379"
     volumes:
@@ -25,6 +29,8 @@ services:
   kafka:
     image: apache/kafka:3.7.0
     container_name: coupon-kafka
+    mem_limit: 1g
+    cpus: 1.0
     ports:
       - "19092:9092"
     environment:
