@@ -9,6 +9,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: coupon_db
+      MYSQL_USER: coupon
+      MYSQL_PASSWORD: 1234
       TZ: Asia/Seoul
     volumes:
       - mysql_data:/var/lib/mysql
