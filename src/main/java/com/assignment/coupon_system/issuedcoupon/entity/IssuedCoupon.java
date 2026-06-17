@@ -8,6 +8,14 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_issued_coupon_coupon_user",
+                        columnNames = {"coupon_id", "user_id"}
+                )
+        }
+)
 @Getter
 @NoArgsConstructor
 public class IssuedCoupon {
