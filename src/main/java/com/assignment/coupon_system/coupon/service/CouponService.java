@@ -5,11 +5,13 @@ import com.assignment.coupon_system.coupon.dto.CouponResponse;
 import com.assignment.coupon_system.coupon.dto.CreateCouponRequest;
 import com.assignment.coupon_system.coupon.entity.Coupon;
 import com.assignment.coupon_system.coupon.entity.CouponStatus;
+import com.assignment.coupon_system.coupon.redis.CouponRedisKey;
 import com.assignment.coupon_system.coupon.repository.CouponRepository;
 import com.assignment.coupon_system.issuedcoupon.service.IssuedCouponService;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +23,8 @@ import java.util.List;
 public class CouponService {
     private final CouponRepository couponRepository;
     private final IssuedCouponService issuedCouponService;
+    private final StringRedisTemplate redisTemplate;
+
 
 
     public CouponResponse createCoupon(CreateCouponRequest request) {
@@ -62,6 +66,11 @@ public class CouponService {
                 .orElseThrow(CouponNotFoundException::new);
 
         coupon.resetIssuedQuantity();
+
+        redisTemplate.opsForValue()
+                .set(CouponRedisKey.stock(couponId), String.valueOf(coupon.getTotalQuantity()));
+
+        redisTemplate.delete(CouponRedisKey.issueUsers(couponId));
 
         return coupon.getTotalQuantity();
     }
