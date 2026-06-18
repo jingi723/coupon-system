@@ -6,6 +6,8 @@ import com.assignment.coupon_system.common.exception.CouponNotFoundException;
 import com.assignment.coupon_system.common.exception.DuplicateCouponIssueException;
 import com.assignment.coupon_system.coupon.entity.Coupon;
 import com.assignment.coupon_system.coupon.entity.CouponStatus;
+import com.assignment.coupon_system.coupon.redis.CouponIssueRedisService;
+import com.assignment.coupon_system.coupon.redis.CouponIssueResult;
 import com.assignment.coupon_system.coupon.repository.CouponRepository;
 import com.assignment.coupon_system.issuedcoupon.dto.IssueCouponRequest;
 import com.assignment.coupon_system.issuedcoupon.dto.IssuedCouponResponse;
@@ -28,6 +30,7 @@ public class IssuedCouponService {
 
     private final IssuedCouponRepository issuedCouponRepository;
     private final CouponRepository couponRepository;
+    private final CouponIssueRedisService couponIssueRedisService;
 
 
     @Transactional
@@ -50,6 +53,8 @@ public class IssuedCouponService {
 
     @Transactional
     public IssuedCouponResponse issueCoupon(Long couponId, IssueCouponRequest request) {
+        Long userId = request.getUserId();
+
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(CouponNotFoundException::new);
 
@@ -58,19 +63,31 @@ public class IssuedCouponService {
             throw new CouponNotAvailableException();
         }
 
-        int updated = couponRepository.tryIncreaseIssueQuantity(couponId, CouponStatus.ACTIVE);
-        if (updated == 0) {
+        CouponIssueResult result = couponIssueRedisService.tryIssue(couponId, userId);
+
+        if(result == CouponIssueResult.DUPLICATE) {
+            throw new DuplicateCouponIssueException();
+        }
+
+        if(result == CouponIssueResult.SOLD_OUT) {
             throw new CouponExhaustedException();
         }
 
-        IssuedCoupon issuedCoupon = IssuedCoupon.issue(coupon, request.getUserId());
         try {
-            // 충돌 시 감지
+            int updated = couponRepository.tryIncreaseIssueQuantity(couponId, CouponStatus.ACTIVE);
+
+            if(updated == 0) {
+                couponIssueRedisService.rollbackIssue(couponId, userId);
+                throw new CouponExhaustedException();
+            }
+
+            IssuedCoupon issuedCoupon = IssuedCoupon.issue(coupon, userId);
             IssuedCoupon saved = issuedCouponRepository.saveAndFlush(issuedCoupon);
+
             return IssuedCouponResponse.from(saved);
-        } catch (DataIntegrityViolationException e) {
-            // (쿠폰, 유저) 유니크 제약
-            throw new DuplicateCouponIssueException();
+        } catch (Exception e) {
+            couponIssueRedisService.rollbackIssue(couponId, userId);
+            throw e;
         }
     }
 
