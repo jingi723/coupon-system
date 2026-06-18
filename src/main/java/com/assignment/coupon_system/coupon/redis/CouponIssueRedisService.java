@@ -16,7 +16,7 @@ public class CouponIssueRedisService {
     private static final String ISSUE_SCRIPT = """
             local stock = tonumber(redis.call('GET', KEYS[1]))
             
-            if(rdis.call('SISMEMBER', KEY[2], ARGC[1]) == 1 then
+            if redis.call('SISMEMBER', KEYS[2], ARGV[1]) == 1 then
                 return -1
             end
             
@@ -45,5 +45,17 @@ public class CouponIssueRedisService {
         if (result == -2L) return CouponIssueResult.SOLD_OUT;
 
         throw new IllegalStateException("Unknown Redis result: " + result);
+    }
+
+    public void rollbackIssue(Long couponId, Long userId) {
+        String stockKey = CouponRedisKey.stock(couponId);
+        String usersKey = CouponRedisKey.issueUsers(couponId);
+
+        Long removed = redisTemplate.opsForSet()
+                .remove(usersKey, userId.toString());
+
+        if(removed != null && removed > 0) {
+            redisTemplate.opsForValue().increment(stockKey);
+        }
     }
 }
