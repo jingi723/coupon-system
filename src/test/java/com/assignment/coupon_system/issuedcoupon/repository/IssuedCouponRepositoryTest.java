@@ -85,7 +85,10 @@ class IssuedCouponRepositoryTest {
     @DisplayName("findByUserId() 는 해당 사용자의 모든 발급 쿠폰을 반환한다")
     void findByUserId_returnsAllIssuedCouponsForUser() {
         issueFor(1L);
-        issueFor(1L); // 같은 사용자 다른 쿠폰 시나리오는 실제론 다른 쿠폰이어야 하지만 구조상 허용
+        Coupon another = couponRepository.save(Coupon.create(
+                "테스트 쿠폰2", "테스트 쿠폰2", CouponType.FIXED_AMOUNT, 1000, 5000,
+                100, 30, LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(30)));
+        issuedCouponRepository.save(IssuedCoupon.issue(another, 1L)); // 같은 사용자, 다른 쿠폰
         issueFor(2L);
 
         List<IssuedCoupon> result = issuedCouponRepository.findByUserId(1L);

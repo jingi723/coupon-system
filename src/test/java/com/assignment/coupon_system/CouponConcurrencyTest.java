@@ -3,6 +3,7 @@ package com.assignment.coupon_system;
 import com.assignment.coupon_system.coupon.entity.Coupon;
 import com.assignment.coupon_system.coupon.entity.CouponType;
 import com.assignment.coupon_system.coupon.repository.CouponRepository;
+import com.assignment.coupon_system.coupon.service.CouponService;
 import com.assignment.coupon_system.issuedcoupon.dto.IssueCouponRequest;
 import com.assignment.coupon_system.issuedcoupon.repository.IssuedCouponRepository;
 import com.assignment.coupon_system.issuedcoupon.service.IssuedCouponService;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -34,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest
 @ActiveProfiles("test")
+@Import(TestcontainersConfig.class)
 @DisplayName("쿠폰 발급 동시성 테스트")
 class CouponConcurrencyTest {
 
@@ -42,6 +45,9 @@ class CouponConcurrencyTest {
 
     @Autowired
     private CouponRepository couponRepository;
+
+    @Autowired
+    private CouponService couponService;
 
     @Autowired
     private IssuedCouponRepository issuedCouponRepository;
@@ -63,6 +69,7 @@ class CouponConcurrencyTest {
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(30)
         ));
+        couponService.initStock(coupon.getId());
 
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(totalRequests);
@@ -113,6 +120,7 @@ class CouponConcurrencyTest {
                 LocalDateTime.now().minusDays(1),
                 LocalDateTime.now().plusDays(30)
         ));
+        couponService.initStock(coupon.getId());
 
         CountDownLatch startLatch = new CountDownLatch(1);
         CountDownLatch doneLatch = new CountDownLatch(totalRequests);

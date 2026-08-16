@@ -17,6 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import com.assignment.coupon_system.coupon.entity.CouponStatus;
+import com.assignment.coupon_system.coupon.redis.CouponIssueRedisService;
+import com.assignment.coupon_system.coupon.redis.CouponIssueResult;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -39,6 +42,9 @@ class IssuedCouponServiceTest {
 
     @Mock
     private CouponRepository couponRepository;
+
+    @Mock
+    private CouponIssueRedisService couponIssueRedisService;
 
     @InjectMocks
     private IssuedCouponService issuedCouponService;
@@ -69,8 +75,9 @@ class IssuedCouponServiceTest {
         IssueCouponRequest request = new IssueCouponRequest(userId);
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
-        given(issuedCouponRepository.existsByCouponIdAndUserId(couponId, userId)).willReturn(false);
-        given(issuedCouponRepository.save(any())).willReturn(issuedCoupon);
+        given(couponIssueRedisService.tryIssue(couponId, userId)).willReturn(CouponIssueResult.SUCCESS);
+        given(couponRepository.tryIncreaseIssueQuantity(couponId, CouponStatus.ACTIVE)).willReturn(1);
+        given(issuedCouponRepository.saveAndFlush(any())).willReturn(issuedCoupon);
 
         IssuedCouponResponse response = issuedCouponService.issueCoupon(couponId, request);
 
@@ -117,7 +124,7 @@ class IssuedCouponServiceTest {
         coupon.increaseIssuedQuantity(); // issuedQuantity == totalQuantity → 소진
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
-        given(issuedCouponRepository.existsByCouponIdAndUserId(couponId, userId)).willReturn(false);
+        given(couponIssueRedisService.tryIssue(couponId, userId)).willReturn(CouponIssueResult.SOLD_OUT);
 
         assertThatThrownBy(() -> issuedCouponService.issueCoupon(couponId, new IssueCouponRequest(userId)))
                 .isInstanceOf(CouponExhaustedException.class);
@@ -133,7 +140,7 @@ class IssuedCouponServiceTest {
         Coupon coupon = activeCoupon(100);
 
         given(couponRepository.findById(couponId)).willReturn(Optional.of(coupon));
-        given(issuedCouponRepository.existsByCouponIdAndUserId(couponId, userId)).willReturn(true);
+        given(couponIssueRedisService.tryIssue(couponId, userId)).willReturn(CouponIssueResult.DUPLICATE);
 
         assertThatThrownBy(() -> issuedCouponService.issueCoupon(couponId, new IssueCouponRequest(userId)))
                 .isInstanceOf(DuplicateCouponIssueException.class);
