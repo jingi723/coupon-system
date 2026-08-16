@@ -24,10 +24,9 @@
           ▼
   Spring Boot API  (POST /api/coupons/{id}/issue)
           │
-          ├─ Redis SISMEMBER  → 중복 체크
-          ├─ Redis DECR       → 재고 차감 (원자적)
-          ├─ Redis SADD       → 사용자 등록
-          └─ Kafka Produce    → 비동기 DB 저장
+          ├─ Redis Lua 스크립트 → 중복 체크(SISMEMBER)·재고 확인·차감(DECR)·등록(SADD)을 원자 실행
+          └─ DB 저장(동기)     → 실패 시 Redis 재고 rollback
+                                 (Kafka 비동기 저장 분리는 다음 단계 — broker 구성만 완료)
           │
           ▼
   브라우저에 성공/실패 응답 반환
