@@ -13,3 +13,29 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  kafka:
+    bootstrap-servers: localhost:19092
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      acks: all
+      properties:
+        "[enable.idempotence]": true
+
+    consumer:
+      group-id: coupon-issue-group
+      enable-auto-commit: false
+      auto-offset-reset: earliest
+
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+
+      properties:
+        "[spring.json.trusted.packages]": com.assignment.coupon_system.issuerequest.dto
+        "[spring.json.value.default.type]": com.assignment.coupon_system.issuerequest.dto.CouponIssueMessage
+        "[spring.json.use.type.headers]": false
+
+    listener:
+      ack-mode: record
+      concurrency: 1
