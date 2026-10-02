@@ -30,6 +30,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
 	testImplementation 'org.testcontainers:junit-jupiter'
 	testImplementation 'org.testcontainers:mysql'
+	testImplementation 'org.testcontainers:kafka'
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testRuntimeOnly 'com.h2database:h2'
@@ -38,4 +39,6 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+	// 장애 복구 테스트에서 실제 애플리케이션을 별도 JVM으로 실행한다.
+	systemProperty 'recovery.test.classpath', sourceSets.test.runtimeClasspath.asPath
 }
