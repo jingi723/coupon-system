@@ -1,0 +1,168 @@
+{
+  "coupon_id": 15,
+  "result": "PASS",
+  "cases": 7,
+  "offset_before": {
+    "end": 0,
+    "committed": 0,
+    "lag": 0
+  },
+  "offset_after": {
+    "end": 4,
+    "committed": 4,
+    "lag": 0
+  },
+  "issued_quantity": 1,
+  "issued_history_count": 1,
+  "result_count": 2,
+  "db_results": "c3f7a90d-c0f1-4d87-8192-0fd2156b8403\tISSUED\t154579\n82c27234-9df3-44b3-bf8a-abf2fdbb6d2e\tREJECTED\t0",
+  "events": [
+    {
+      "path": "/api/coupons",
+      "request": {
+        "name": "kafka-smoke-b19a5008-9e51-4cbc-be4b-465e23b29cf9",
+        "description": "Kafka E2E test",
+        "couponType": "FIXED_AMOUNT",
+        "discountValue": 1000,
+        "minOrderAmount": 0,
+        "maxDiscountAmount": 1000,
+        "totalQuantity": 1,
+        "validDays": 30,
+        "startDateTime": "2026-10-01T20:45:52",
+        "endDateTime": "2026-10-03T20:45:52"
+      },
+      "status": 200,
+      "response": {
+        "success": true,
+        "data": {
+          "id": 15,
+          "description": "Kafka E2E test",
+          "couponType": "FIXED_AMOUNT",
+          "status": "ACTIVE",
+          "discountValue": null,
+          "minOrderAmount": 0,
+          "maxDiscountAmount": 1000,
+          "totalQuantity": 1,
+          "issuedQuantity": 0,
+          "validDays": 30,
+          "startDate": "2026-10-01T20:45:52",
+          "endDate": "2026-10-03T20:45:52"
+        },
+        "message": null
+      },
+      "elapsed_ms": 78.34
+    },
+    {
+      "path": "/api/coupons/15/issue-requests",
+      "request": {
+        "requestId": "c3f7a90d-c0f1-4d87-8192-0fd2156b8403",
+        "userId": 900001
+      },
+      "status": 202,
+      "response": {
+        "success": true,
+        "data": {
+          "requestId": "c3f7a90d-c0f1-4d87-8192-0fd2156b8403",
+          "status": "ACCEPTED"
+        },
+        "message": null
+      },
+      "elapsed_ms": 154.73
+    },
+    {
+      "path": "/api/coupons/15/issue-requests",
+      "request": {
+        "requestId": "c3f7a90d-c0f1-4d87-8192-0fd2156b8403",
+        "userId": 900001
+      },
+      "status": 202,
+      "response": {
+        "success": true,
+        "data": {
+          "requestId": "c3f7a90d-c0f1-4d87-8192-0fd2156b8403",
+          "status": "ACCEPTED"
+        },
+        "message": null
+      },
+      "elapsed_ms": 4.53
+    },
+    {
+      "path": "/api/coupons/15/issue-requests",
+      "request": {
+        "requestId": "82c27234-9df3-44b3-bf8a-abf2fdbb6d2e",
+        "userId": 900002
+      },
+      "status": 202,
+      "response": {
+        "success": true,
+        "data": {
+          "requestId": "82c27234-9df3-44b3-bf8a-abf2fdbb6d2e",
+          "status": "ACCEPTED"
+        },
+        "message": null
+      },
+      "elapsed_ms": 3.56
+    },
+    {
+      "path": "/api/coupons/15/issue-requests",
+      "request": {
+        "requestId": "82c27234-9df3-44b3-bf8a-abf2fdbb6d2e",
+        "userId": 900002
+      },
+      "status": 202,
+      "response": {
+        "success": true,
+        "data": {
+          "requestId": "82c27234-9df3-44b3-bf8a-abf2fdbb6d2e",
+          "status": "ACCEPTED"
+        },
+        "message": null
+      },
+      "elapsed_ms": 3.96
+    },
+    {
+      "path": "/api/coupons/15/issue-requests",
+      "request": {
+        "requestId": "not-a-uuid",
+        "userId": 900003
+      },
+      "status": 400,
+      "response": {
+        "timestamp": "2026-10-02T11:45:52.898+00:00",
+        "status": 400,
+        "error": "Bad Request",
+        "path": "/api/coupons/15/issue-requests"
+      },
+      "elapsed_ms": 9.7
+    },
+    {
+      "path": "/api/coupons/15/issue-requests",
+      "request": {
+        "requestId": "163fd6b8-1039-4357-8877-88aed2651659",
+        "userId": 0
+      },
+      "status": 400,
+      "response": {
+        "timestamp": "2026-10-02T11:45:52.904+00:00",
+        "status": 400,
+        "error": "Bad Request",
+        "path": "/api/coupons/15/issue-requests"
+      },
+      "elapsed_ms": 2.52
+    },
+    {
+      "path": "/api/coupons/15/issue-requests",
+      "request": {
+        "userId": 900003
+      },
+      "status": 400,
+      "response": {
+        "timestamp": "2026-10-02T11:45:52.906+00:00",
+        "status": 400,
+        "error": "Bad Request",
+        "path": "/api/coupons/15/issue-requests"
+      },
+      "elapsed_ms": 1.75
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+Java17, Docker, k6 필요. 기존 앱/컨테이너를 종료하지 않는다.
+./gradlew --no-daemon -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle testClasses writeConsumerProfileClasspath
+
+python3 - <<'RUN'
+from pathlib import Path
+import os,subprocess
+out=Path('선착순_쿠폰발급_부하테스트/results/NEW-production-batch-load').resolve()
+out.mkdir(exist_ok=False)
+with (out/'environment.log').open('w') as log:
+ subprocess.run(['java','-cp',Path('build/consumer-profile-classpath.txt').read_text().strip(),'com.assignment.coupon_system.issuerequest.profiling.ReservationLoadEnvironment',str(out)],env=dict(os.environ,LOAD_PRODUCTION_BATCH='true'),stdout=log,stderr=subprocess.STDOUT,check=True)
+for name in ['production-single-1','production-batch-1','production-batch-2','production-single-2']:
+ subprocess.run(['python3','선착순_쿠폰발급_부하테스트/analyze-reservation-load.py',str(out/name)],check=True)
+subprocess.run(['python3','선착순_쿠폰발급_부하테스트/summarize-production-batch.py',str(out)],check=True)
+RUN
+
+실제 빌드: GRADLE_USER_HOME=/tmp/coupon-gradle-home 및 설치된 Gradle8.14.4 사용.
+LOAD_PRODUCTION_BATCH와 기존 후보/프로파일 옵션은 동시에 사용하지 않는다.
+시리즈가 격리 인프라를 생성하고 매 실행 새 앱/쿠폰으로 수행한다. 결과 수집 및 모든 앱 종료 뒤 해당 인프라만 정리한다.
+커밋은 실행 권한으로 차단됨. service-staged.patch에 첫 커밋 예정 변경 보존.
+
+시계 재검증 추가 실행: 별도 출력 디렉터리 timing-repeat, LOAD_PRODUCTION_BATCH=true LOAD_PRODUCTION_RUNS=production-single-repeat로 같은 ReservationLoadEnvironment 실행. 각 reservation-analysis.json의 timing_valid 확인. 최초4회 및 추가1회 결과를 summarize-production-batch.py가 함께 집계한다.

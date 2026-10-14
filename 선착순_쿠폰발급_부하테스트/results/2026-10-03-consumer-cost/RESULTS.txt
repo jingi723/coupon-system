@@ -1,0 +1,225 @@
+Kafka Consumer 처리 비용 계측 — 2026-10-03
+
+확인한 병목 범위: 현재 단일 Consumer의 순차 DB 서비스 호출 경로가 적체 시간의 약92%를 차지했다.
+두 ON 실행에서 offset 커밋은 약7~8%, poll 약0.04%, 나머지 루프 약0.4~0.5%였다.
+DB 커밋 단계는 DB 구간의 일부이며 전체 적체 시간의 약37~38%. 이를 DB 전체와 중복 합산하지 않았다.
+JDBC 왕복/JPA/flush/서버 파일 동기화의 세부 기여는 아직 완전히 분리하지 못했다.
+다음 비교 하나: Kafka를 제외한 DB 전용 벤치마크에서 트랜잭션당 1건 vs10건을 비교해 커밋 고정 비용을 검증한다.
+이번 작업에서는 서비스 로직·트랜잭션 단위·ack-mode·파티션·Consumer 수를 변경하지 않았다. 커밋·배포도 하지 않았다.
+
+1. 실험 전 계획과 실행 조건
+실험 전 README에 가설·계측 경계·집계 방식·판정값·OFF/ON 반복 순서를 기록했다. README.plan.md에 당시 원문을 보존했다.
+가설 H1 DB 경로, H2 offset 커밋, H3 poll/기타 루프를 분리했다. 지배 비용은 같은 적체 창50% 초과, 유의미한 비용 후보20% 이상으로 사전 정의했다.
+순서 OFF1→ON1→ON2→OFF2. OFF도 같은 테스트 앱/클래스패스/외부 관측이며 내부 타이밍 advice·Consumer wrapper·트랜잭션 콜백만 설치하지 않았다.
+각 실행 새 앱 JVM, 새 쿠폰, 재고100000, 고유 사용자/requestId. 프로필100/s 20초→1200/s 10초→100/s 30초. timeout5초, 재시도0, VU50/6500/1000.
+MySQL8.0 CPU1개/1GiB, Kafka3.7.0 CPU1개/1GiB, Hikari10. 파티션1, Consumer1, ack-mode RECORD, syncCommits=true, enable-auto-commit=false, pollTimeout5000ms.
+기존과 동일하게 앱에 별도 CPU/heap 제한을 지정하지 않고 Java 기본값을 사용했다. 이번에는 테스트 클래스패스와 테스트 진입점을 사용했다.
+별도 Kafka coupon-kafka-profile-20261003:39092, 앱28080, 그룹 consumer-cost-20261003. 기존 앱8080/브로커19092와 경쟁하지 않는다.
+같은 독립 브로커/그룹을 재사용하며 매 실행 전 lag0을 확인했다. preflight의 3건은 별도 쿠폰이며 본 비교17,000건 목표에 포함하지 않는다.
+같은 로컬 MySQL을 사용하고 기존 데이터는 삭제하지 않았다. 매 실행 테이블 크기·캐시·호스트 다른 작업의 상태가 달라 완벽한 통제 실험이 아니다.
+이전 과부하 실험 대비 추가된 것은 테스트 프록시(ON), MySQL digest/파일 I/O 전후 조회, CPU 및 Docker stats 관측이다. 후자는 OFF/ON 공통이다.
+Spring Kafka3.3.15, Kafka clients3.9.2, Spring TX6.2.18. 현재 소스·설정 전체는 source-state.tar.gz, 사용자 미커밋 변경은 working-tree-before.patch/각 run working-tree.patch에 보존했다.
+
+2. 측정 경계와 검증
+DB: 실제 초기화된 CouponIssueProcessor AOP 프록시에서 TransactionInterceptor 존재를 검사하고 맨 바깥에 advice를 추가했다.
+프록시 진입(트랜잭션 시작 전)→프록시 정상 반환(실제 커밋과 정리 후)을 nanoTime으로 측정한다. 시작 전/반환 후 활성 트랜잭션 없음, afterBegin 활성 상태를 확인했다.
+서비스 메서드 본문 종료나 엔티티 processed_at을 커밋 완료로 간주하지 않는다. 호출 범위에는 시작/연결 확보/JPA/SQL/commit/정리가 포함된다.
+DB commit 부분: TransactionExecutionListener.beforeCommit→afterCommit. Spring doCommit 및 commit 후 synchronization 처리가 포함된다. 순수 JDBC Connection.commit만의 시간이 아니다.
+Listener: 사용자 CouponIssueConsumer.consume 메서드 진입→반환. DB 프록시 호출을 포함하지만 offset 커밋을 포함하지 않는다.
+offset: DefaultKafkaConsumerFactory의 Consumer post-processor로 실제 Consumer.commitSync 호출→반환을 감싼다. commitAsync 호출도 감시했다.
+대상 Spring 소스에서 doInvokeOnMessage→ackCurrent→commitSync 순서를 확인했으며 각 요청의 원시 구간에서도 Listener 반환 이후 offset 시작을 검증했다.
+poll: 실제 Consumer.poll 호출→반환. fetch/역직렬화/대기를 함께 포함한다. 빈 poll 대기는 DB 처리시간으로 분류하지 않는다.
+모든 내부 구간은 System.nanoTime. wall anchor는 클라이언트/외부 관측과 연결할 때만 쓴다. 외부 wall/monotonic 차이도 점검했다.
+요청당 파일 로그 없이 메모리에 숫자 구간과 requestId를 저장하고 drain 후 종료 시 한 번 출력했다. 버퍼 상한500000, 초과/경계 위반/예외 카운터를 확인했다.
+종료 때 진행 중인 마지막 idle poll은 dump 이후 종료돼 기록되지 않을 수 있다. 적체 창과 모든 DB/offset 구간은 그보다 먼저 끝나므로 해당 분석에는 누락이 없다.
+preflight 3건에서 독립 JDBC로 실제 커밋을 확인하고 DB→Listener→offset 순서를 검사했다. 본 ON 두 실행에서도 요청/DB/commit/Listener 건수 및 ID가 모두 대응했다.
+원문: https://github.com/spring-projects/spring-kafka/blob/v3.3.15/spring-kafka/src/main/java/org/springframework/kafka/listener/KafkaMessageListenerContainer.java
+원문: https://github.com/spring-projects/spring-framework/blob/v6.2.18/spring-tx/src/main/java/org/springframework/transaction/support/AbstractPlatformTransactionManager.java
+해당 소스를 실험 디렉터리에도 보존했다.
+
+3. 예정·전송·접수·정합성
+실행  쿠폰   명목예정  실제전송  baseline/burst/recovery 시나리오 전송  정확한[20,30)전송  미전송
+off1    22    17000    17003    2001/12001/3001                      11998             0
+on1     23    17000    17001    2000/12000/3001                      11998             0
+on2     24    17000    17003    2001/12001/3001                      11987             0
+off2    25    17000    17003    2001/12001/3001                      12000             0
+모든 실행에서 HTTP202 수=최종 ISSUED 결과=발급 이력=issuedQuantity=고유 사용자 수였다.
+타임아웃/응답 불명/5xx/거절/중복/미완료/예상하지 못한 결과=모두0. 각 requestId→userId 및 결과 issuedCouponId→이력의 매핑까지 대조했다.
+모든 실제 전송의 응답 기록과 최종 DB 관측 기록이 존재한다. 최종 lag0만으로 통과 판정하지 않았다.
+전체 유효 부하 요청 합계 68010건. 소량의 예정 초과/경계 편차는 k6 실제 기록 그대로 보존했다.
+실제 전송 시각은 공통 RUN_ORIGIN_MS에 맞춰 분류했다. 완료 시각으로 폭주 요청을 회복 요청으로 옮기지 않았다.
+실행  burst 첫/마지막 전송(s)     시나리오 원점 오차(ms)
+off1  20.056/30.002               {'baseline': [0], 'burst': [2], 'recovery': [1]}
+on1   20.065/30.001               {'baseline': [0], 'burst': [1], 'recovery': [0]}
+on2   20.081/30.012               {'baseline': [0], 'burst': [12], 'recovery': [0]}
+off2  20.066/30.001               {'baseline': [0], 'burst': [1], 'recovery': [1]}
+
+4. HTTP 접수 및 커밋된 최종 결과 최초 관측
+전체 요청 분포. 단위ms, p50/p95/p99. 최종 관측은 독립 JDBC 조회 지연을 포함한다.
+실행   HTTP 접수 p50/p95/p99          최종 결과 관측 p50/p95/p99     마지막 결과 시각(s)
+off1   1.000/3.000/11.000           23816.000/39773.900/41053.980    81.143
+on1    1.000/2.000/13.000           19441.000/34973.000/36155.000    77.120
+on2    1.000/2.000/3.000            15401.000/29931.900/31051.980    70.579
+off2   1.000/2.000/3.000            17281.000/32911.900/34065.980    74.084
+마지막 요청은 약60초에 전송했다. 최종 처리 대기와 한 건 DB 서비스 시간을 혼동하지 않는다.
+실제 전송 시각 구간별 분포(단위ms):
+off1/baseline: n=2000, HTTP 2.000/4.000/5.000, final 150.000/347.050/471.050
+off1/burst: n=11998, HTTP 1.000/2.000/14.000, final 23465.500/39790.150/41058.030
+off1/recovery: n=3004, HTTP 1.000/2.000/3.000, final 31348.000/40311.500/41127.820
+off1/late: n=1, HTTP 1.000/1.000/1.000, final 21141.000/21141.000/21141.000
+on1/baseline: n=2000, HTTP 2.000/3.000/4.000, final 139.000/253.050/341.020
+on1/burst: n=11998, HTTP 1.000/2.000/20.000, final 19253.500/34994.150/36149.540
+on1/recovery: n=3002, HTTP 1.000/2.000/3.000, final 26395.000/35502.800/36254.940
+on1/late: n=1, HTTP 1.000/1.000/1.000, final 17119.000/17119.000/17119.000
+on2/baseline: n=2000, HTTP 1.000/2.000/3.000, final 134.000/249.000/259.000
+on2/burst: n=11987, HTTP 1.000/1.000/4.000, final 15974.000/29957.700/31046.140
+on2/recovery: n=3015, HTTP 1.000/2.000/3.000, final 20941.000/30361.000/31205.860
+on2/late: n=1, HTTP 1.000/1.000/1.000, final 10577.000/10577.000/10577.000
+off2/baseline: n=2000, HTTP 1.000/2.000/3.000, final 134.000/247.000/257.010
+off2/burst: n=12000, HTTP 1.000/2.000/4.000, final 17220.500/32949.050/34075.010
+off2/recovery: n=3002, HTTP 1.000/2.000/3.000, final 24015.000/33256.800/34152.900
+off2/late: n=1, HTTP 1.000/1.000/1.000, final 14083.000/14083.000/14083.000
+on1: 요청 시작→DB 프록시 진입 p50/p95/p99=19326.313/34831.891/36061.612ms. DB 한 건 평균=3.668ms.
+on2: 요청 시작→DB 프록시 진입 p50/p95/p99=15269.207/29768.201/30918.698ms. DB 한 건 평균=3.258ms.
+요청 시작→DB 진입에는 API/Producer/broker 대기와 poll 후 로컬 레코드 대기가 함께 들어간다. 순수 Kafka queue 체류시간이라고 부르지 않는다.
+수십 초의 최종 지연과 수ms의 한 건 DB 처리시간은 다른 지표다. 누적된 앞선 요청을 순차 처리하는 대기가 대부분이다.
+
+5. DB·offset·Listener 구간별 전체 호출 분포
+단위ms, 모든 요청 포함(워밍업/적체 외 구간도 포함). sum은 누적 호출시간이며 중첩 항목을 더하지 않는다.
+실행  항목                      횟수      p50/p95/p99(ms)                 sum(ms)       평균(ms)
+on1   db_proxy                   17001    3.211/6.274/8.936                62352.243    3.668
+on1   db_commit_callbacks        17001    1.209/2.496/3.543                24132.763    1.419
+on1   listener_method            17001    3.213/6.282/8.947                62401.734    3.670
+on1   commitSync                 17001    0.259/0.616/0.993                 5459.423    0.321
+on1   poll                        1950    4.885/6.498/7.121                48815.555    25.034
+on2   db_proxy                   17003    2.990/5.243/7.182                55391.117    3.258
+on2   db_commit_callbacks        17003    1.143/2.212/3.084                22281.128    1.310
+on2   listener_method            17003    2.992/5.250/7.189                55435.583    3.260
+on2   commitSync                 17003    0.227/0.445/0.752                 4522.041    0.266
+on2   poll                        2008    5.400/6.781/7.320                50048.189    24.924
+두 ON 모두 commitAsync0, 요청마다 commitSync1회. 재시도/커밋 오류0. Listener/DB와 offset 구간이 중첩되지 않았고 동일 Consumer 스레드1개였다.
+commitSync 시간은 클라이언트 blocking 호출 벽시간이다. 네트워크·브로커 처리·클라이언트 스케줄링을 포함하며 broker 내부 저장/복제/디스크 단독 시간은 아니다.
+Kafka JMX commit-total은 OFF에서도 관측했다. commit-latency-avg/max는 클라이언트 rolling 통계라 전체 실행의 p95/p99나 누적시간으로 사용하지 않았다.
+OFF에서는 내부 구간 percentile/합계를 만들지 않았다. ON의 직접 호출 계측으로만 해당 값을 계산했다.
+poll 전체 누적시간에는 초기/저부하와 요청 종료 후 idle 대기가 포함된다. 이를 적체 처리 병목 비율로 쓰지 않는다.
+
+6. 적체 중 비용과 실제 완료율
+사전 기준: 각5초 구간의 모든 약250ms lag 샘플>=500, 15개 이상. DB/offset/poll은 같은 구간으로 잘라 합집합을 계산했다.
+잔여=창 길이-DB-offset-poll. DB는 Listener 안에, DB commit 콜백은 DB 안에 포함되므로 별도 부분값이다.
+실행   적체창(s)  독립DB완료/초   내부DB반환/초   DB%    offset%   poll%   기타%   DBcommit부분%(중첩)
+off1       50      246.040       내부계측OFF
+on1        45      267.600      268.267    91.795  7.698     0.043  0.464   36.637
+on2        40      300.175      301.200    92.215  7.338     0.045  0.402   38.489
+off2       45      279.400       내부계측OFF
+독립 조회와 내부 반환 차이는 약250ms의 관측 지연으로 경계 건수가 옮겨지기 때문이다.
+기타에는 프레임워크 dispatch·메시지 어댑터·계측 기록·스케줄링 등 미분리 비용이 포함된다. 별도 CPU/서버 I/O/heartbeat 시간을 이 분모에 더하지 않았다.
+시간대별 독립 DB 완료율(건/초), *는 위 적체 기준 충족. ON 괄호는 실제 DB 프록시 반환율이다.
+구간(s)        OFF1              ON1(내부)            ON2(내부)            OFF2
+ 0~ 5           95.4                 95.8(100.0)          97.0(100.0)          95.8              
+ 5~10           101.0                101.4(100.0)         101.2(100.0)         101.2             
+10~15           101.2                101.2(100.0)         101.2(100.0)         100.8             
+15~20           101.0                101.2(100.0)         96.2(100.0)          101.4             
+20~25           154.6                197.2(203.4)         235.6(239.4)         235.6             
+25~30           166.6*               196.0*(197.4)        268.4*(265.4)        217.4*            
+30~35           231.8*               261.2*(259.0)        328.4*(326.0)        309.4*            
+35~40           223.2*               293.0*(292.2)        323.0*(321.0)        303.0*            
+40~45           232.6*               300.0*(295.4)        276.6*(287.4)        309.8*            
+45~50           282.8*               293.6*(305.2)        297.8*(294.8)        284.0*            
+50~55           229.2*               280.8*(274.6)        303.6*(301.0)        237.2*            
+55~60           238.4*               180.0*(177.4)        282.4*(279.4)        232.8*            
+60~65           264.2*               313.6*(311.8)        321.2*(334.6)        322.8*            
+65~70           290.6*               290.2*(301.4)        329.8(324.4)         298.2*            
+70~75           301.0*               302.0(296.4)         38.2(27.2)           251.2             
+75~80           314.0                93.0(86.0)           -                    -                 
+80~85           73.0                 -                    -                    -                 
+각 run/db-completions-per-second.csv에 1초 단위 원시 집계도 보존했다. 적체 창의 min/max 완료율은 cost-analysis.json에 있다.
+
+7. CPU·연결·락·쓰기
+CPU는 1코어=100% 기준이다. 앱은 여러 스레드가 있어100%를 넘을 수 있다. 이는 Consumer wall-time의 구성 비율이 아니다.
+아래 CPU는 적체창 샘플 평균, Docker는 약2초 간격 스냅샷, 앱은 JMX ProcessCpuTime 차분 약250ms다.
+실행  앱CPU평균%  DBCPU평균%  brokerCPU평균%  최대lag  연결대기  행락대기
+off1       46.76       22.20           12.95    10370      0        0
+on1        46.20       20.05            7.59     9984      0        0
+on2        48.47       18.92            6.64     9447      0        0
+off2       49.42       19.51            7.29     9683      0        0
+평균CPU가 낮거나 연결 대기가0이어도 DB 여력이 충분하다는 뜻은 아니다. 단일 순차 호출은 왕복/commit을 기다리는 동안 CPU를 적게 쓸 수 있다.
+MySQL 내구성 설정: innodb_flush_log_at_trx_commit=1, sync_binlog=1, log_bin=ON, buffer pool128MiB, performance_schema=ON. 변경하지 않았다.
+글로벌 카운터 차분(시험만의 비용으로 엄밀히 귀속되지 않음):
+off1 {"Innodb_os_log_written": 38940672, "Innodb_log_writes": 64544, "Innodb_log_waits": 0, "Innodb_data_written": 116284928, "Innodb_data_writes": 69242, "Com_commit": 17003, "Com_insert": 34006, "Com_update": 17003, "Handler_commit": 187691}
+on1 {"Innodb_os_log_written": 38220288, "Innodb_log_writes": 62870, "Innodb_log_waits": 0, "Innodb_data_written": 124813312, "Innodb_data_writes": 68280, "Com_commit": 17001, "Com_insert": 34002, "Com_update": 17001, "Handler_commit": 187576}
+on2 {"Innodb_os_log_written": 37528064, "Innodb_log_writes": 60899, "Innodb_log_waits": 0, "Innodb_data_written": 125280768, "Innodb_data_writes": 66398, "Com_commit": 17003, "Com_insert": 34006, "Com_update": 17003, "Handler_commit": 187568}
+off2 {"Innodb_os_log_written": 37861376, "Innodb_log_writes": 62135, "Innodb_log_waits": 0, "Innodb_data_written": 131901440, "Innodb_data_writes": 68105, "Com_commit": 17003, "Com_insert": 34006, "Com_update": 17003, "Handler_commit": 187578}
+Docker BlockIO 누적 표시값은 docker-stats.jsonl에 보존했다. 표시값의 반올림/전역 집계 때문에 요청당 물리 I/O 값으로 쓰지 않았다.
+MySQL Performance Schema normalized statement digest 전후 차분:
+off1 COMMIT count=17003, 누적서버시간=18192.157ms, 평균=1.070ms
+on1 COMMIT count=17001, 누적서버시간=17336.035ms, 평균=1.020ms
+on2 COMMIT count=17003, 누적서버시간=16380.190ms, 평균=0.963ms
+off2 COMMIT count=17003, 누적서버시간=17091.851ms, 평균=1.005ms
+on1 주요 나머지 SQL(전체 문장/나머지 항목은 sql-digest-deltas.json):
+  count=17001, mean=0.0712ms, sum=1210.552ms, UPDATE `coupon` `c1_0` SET `issued_quantity` = ( `c1_0` . `issued_quantity` + ? ) WHERE `c1_0` . `id` = ? AND `c1_0` . `status` = ? AND `c1_0` . `issued_quantity` < `c1_0` . `total_quantity`
+  count=17001, mean=0.0595ms, sum=1012.137ms, SELECT `cir1_0` . `id` , `cir1_0` . `coupon_id` , `cir1_0` . `issued_coupon_id` , `cir1_0` . `processed_at` , `cir1_0` . `request_id` , `cir1_0` . `status` , `cir1_0` . `user_id` FROM `coupon_issue_result` `cir1_0` WHERE `cir1_0` . `request_id` = ?
+  count=17001, mean=0.0505ms, sum=858.225ms, INSERT INTO `issued_coupon` ( `coupon_id` , `expired_at` , `issued_at` , STATUS , `used_at` , `user_id` ) VALUES (...)
+  count=17001, mean=0.0488ms, sum=829.621ms, SELECT `c1_0` . `id` , `c1_0` . `coupon_type` , `c1_0` . `description` , `c1_0` . `discount_value` , `c1_0` . `end_date` , `c1_0` . `issued_quantity` , `c1_0` . `max_discount_amount` , `c1_0` . `min_order_amount` , `c1_0` . `name` , `c1_0` . `start_date` , `c1_0` . `status` , `c1_0` . `total_quantity` , `c1_0` . `valid_days` FROM `coupon` `c1_0` WHERE `c1_0` . `id` = ?
+  count=34005, mean=0.0243ms, sum=825.453ms, SET `autocommit` = ?
+  count=17001, mean=0.0483ms, sum=821.624ms, SELECT `ic1_0` . `id` FROM `issued_coupon` `ic1_0` LEFT JOIN `coupon` `c1_0` ON `c1_0` . `id` = `ic1_0` . `coupon_id` WHERE `c1_0` . `id` = ? AND `ic1_0` . `user_id` = ? LIMIT ?
+on1 파일 I/O 대기 상위(여러 서버 스레드가 병렬 수행하므로 합산 비율 금지):
+  {"event": "wait/io/file/innodb/innodb_log_file", "operations": 106205, "total_wait_ms": 18204.4506621, "writes": 62903, "write_wait_ms": 219.971027075, "bytes_written": 54804480}
+  {"event": "wait/io/file/sql/binlog", "operations": 34002, "total_wait_ms": 8236.043671025, "writes": 17001, "write_wait_ms": 91.635698475, "bytes_written": 14926878}
+  {"event": "wait/io/file/innodb/innodb_data_file", "operations": 6423, "total_wait_ms": 1071.655246525, "writes": 4277, "write_wait_ms": 52.445528675, "bytes_written": 74203136}
+  {"event": "wait/io/file/innodb/innodb_dblwr_file", "operations": 2200, "total_wait_ms": 746.133655225, "writes": 1100, "write_wait_ms": 12.376099725, "bytes_written": 70008832}
+on2 주요 나머지 SQL(전체 문장/나머지 항목은 sql-digest-deltas.json):
+  count=17003, mean=0.0581ms, sum=987.833ms, UPDATE `coupon` `c1_0` SET `issued_quantity` = ( `c1_0` . `issued_quantity` + ? ) WHERE `c1_0` . `id` = ? AND `c1_0` . `status` = ? AND `c1_0` . `issued_quantity` < `c1_0` . `total_quantity`
+  count=17003, mean=0.0469ms, sum=796.689ms, SELECT `cir1_0` . `id` , `cir1_0` . `coupon_id` , `cir1_0` . `issued_coupon_id` , `cir1_0` . `processed_at` , `cir1_0` . `request_id` , `cir1_0` . `status` , `cir1_0` . `user_id` FROM `coupon_issue_result` `cir1_0` WHERE `cir1_0` . `request_id` = ?
+  count=17003, mean=0.0414ms, sum=703.440ms, INSERT INTO `issued_coupon` ( `coupon_id` , `expired_at` , `issued_at` , STATUS , `used_at` , `user_id` ) VALUES (...)
+  count=17003, mean=0.0404ms, sum=687.380ms, SELECT `c1_0` . `id` , `c1_0` . `coupon_type` , `c1_0` . `description` , `c1_0` . `discount_value` , `c1_0` . `end_date` , `c1_0` . `issued_quantity` , `c1_0` . `max_discount_amount` , `c1_0` . `min_order_amount` , `c1_0` . `name` , `c1_0` . `start_date` , `c1_0` . `status` , `c1_0` . `total_quantity` , `c1_0` . `valid_days` FROM `coupon` `c1_0` WHERE `c1_0` . `id` = ?
+  count=17003, mean=0.0401ms, sum=681.070ms, SELECT `ic1_0` . `id` FROM `issued_coupon` `ic1_0` LEFT JOIN `coupon` `c1_0` ON `c1_0` . `id` = `ic1_0` . `coupon_id` WHERE `c1_0` . `id` = ? AND `ic1_0` . `user_id` = ? LIMIT ?
+  count=34007, mean=0.0200ms, sum=680.311ms, SET `autocommit` = ?
+on2 파일 I/O 대기 상위(여러 서버 스레드가 병렬 수행하므로 합산 비율 금지):
+  {"event": "wait/io/file/innodb/innodb_log_file", "operations": 103780, "total_wait_ms": 16369.9319984, "writes": 60936, "write_wait_ms": 177.906449175, "bytes_written": 54190592}
+  {"event": "wait/io/file/sql/binlog", "operations": 34006, "total_wait_ms": 7813.324727475, "writes": 17003, "write_wait_ms": 78.317535375, "bytes_written": 14928634}
+  {"event": "wait/io/file/innodb/innodb_data_file", "operations": 6531, "total_wait_ms": 1047.228112075, "writes": 4347, "write_wait_ms": 58.67114855, "bytes_written": 79478784}
+  {"event": "wait/io/file/innodb/innodb_dblwr_file", "operations": 2230, "total_wait_ms": 683.293756425, "writes": 1115, "write_wait_ms": 12.04332485, "bytes_written": 71090176}
+서버 COMMIT이 개별 SELECT/UPDATE/INSERT보다 큰 비용이며, redo/binlog 파일 관련 대기도 관측했다.
+다만 파일 wait에는 write 외 기타 작업이 섞이고 background 작업과 겹친다. 이를 전부 fsync 시간으로 단정하거나 DB proxy 시간에서 빼지 않았다.
+서버 digest에는 클라이언트/JDBC/JPA 시간은 포함되지 않는다. commit callback 구간에는 flush/synchronization이 섞여 둘의 차이를 순수 network 비용이라고 단정할 수 없다.
+
+8. 계측 누락·오버헤드·편차
+OFF 적체 완료율246.04/279.40, ON267.60/300.175건/초. 범위가 겹치고 양 ON이 양 OFF보다10% 이상 느린 패턴은 없다.
+ON이 빨라진 것을 계측의 성능 개선이라고 주장하지 않는다. 이4회만으로 오버헤드0 또는 정확한 오버헤드 비율을 추정할 수 없다.
+외부 관측 비용은 OFF/ON에 공통이며 완전 무계측 실행과의 비용 차이는 분리하지 않았다. 캐시/호스트 경쟁/JIT/실행 순서가 남아 있다.
+ON 두 실행의 완료율은 다르지만 DB91.79/92.21%, offset7.70/7.34%라는 비용 구성은 같은 경향이었다.
+조회 간격 실측(평균/p95/최대ms), 계측 결과 수, wall/monotonic 최대차ms:
+off1: 253.101/255.672/256.281ms, 관측행=17003, 고유ID=17003, clock_error=0.962ms, Docker오류=0
+on1: 253.078/255.577/256.104ms, 관측행=17001, 고유ID=17001, clock_error=0.928ms, Docker오류=0
+on2: 253.038/255.619/256.005ms, 관측행=17003, 고유ID=17003, clock_error=0.962ms, Docker오류=0
+off2: 253.136/255.649/256.085ms, 관측행=17003, 고유ID=17003, clock_error=0.957ms, Docker오류=0
+결과 조회 ID 집합과 최종 DB ID 집합이 일치하고 중복 관측0. ON 두 실행은 버퍼 누락0/트랜잭션 경계 위반0/커밋 예외0/중첩 검증 통과.
+JMX offset-total 최종값: off1=17003.0, on1=17001.0, on2=17003.0, off2=17003.0. 각 실행 새 Consumer의 누적값이다.
+JMX rolling latency만으로 percentile이나 총시간을 재구성하지 않았다. 해당 원시값과 직접 span 자료를 모두 보존했다.
+요청 중단 후 모든 결과가 조회되고 lag0, HTTP/DB 무활동·수량 안정35초를 확인한 뒤 종료했다. 요청별 DB span을 파일로 쓰는 작업은 이 뒤에 수행했다.
+
+9. 확인한 병목 / 미분리 비용 / 다음 비교 하나
+확인: 현재 구조의 적체 처리율을 제한하는 지배 구간은 순차 DB 서비스 경로다. RECORD offset 커밋도 비용이 있지만 이번 측정의 주원인은 아니다.
+확인: DB commit 단계가 큰 부분 비용이며 MySQL COMMIT 서버 통계도 이를 뒷받침한다. 특정 SELECT 하나가 지배한다는 결과는 없다.
+미분리: DB 경로의 나머지 JDBC 왕복·ORM·flush·스케줄링, commit의 순수 디스크 동기화·network, broker 내부 offset 처리 비용.
+추천 하나: Kafka를 제외한 DB 전용 순차 벤치마크에서 같은 유효 신청을 1건/트랜잭션과10건/트랜잭션으로 처리해 비교한다.
+  두 군 모두 같은 JDBC 실행기에서 SQL 개수·순서, 재고 조건/고유 제약/요청 ID 멱등성/내구성/총 건수를 맞추고 트랜잭션당 건수만 바꾼다.
+  JPA 1차 캐시로 SELECT 횟수까지 달라지는 혼선을 피하고, 실제 SQL/COMMIT 횟수가 의도한 조건과 일치하는지 검증한다.
+  TPS, COMMIT 횟수/누적시간, 최종 정합성, 일괄 롤백 범위를 비교해 반복 commit 고정 비용을 실제로 줄일 수 있는지 검증한다.
+  이는 다음 원인 검증 후보이며 실제 서비스에 배치 트랜잭션을 적용하라는 확정 결론이 아니다. 실패·재전달 의미가 바뀌므로 적용 전 별도 검증이 필요하다.
+이번 작업에서 이 변경이나 offset BATCH 실험은 실행하지 않았다.
+
+10. 재현과 보존
+소스: src/test/.../profiling/ConsumerProfileApplication.java, 부하 폴더의 ConsumerCostSampler.java, run-consumer-cost.py, run-consumer-cost-series.py, analyze-consumer-cost.py.
+기존 k6-overload-comparison.js 및 analyze-overload-comparison.py를 재사용했다. 부하·서비스 설정은 그대로다.
+준비: 기존 compose MySQL/Redis 유지, 독립 Kafka를39092에 준비(브로커 명 coupon-kafka-profile-20261003, CPU1/1GiB). 다른 Consumer와 그룹을 공유하지 않는다.
+./gradlew -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle testClasses writeConsumerProfileClasspath
+KAFKA_GROUP=<독립브로커의-lag0-그룹> python3 선착순_쿠폰발급_부하테스트/run-consumer-cost-series.py <새결과부모폴더> build/consumer-profile-classpath.txt
+각 off1/on1/on2/off2에 대해: python3 선착순_쿠폰발급_부하테스트/analyze-consumer-cost.py <실행폴더>
+python3 선착순_쿠폰발급_부하테스트/summarize-consumer-cost.py <결과부모폴더>
+빈 브로커에서는 새 그룹 사용. 이번 그룹은 preflight 뒤 commit offset3에서 시작했고 각 실행 전 lag0을 확인했다.
+이 환경은 기본 Gradle 홈 쓰기 제한으로 GRADLE_USER_HOME=/tmp/coupon-gradle-home과 설치된 Gradle8.14.4 실행 파일을 사용했다. 전체 classpath는 classpath.txt에 보존했다.
+원시 자료: metrics.json.gz, requests.csv, observed-results.csv, consumer-spans.csv(ON), progress.jsonl, docker-stats.jsonl, DB digests/I/O 전후 TSV, DB 결과/이력 스냅샷, 로그.
+분석: analysis.json, cost-analysis.json, request-timeline.csv(ON), db-completions-per-second.csv, sql-digest-deltas.json, db-file-io-deltas.json, comparison.json.
+기준 상태: README.before.md/README.plan.md, git-status-before.txt, working-tree-before.patch, source-state.tar.gz, source-hashes.json, environment.json, 소스 사본.
+테스트 앱/관측 프로세스와 새 브로커만 종료했다. 기존 앱/컨테이너 및 DB 테스트 자료는 유지했다. 서비스 소스 변경0, 커밋/배포0.

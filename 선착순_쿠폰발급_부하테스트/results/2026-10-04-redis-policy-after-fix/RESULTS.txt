@@ -1,0 +1,17 @@
+Redis 예약 정책 검증 — 수정 후, 2026-10-04
+수정: EXISTS 호출의 비교식을 호출 밖으로 이동.
+if redis.call('EXISTS', KEYS[5]) == 0 then
+서비스 변경은 위 한 줄이다.
+
+실제 격리 redis:7-alpine Testcontainers에서 Redis 예약/정책38개 + 전달 작업자9개 = 47개 통과.
+실패/오류/건너뜀0. 이전 실패 결과는 ../2026-10-04-redis-policy-before-fix/에 보존했다.
+초기화/재초기화 보존, 부분 데이터 초기화 차단, 밀리초 기간 검증,
+유효 기간 예약, 시작 전/종료 후/접수 중단 거절, 정책 누락/손상,
+기존 예약의 종료 후 재시도, 기존 예약 정합성/동시성/전달 작업자 검증 통과.
+정확히 같은 시작/종료 밀리초의 결정적 경계 테스트와 실제 Kafka/DB 장애 테스트는 범위 밖.
+전달 작업자는 실제 Redis와 Producer 대역을 사용한다.
+
+재현:
+./gradlew test --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest
+실행 환경: GRADLE_USER_HOME=/tmp/coupon-gradle-home, 로컬 Gradle8.14.4, --no-daemon.
+커밋/배포 없음.

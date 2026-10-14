@@ -1,0 +1,21 @@
+Redis claim/lookup 통합 테스트 — 2026-10-03
+기존 예약 테스트10건 + claim/조회 추가11건 = 21건 통과. 실패/오류/건너뜀0.
+실제 redis:7-alpine Testcontainers, 별도 컨테이너/동적 포트 사용.
+
+추가 검증:
+- 빈 pending이면 null, 기존 processing 유지.
+- pending LEFT→processing RIGHT 이동과 순서, 재고/사용자/예약 Hash 유지.
+- processing 자료형 오류 때 pending 항목이 사라지지 않음.
+- 요청10건에 동시 claim20회: 각 ID1회 반환, 나머지10회 null, processing에 원래 순서로10건.
+- claim 후 requestId/couponId/userId/reservedAt 조회 결과 일치, processing 유지.
+- 예약 Hash 없음, 필수 필드4종 각각 누락, 저장 requestId 불일치 시 예외 및 processing 유지.
+
+범위: 서비스 메서드 단위 실제 Redis 통합 검증. Kafka/DB 전달, 프로세스 강제 종료,
+재시작 복구, Redis 데이터 내구성 검증은 아직 수행하지 않음.
+서비스 소스는 사용자 수정 상태를 테스트했고 에이전트는 테스트만 변경함.
+
+재현:
+./gradlew test --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest
+
+이번 환경 실행:
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon test --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest

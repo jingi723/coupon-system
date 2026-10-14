@@ -1,0 +1,242 @@
+{
+  "one-1": {
+    "batch": 1,
+    "requests": 17000,
+    "elapsedNs": 47173109708,
+    "perSecond": 360.3748005003156,
+    "jdbc": {
+      "commitCalls": 17000,
+      "commitSuccess": 17000,
+      "flushEnd": 34000,
+      "flushEntities": 85000,
+      "jdbcExecuteStatementEnd": 102000,
+      "partialFlushEnd": 51000
+    },
+    "jdbcCommitNs": 16246158752,
+    "sql": {
+      "insert into coupon_issue_result (coupon_id,issued_coupon_id,processed_at,request_id,status,user_id) values (?,?,?,?,?,?)": 17000,
+      "insert into issued_coupon (coupon_id,expired_at,issued_at,status,used_at,user_id) values (?,?,?,?,?,?)": 17000,
+      "select c1_0.id,c1_0.coupon_type,c1_0.description,c1_0.discount_value,c1_0.end_date,c1_0.issued_quantity,c1_0.max_discount_amount,c1_0.min_order_amount,c1_0.name,c1_0.start_date,c1_0.status,c1_0.total_quantity,c1_0.valid_days from coupon c1_0 where c1_0.id=?": 17000,
+      "select cir1_0.id,cir1_0.coupon_id,cir1_0.issued_coupon_id,cir1_0.processed_at,cir1_0.request_id,cir1_0.status,cir1_0.user_id from coupon_issue_result cir1_0 where cir1_0.request_id=?": 17000,
+      "select ic1_0.id from issued_coupon ic1_0 left join coupon c1_0 on c1_0.id=ic1_0.coupon_id where c1_0.id=? and ic1_0.user_id=? limit ?": 17000,
+      "update coupon c1_0 set issued_quantity=(c1_0.issued_quantity+1) where c1_0.id=? and c1_0.issued_quantity<c1_0.total_quantity": 17000
+    },
+    "hibernate": {
+      "prepareStatements": 102000,
+      "entityInserts": 34000,
+      "successfulTransactions": 17000,
+      "flushes": 34000,
+      "transactions": 17000
+    },
+    "consistency": "passed: exact request/user/coupon mapping, issued result/history join, count and quantity",
+    "call_start_to_commit_ms": {
+      "mean": 2.627888775882353,
+      "p50": 2.4152915,
+      "p95": 3.834827099999999,
+      "p99": 5.69999832999998,
+      "max": 19.295834
+    },
+    "processor_call_ms_not_commit": {
+      "mean": 1.5215121934117648,
+      "p50": 1.420625,
+      "p95": 2.10429615,
+      "p99": 3.4369854999999956,
+      "max": 12.222
+    },
+    "preloaded_ready_to_completion_s": {
+      "mean": 24.05557080791347,
+      "p50": 24.142987187499998,
+      "p95": 44.962563925299996,
+      "p99": 46.72311627384,
+      "max": 47.173108667
+    },
+    "jdbc_commit_mean_ms": 0.9556563971764707,
+    "sql_total": 102000,
+    "sql_by_kind": {
+      "select": 51000,
+      "insert": 34000,
+      "update": 17000,
+      "delete": 0
+    }
+  },
+  "ten-1": {
+    "batch": 10,
+    "requests": 17000,
+    "elapsedNs": 20042798666,
+    "perSecond": 848.1849408006223,
+    "jdbc": {
+      "commitCalls": 1700,
+      "commitSuccess": 1700,
+      "flushEnd": 18700,
+      "flushEntities": 222700,
+      "jdbcExecuteStatementEnd": 86700,
+      "partialFlushEnd": 51000
+    },
+    "jdbcCommitNs": 3570720874,
+    "sql": {
+      "insert into coupon_issue_result (coupon_id,issued_coupon_id,processed_at,request_id,status,user_id) values (?,?,?,?,?,?)": 17000,
+      "insert into issued_coupon (coupon_id,expired_at,issued_at,status,used_at,user_id) values (?,?,?,?,?,?)": 17000,
+      "select c1_0.id,c1_0.coupon_type,c1_0.description,c1_0.discount_value,c1_0.end_date,c1_0.issued_quantity,c1_0.max_discount_amount,c1_0.min_order_amount,c1_0.name,c1_0.start_date,c1_0.status,c1_0.total_quantity,c1_0.valid_days from coupon c1_0 where c1_0.id=?": 1700,
+      "select cir1_0.id,cir1_0.coupon_id,cir1_0.issued_coupon_id,cir1_0.processed_at,cir1_0.request_id,cir1_0.status,cir1_0.user_id from coupon_issue_result cir1_0 where cir1_0.request_id=?": 17000,
+      "select ic1_0.id from issued_coupon ic1_0 left join coupon c1_0 on c1_0.id=ic1_0.coupon_id where c1_0.id=? and ic1_0.user_id=? limit ?": 17000,
+      "update coupon c1_0 set issued_quantity=(c1_0.issued_quantity+1) where c1_0.id=? and c1_0.issued_quantity<c1_0.total_quantity": 17000
+    },
+    "hibernate": {
+      "prepareStatements": 86700,
+      "entityInserts": 34000,
+      "successfulTransactions": 1700,
+      "flushes": 18700,
+      "transactions": 1700
+    },
+    "consistency": "passed: exact request/user/coupon mapping, issued result/history join, count and quantity",
+    "call_start_to_commit_ms": {
+      "mean": 7.262818598941177,
+      "p50": 6.961292,
+      "p95": 12.489342299999999,
+      "p99": 17.096585839999985,
+      "max": 105.963625
+    },
+    "processor_call_ms_not_commit": {
+      "mean": 0.9425058014117648,
+      "p50": 0.847209,
+      "p95": 1.3062728999999995,
+      "p99": 2.4230626699999966,
+      "max": 84.064542
+    },
+    "preloaded_ready_to_completion_s": {
+      "mean": 10.118907855325881,
+      "p50": 10.032715270499999,
+      "p95": 19.033352851749992,
+      "p99": 19.795778953329975,
+      "max": 20.042797625
+    },
+    "jdbc_commit_mean_ms": 2.100424043529412,
+    "sql_total": 86700,
+    "sql_by_kind": {
+      "select": 35700,
+      "insert": 34000,
+      "update": 17000,
+      "delete": 0
+    }
+  },
+  "ten-2": {
+    "batch": 10,
+    "requests": 17000,
+    "elapsedNs": 20218665375,
+    "perSecond": 840.8072286027435,
+    "jdbc": {
+      "commitCalls": 1700,
+      "commitSuccess": 1700,
+      "flushEnd": 18700,
+      "flushEntities": 222700,
+      "jdbcExecuteStatementEnd": 86700,
+      "partialFlushEnd": 51000
+    },
+    "jdbcCommitNs": 3535596450,
+    "sql": {
+      "insert into coupon_issue_result (coupon_id,issued_coupon_id,processed_at,request_id,status,user_id) values (?,?,?,?,?,?)": 17000,
+      "insert into issued_coupon (coupon_id,expired_at,issued_at,status,used_at,user_id) values (?,?,?,?,?,?)": 17000,
+      "select c1_0.id,c1_0.coupon_type,c1_0.description,c1_0.discount_value,c1_0.end_date,c1_0.issued_quantity,c1_0.max_discount_amount,c1_0.min_order_amount,c1_0.name,c1_0.start_date,c1_0.status,c1_0.total_quantity,c1_0.valid_days from coupon c1_0 where c1_0.id=?": 1700,
+      "select cir1_0.id,cir1_0.coupon_id,cir1_0.issued_coupon_id,cir1_0.processed_at,cir1_0.request_id,cir1_0.status,cir1_0.user_id from coupon_issue_result cir1_0 where cir1_0.request_id=?": 17000,
+      "select ic1_0.id from issued_coupon ic1_0 left join coupon c1_0 on c1_0.id=ic1_0.coupon_id where c1_0.id=? and ic1_0.user_id=? limit ?": 17000,
+      "update coupon c1_0 set issued_quantity=(c1_0.issued_quantity+1) where c1_0.id=? and c1_0.issued_quantity<c1_0.total_quantity": 17000
+    },
+    "hibernate": {
+      "prepareStatements": 86700,
+      "entityInserts": 34000,
+      "successfulTransactions": 1700,
+      "flushes": 18700,
+      "transactions": 1700
+    },
+    "consistency": "passed: exact request/user/coupon mapping, issued result/history join, count and quantity",
+    "call_start_to_commit_ms": {
+      "mean": 7.290413195529411,
+      "p50": 6.9619995,
+      "p95": 12.82577295,
+      "p99": 18.653907919999995,
+      "max": 98.501167
+    },
+    "processor_call_ms_not_commit": {
+      "mean": 0.9546772467647059,
+      "p50": 0.8457915,
+      "p95": 1.3773455499999998,
+      "p99": 2.7642983399999923,
+      "max": 84.493375
+    },
+    "preloaded_ready_to_completion_s": {
+      "mean": 10.127423528421764,
+      "p50": 9.9526646875,
+      "p95": 19.16284628544999,
+      "p99": 20.018687277419986,
+      "max": 20.218664625
+    },
+    "jdbc_commit_mean_ms": 2.079762617647059,
+    "sql_total": 86700,
+    "sql_by_kind": {
+      "select": 35700,
+      "insert": 34000,
+      "update": 17000,
+      "delete": 0
+    }
+  },
+  "one-2": {
+    "batch": 1,
+    "requests": 17000,
+    "elapsedNs": 71948080959,
+    "perSecond": 236.28149317405064,
+    "jdbc": {
+      "commitCalls": 17000,
+      "commitSuccess": 17000,
+      "flushEnd": 34000,
+      "flushEntities": 85000,
+      "jdbcExecuteStatementEnd": 102000,
+      "partialFlushEnd": 51000
+    },
+    "jdbcCommitNs": 34733600029,
+    "sql": {
+      "insert into coupon_issue_result (coupon_id,issued_coupon_id,processed_at,request_id,status,user_id) values (?,?,?,?,?,?)": 17000,
+      "insert into issued_coupon (coupon_id,expired_at,issued_at,status,used_at,user_id) values (?,?,?,?,?,?)": 17000,
+      "select c1_0.id,c1_0.coupon_type,c1_0.description,c1_0.discount_value,c1_0.end_date,c1_0.issued_quantity,c1_0.max_discount_amount,c1_0.min_order_amount,c1_0.name,c1_0.start_date,c1_0.status,c1_0.total_quantity,c1_0.valid_days from coupon c1_0 where c1_0.id=?": 17000,
+      "select cir1_0.id,cir1_0.coupon_id,cir1_0.issued_coupon_id,cir1_0.processed_at,cir1_0.request_id,cir1_0.status,cir1_0.user_id from coupon_issue_result cir1_0 where cir1_0.request_id=?": 17000,
+      "select ic1_0.id from issued_coupon ic1_0 left join coupon c1_0 on c1_0.id=ic1_0.coupon_id where c1_0.id=? and ic1_0.user_id=? limit ?": 17000,
+      "update coupon c1_0 set issued_quantity=(c1_0.issued_quantity+1) where c1_0.id=? and c1_0.issued_quantity<c1_0.total_quantity": 17000
+    },
+    "hibernate": {
+      "prepareStatements": 102000,
+      "entityInserts": 34000,
+      "successfulTransactions": 17000,
+      "flushes": 34000,
+      "transactions": 17000
+    },
+    "consistency": "passed: exact request/user/coupon mapping, issued result/history join, count and quantity",
+    "call_start_to_commit_ms": {
+      "mean": 4.069807493117647,
+      "p50": 3.7892085,
+      "p95": 6.469511049999999,
+      "p99": 9.878582499999988,
+      "max": 166.169959
+    },
+    "processor_call_ms_not_commit": {
+      "mean": 1.8469781907058822,
+      "p50": 1.6773120000000001,
+      "p95": 2.7948443999999997,
+      "p99": 4.776968839999998,
+      "max": 164.490584
+    },
+    "preloaded_ready_to_completion_s": {
+      "mean": 36.058494934600056,
+      "p50": 36.2026613125,
+      "p95": 68.76246089794999,
+      "p99": 71.46009719233,
+      "max": 71.948080375
+    },
+    "jdbc_commit_mean_ms": 2.043152942882353,
+    "sql_total": 102000,
+    "sql_by_kind": {
+      "select": 51000,
+      "insert": 34000,
+      "update": 17000,
+      "delete": 0
+    }
+  }
+}

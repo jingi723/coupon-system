@@ -1,0 +1,42 @@
+2026-10-15 서비스 묶음 Consumer 반영 검증
+
+구현
+- CouponBatchConsumer: 단일 파티션/단일 작업자, 최대10건, 첫 poll 수신부터10ms 단조 시계 수집.
+- 수집/Redis 승인 검증은 트랜잭션 밖. 외부 TransactionTemplate 아래 기존 REQUIRED processReserved 호출.
+- DB 실제 커밋/정리 반환 후 마지막 offset+1 commitSync. 처리 실패 시 중지, 자동 재시도 없음.
+- commitSync 오류는 Kafka 반영 여부가 불명확할 수 있음. 같은 그룹으로 재시작, DB requestId 멱등성 유지.
+- 수집 중 파티션 재할당 시 중지. SmartLifecycle 종료 후 Kafka close, 종료 콜백.
+- 기본 단건, COUPON_BATCH_ENABLED=true 선택 시 단건 Listener 자동 시작 금지.
+- spring.kafka.listener.auto-startup=false는 단건/묶음 둘 다 적용.
+
+선택 테스트 최종 34개 통과 (3회 실행의 서로 다른 테스트 합계; 전체 프로젝트 테스트 아님)
+1. ReservedCouponIssueIntegrationTest 19/19, ProductionBatchConsumerRecoveryTest 3/3.
+2. 기존 단건 ReservationFailureRecoveryTest 4/4.
+3. CouponBatchConsumerTest 최종 8/8.
+최초 단위시험은7개 중1개 실패: Mockito 재설정 when(any())가 이전 Answer를 null로 호출한 fixture 오류.
+실패 주입을 doThrow 방식으로 수정하고 옵션 빈 등록 검증1개 추가 후8개 통과. 최초 로그/XML 보존.
+
+실제 인프라에서 확인
+- src/main CouponBatchConsumer를 별도 JVM으로 실행. 기존 테스트 후보 BatchConsumerCandidate 사용 안 함.
+- 전용 MySQL8 / Redis7 AOF always 볼륨 / Kafka3.7, 실행별 고유 Consumer group.
+- HTTP 승인13건 -> offset10+3 커밋, 이후 단독1건도 추가 트래픽 없이 발급.
+- 5번째 결과 INSERT에 CHECK 오류: 수량/이력/결과 전체0, offset 유지. 원인 제거 후 재시작해13건 발급.
+- DB10건 커밋 직후 commitSync 진입 전 강제종료: 독립 JDBC로 커밋 관측/offset 유지 확인.
+  같은 그룹 재시작 시 같은 offset 범위를 다시 커밋하고 기존10건 결과ID/이력ID 불변, 총13건 발급.
+- 승인 requestId 집합, 결과/이력/issuedQuantity, Redis 재고, 최종 상태 조회 대조.
+- Kafka poll/commitSync 시 DB 트랜잭션 비활성 검사. 기존 단건 Listener 동시 실행 없음.
+- 기존 단건 Relay claim/ack 경계 종료, DB 실패/재개, DB 커밋 후 동일레코드 재전달 회귀4개 통과.
+
+범위/한계
+- 이번 실행은 기능/장애 복구 검증. 서비스 코드의 부하/10ms 지연 분포 재측정 없음.
+- 과거 성능 비교는 테스트 후보+Lua Relay 조건. 이번 서비스 Relay는 기존 구현, 수치 직접 전용 불가.
+- 10ms는 논리 수집 deadline이며 poll/OS 스케줄링과 DB 완료시간 상한이 아님.
+- 종료 중 Relay Redis 접근 오류는 별도 기존 과제. 이번 변경에서 Relay 서비스 수정 없음.
+- 테스트 프로세스/컨테이너/Redis 전용 볼륨 정리. 기존 개발 coupon-mysql/coupon-redis 및 다른 컨테이너 유지.
+- 기존 미커밋 작업 보존. 커밋/배포 없음.
+
+근거
+TEST-*.xml: 최종 테스트별 결과. first-TEST-* 및 first-regression.log: 최초 실패.
+evidence/: 실제 서비스 묶음 HTTP/DB/offset/프로세스 로그.
+single-recovery-evidence/: 기존 단건 회귀 원문.
+sources/: 이번 구현/시험/문서 스냅샷. SHA256SUMS.txt 및 REPRODUCE.txt 참조.

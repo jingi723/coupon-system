@@ -1,0 +1,232 @@
+{
+  "run1": {
+    "planned": 17000,
+    "sent": 17000,
+    "unsent": 0,
+    "reserved": 17000,
+    "results": {
+      "RESERVED": 17000
+    },
+    "errors": {},
+    "all": {
+      "calls": 17000,
+      "reserved": 17000,
+      "service_ms": {
+        "p50": 0.462,
+        "p95": 1.370375,
+        "p99": 1.959083
+      },
+      "schedule_delay_ms": {
+        "p50": 0.195876,
+        "p95": 2.174292,
+        "p99": 2.451709
+      }
+    },
+    "stages_by_actual_start": {
+      "baseline": {
+        "calls": 2000,
+        "reserved": 2000,
+        "service_ms": {
+          "p50": 1.115459,
+          "p95": 1.917292,
+          "p99": 2.772
+        },
+        "schedule_delay_ms": {
+          "p50": 1.903334,
+          "p95": 2.440917,
+          "p99": 2.561
+        }
+      },
+      "burst": {
+        "calls": 12000,
+        "reserved": 12000,
+        "service_ms": {
+          "p50": 0.422292,
+          "p95": 0.775417,
+          "p99": 1.530416
+        },
+        "schedule_delay_ms": {
+          "p50": 0.190751,
+          "p95": 0.216417,
+          "p99": 0.254375
+        }
+      },
+      "recovery": {
+        "calls": 3000,
+        "reserved": 3000,
+        "service_ms": {
+          "p50": 0.683542,
+          "p95": 1.416416,
+          "p99": 2.196875
+        },
+        "schedule_delay_ms": {
+          "p50": 1.691709,
+          "p95": 2.419959,
+          "p99": 2.510417
+        }
+      },
+      "after_stop": {
+        "calls": 0,
+        "reserved": 0,
+        "service_ms": {
+          "p50": null,
+          "p95": null,
+          "p99": null
+        },
+        "schedule_delay_ms": {
+          "p50": null,
+          "p95": null,
+          "p99": null
+        }
+      }
+    },
+    "sent_by_planned_phase": {
+      "baseline": 2000,
+      "burst": 12000,
+      "recovery": 3000
+    },
+    "burst_completions_per_second": 1200.0,
+    "burst_completion_min_max": [
+      1200,
+      1200
+    ],
+    "last_completion_s": 59.995837917,
+    "resources": {
+      "samples": 60,
+      "errors": 0,
+      "sample_interval_max_s": 1.004800917,
+      "burst_cpu_mean_one_core_percent": 5.829961547171648,
+      "burst_cpu_max_one_core_percent": 6.649996717560754,
+      "used_memory_first": 1472328,
+      "used_memory_last": 6918544,
+      "used_memory_max": 6918544,
+      "rss_max": 14520320
+    },
+    "integrity": {
+      "valid": "true",
+      "stock": "83000",
+      "reservations": "17000",
+      "users": "17000",
+      "pending": "17000",
+      "missing_success": "0",
+      "unexpected_stored": "0",
+      "field_mismatches": "0",
+      "error_but_stored": "0"
+    }
+  },
+  "run2": {
+    "planned": 17000,
+    "sent": 17000,
+    "unsent": 0,
+    "reserved": 17000,
+    "results": {
+      "RESERVED": 17000
+    },
+    "errors": {},
+    "all": {
+      "calls": 17000,
+      "reserved": 17000,
+      "service_ms": {
+        "p50": 0.421375,
+        "p95": 1.333792,
+        "p99": 2.011709
+      },
+      "schedule_delay_ms": {
+        "p50": 0.188376,
+        "p95": 2.216459,
+        "p99": 2.498125
+      }
+    },
+    "stages_by_actual_start": {
+      "baseline": {
+        "calls": 2000,
+        "reserved": 2000,
+        "service_ms": {
+          "p50": 0.926208,
+          "p95": 1.849084,
+          "p99": 2.576292
+        },
+        "schedule_delay_ms": {
+          "p50": 1.755584,
+          "p95": 2.479792,
+          "p99": 2.548917
+        }
+      },
+      "burst": {
+        "calls": 12000,
+        "reserved": 12000,
+        "service_ms": {
+          "p50": 0.365709,
+          "p95": 0.804875,
+          "p99": 1.572083
+        },
+        "schedule_delay_ms": {
+          "p50": 0.182584,
+          "p95": 0.214792,
+          "p99": 0.326334
+        }
+      },
+      "recovery": {
+        "calls": 3000,
+        "reserved": 3000,
+        "service_ms": {
+          "p50": 0.744083,
+          "p95": 1.48925,
+          "p99": 2.156333
+        },
+        "schedule_delay_ms": {
+          "p50": 1.718917,
+          "p95": 2.452959,
+          "p99": 2.516542
+        }
+      },
+      "after_stop": {
+        "calls": 0,
+        "reserved": 0,
+        "service_ms": {
+          "p50": null,
+          "p95": null,
+          "p99": null
+        },
+        "schedule_delay_ms": {
+          "p50": null,
+          "p95": null,
+          "p99": null
+        }
+      }
+    },
+    "sent_by_planned_phase": {
+      "baseline": 2000,
+      "burst": 12000,
+      "recovery": 3000
+    },
+    "burst_completions_per_second": 1200.0,
+    "burst_completion_min_max": [
+      1199,
+      1201
+    ],
+    "last_completion_s": 59.996853,
+    "resources": {
+      "samples": 60,
+      "errors": 0,
+      "sample_interval_max_s": 1.004877833,
+      "burst_cpu_mean_one_core_percent": 6.205646296583126,
+      "burst_cpu_max_one_core_percent": 7.549145311741009,
+      "used_memory_first": 1546400,
+      "used_memory_last": 6993328,
+      "used_memory_max": 6993328,
+      "rss_max": 14995456
+    },
+    "integrity": {
+      "valid": "true",
+      "stock": "83000",
+      "reservations": "17000",
+      "users": "17000",
+      "pending": "17000",
+      "missing_success": "0",
+      "unexpected_stored": "0",
+      "field_mismatches": "0",
+      "error_but_stored": "0"
+    }
+  }
+}

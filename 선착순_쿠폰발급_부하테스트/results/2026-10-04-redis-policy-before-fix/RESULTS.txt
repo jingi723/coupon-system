@@ -1,0 +1,10 @@
+Redis 예약 정책 검증 — 수정 전 결과, 2026-10-04
+총 47, 통과 9, 실패 38. 실제 격리 redis:7-alpine Testcontainers 사용.
+기존30개 + 추가17개. 테스트 준비를 initializeReservation() 호출로 변경했다.
+실패 원인: RESERVE_SCRIPT의 redis.call('EXISTS', KEYS[5] == 0)는 문자열 키 대신 boolean을 전달한다.
+수정할 식: if redis.call('EXISTS', KEYS[5]) == 0 then
+신규 예약이 이 위치에서 실패하므로 후속 정책/조회/전달 검증도 실패한다.
+초기화 관련6개 및 신규 예약이 필요 없는 기존3개는 통과했다.
+서비스 코드는 수정하지 않았다. 수정 후 전체47개 재실행이 필요하다.
+시작/종료와 정확히 같은 밀리초의 결정적 경계 테스트는 이번 범위 밖이다.
+실행: ./gradlew test --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest

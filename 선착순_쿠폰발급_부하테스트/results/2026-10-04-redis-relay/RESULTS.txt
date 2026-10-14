@@ -1,0 +1,24 @@
+Redis 전달 작업자 테스트 — 2026-10-04
+실제 redis:7-alpine Testcontainers + Mockito Producer 대역.
+작업자9개 + 기존 예약/조회21개 = 총30개, 실패/오류/건너뜀0.
+
+검증:
+빈 큐 false 및 전송 없음.
+정상 메시지의 requestId/couponId/userId/시각 보존, 전송 후 processing 제거.
+전송 결과 대기 중 processing 유지(latch로 send 반환을 차단).
+ExecutionException/TimeoutException/InterruptedException 각각 processing 유지 및 재호출에서 동일 메시지 전송.
+processing 우선 전달, 이후 pending 전달.
+전송 정상 반환 후 LREM 직전 실패를 주입하고 새 작업자 객체에서 같은 requestId 재전달.
+예약 Hash 누락이면 전송 전 중단하고 processing 유지.
+완료 처리 재호출에도 예약/재고/사용자 보존.
+
+한계:
+실제 Kafka 기록이나 DB 중복 발급을 검사한 것이 아니다.
+작업자 객체 재생성은 JVM 강제 종료/재시작과 다르다.
+예외 주입은 실제 Redis 네트워크 장애를 재현한 것이 아니다.
+후속 실제 Kafka/DB 테스트에서 전송 성공→processing 제거 사이 강제 종료 후 전량 발급/중복 없음을 확인해야 한다.
+
+재현:
+./gradlew test --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest
+이번 실행은 GRADLE_USER_HOME=/tmp/coupon-gradle-home 및 로컬 Gradle8.14.4 바이너리를 사용했다.
+서비스 변경 없음, 테스트/문서만 추가. 커밋/배포 없음. 테스트 컨테이너 정리, 기존 컨테이너 유지.

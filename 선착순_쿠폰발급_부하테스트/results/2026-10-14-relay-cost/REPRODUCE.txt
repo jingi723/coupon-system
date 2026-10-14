@@ -1,0 +1,36 @@
+작업 위치: <repository-root>
+
+1. 컴파일 (테스트 전용 소스, 서비스 로직 변경 없음)
+./gradlew --no-daemon -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle testClasses writeConsumerProfileClasspath
+
+2. 새 결과 디렉터리에서 실행
+python3 - <<'PY'
+from pathlib import Path
+import subprocess,os
+out=Path('선착순_쿠폰발급_부하테스트/results/NEW-relay-cost')
+out.mkdir(exist_ok=False)
+with (out/'environment.log').open('w') as log:
+    subprocess.run(['java','-cp',Path('build/consumer-profile-classpath.txt').read_text().strip(),
+      'com.assignment.coupon_system.issuerequest.profiling.ReservationLoadEnvironment',str(out)],
+      env=dict(os.environ,LOAD_RELAY_PROFILE='true'),stdout=log,stderr=subprocess.STDOUT,check=True)
+subprocess.run(['python3','선착순_쿠폰발급_부하테스트/analyze-relay-cost.py',str(out)],check=True)
+PY
+
+환경 실행기는 격리한 MySQL/Redis/Kafka를 시작하고 같은 인프라에서 OFF→ON→OFF→ON을 실행한다.
+각 회차 새 앱 JVM/쿠폰, 연결 풀10, Tomcat200, 단일Relay/Consumer, 1partition, RECORD, AOF always.
+부하/외부 관측은 기존과 동일. 전체 승인 결과와 모든 큐가 비고 안정35초 후 프로세스 종료.
+ON: 테스트 BeanPostProcessor가 실제 Relay/RedisService/Producer를 감싼다.
+OFF: 같은 테스트 main을 쓰되 프록시 설치·시간 측정·메모리 수집이 없다.
+시작 옵션은 run-reservation-load.py, 인프라 조건은 infrastructure.json 및 container-*.json 참조.
+서버 요청별 로그를 추가하지 않는다. relay-spans.csv는 JVM 종료 훅에서 메모리 자료를 출력한다.
+종료 훅은 안정화 이후 실행되며 부하 중 파일 기록은 없다. Empty poll/sleep은 구간 합계에서 제외.
+
+분석 재실행:
+python3 선착순_쿠폰발급_부하테스트/analyze-relay-cost.py 선착순_쿠폰발급_부하테스트/results/2026-10-14-relay-cost
+
+원시 자료:
+각 회차 relay-spans.csv(단조시계 ns), relay-counters.txt, metrics.json.gz, observed-results.csv,
+progress.jsonl, requests.csv, 최종 DB/Redis 스냅샷, docker-stats.jsonl, application.log.
+ON 계측의 성공 requestId 집합/각 단계 호출1회/구간 비중첩/잔여시간 양수/누락0을 확인한다.
+Producer.send 시간에는 직렬화·클라이언트 처리·Future.get 확인까지 포함된다. 브로커 시간만 의미하지 않는다.
+Redis 명령 반환 시간도 네트워크/서버 처리/fsync 응답 대기 전체이며 fsync 자체를 분리한 값이 아니다.

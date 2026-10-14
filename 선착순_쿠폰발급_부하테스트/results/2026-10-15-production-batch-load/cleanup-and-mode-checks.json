@@ -1,0 +1,23 @@
+{
+  "production-single-1_app_stopped": true,
+  "production-single-1_correct_consumer": true,
+  "production-single-1_no_error_logs": true,
+  "production-batch-1_app_stopped": true,
+  "production-batch-1_correct_consumer": true,
+  "production-batch-1_no_error_logs": true,
+  "production-batch-2_app_stopped": true,
+  "production-batch-2_correct_consumer": true,
+  "production-batch-2_no_error_logs": true,
+  "production-single-2_app_stopped": true,
+  "production-single-2_correct_consumer": true,
+  "production-single-2_no_error_logs": true,
+  "mysql_test_container_removed": true,
+  "redis_test_container_removed": true,
+  "kafka_test_container_removed": true,
+  "existing_coupon_containers_running": true,
+  "repeat_mysql_removed": true,
+  "repeat_redis_removed": true,
+  "repeat_kafka_removed": true,
+  "repeat_app_stopped": true,
+  "repeat_no_error_logs": true
+}

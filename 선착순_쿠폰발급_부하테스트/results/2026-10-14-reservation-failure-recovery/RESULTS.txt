@@ -1,0 +1,24 @@
+Redis 예약 경로 실제 장애 경계 검증 — 2026-10-14
+실행1: 신규 장애4개 + 기존 실제 전체 연결2개 = 선택6개 통과, 실패/오류/건너뜀0 (2m23s).
+실행2: DB CHECK 주입을 특정 requestId로 좁혀 테스트 실행 순서 의존 제거 후 장애4개 재실행 통과 (2m2s).
+기존150개는 이번에 재실행하지 않았다. 전체 프로젝트 테스트 결과가 아니다.
+
+시나리오별 승인2건, 최종발급2건/issuedQuantity2/이력2/결과2, Redis 재고8/사용자2/예약2, pending0/processing0, lag0.
+1. 실제 claim(LMOVE) 반환 후 Producer 호출 전 파일 marker → SIGKILL → 같은 Redis/그룹으로 재시작. Kafka 레코드2, 처리2. 누락 없음.
+2. 실제 Kafka send Future.get 성공 후 processing LREM 전 marker. 첫 발급과 offset커밋을 별도 조회한 뒤 SIGKILL. 재전송은 다른 offset의 새 레코드. Kafka 레코드3/승인2/발급2, 첫 issuedCouponId 유지.
+3. 결과 INSERT CHECK 실패. independent JDBC 조회로 수량/이력/결과 모두0 및 Consumer정지, 실패 offset 미커밋 확인. API는 후속 예약 접수. Redis 예약/차감 유지. CHECK 제거 후 명시적 Consumer재개, 같은 offset 실패레코드 재처리 후 후속까지 완료. Kafka레코드2/Listener전달3.
+4. Consumer 반환 전 marker에서 transactionActive=false 및 별도 JDBC로 DB커밋 확인, offset은 이전위치. SIGKILL→재시작으로 동일 topic/partition/offset 재전달. 결과id/issuedCouponId/processedAt 그대로 유지. Kafka레코드2/Listener전달3.
+
+테스트 전용 BeanPostProcessor/별도 앱 JVM, 실제 HTTP/Redis7 AOF always/전용volume/MySQL8/Kafka3.7.
+기존 probe와 공통 실행·정리·HTTP·snapshot helper를 재사용하도록 ReservationTestSupport로 분리했다.
+각 그룹은 독립이고 첫 시작 전 이전 테스트의 endOffset으로 초기화했다. 장애 이후에는 offset 변경 없이 같은 그룹으로 재개했다.
+RECORD/단일Relay/단일Consumer/1파티션 유지. 강제종료 후 기본 Consumer그룹 장애감지·재할당 대기를 포함한다. 이 시간은 성능 개선/회복 SLA 측정으로 해석하지 않는다.
+HTTP timeout5초, 자동 재시도 없음, 완료 조회200ms. 초기화는 테스트fixture initializeReservation. 이번 claim은 실제 Relay 경로이며 직접 이동fixture가 아님.
+run-1/run-2에 marker, 종료pid/exitCode, HTTP 응답, DB실패/커밋/최종결과, Redis DUMP, deliveries topic/partition/offset, 앱로그, 환경·정리기록 보존.
+서비스 코드/설정·기존 앱·컨테이너 변경 없음. 테스트 앱/컨테이너/전용볼륨만 정리.
+커밋 시도: .git/index.lock Operation not permitted로 실패. 이번 작업 새 커밋 없음. 기준 HEAD f5479a4.
+
+재현 (6개):
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon test --tests com.assignment.coupon_system.issuerequest.recovery.ReservationFailureRecoveryTest --tests com.assignment.coupon_system.issuerequest.recovery.ReservationEndToEndTest
+재현 (최종4개): 위 명령에서 ReservationEndToEndTest 선택만 제외.
+다음: 기존 100/s20초→1200/s10초→100/s30초 폭주 비교. 예약 응답/최종완료/실제전송/적체와 수량 대조. 이번 작업은 성능시험 아님.

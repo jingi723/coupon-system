@@ -1,0 +1,29 @@
+작업 위치 <repository-root>
+
+장애/잔여 요청 검증:
+./gradlew --no-daemon -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle test --tests '*BatchConsumerRecoveryTest' writeConsumerProfileClasspath --rerun-tasks
+
+전체 경로 비교:
+python3 - <<'PY'
+from pathlib import Path
+import os,subprocess
+out=Path('선착순_쿠폰발급_부하테스트/results/NEW-batch-consumer').resolve()
+out.mkdir(exist_ok=False)
+with (out/'environment.log').open('w') as log:
+    subprocess.run(['java','-cp',Path('build/consumer-profile-classpath.txt').read_text().strip(),
+        'com.assignment.coupon_system.issuerequest.profiling.ReservationLoadEnvironment',str(out)],
+        env=dict(os.environ,LOAD_BATCH_CONSUMER='true'),stdout=log,stderr=subprocess.STDOUT,check=True)
+subprocess.run(['python3','선착순_쿠폰발급_부하테스트/analyze-batch-consumer.py',str(out)],check=True)
+PY
+
+순서1→최대10→최대10→1. 모두 동일 테스트 전용 manual poll/commitSync 루프, max.poll.records10, 동시성1.
+1건 모드는 수집 대기 없이 즉시 처리. 최대10건 모드는 첫 poll 수신 시각 기준10ms 또는10건까지 수집.
+Redis 예약 조회/메시지 검증도 transaction 밖. 모인 예약을 외부 TransactionTemplate으로 기존processReserved에 전달.
+Spring Listener auto-startup=false. 같은 그룹 경쟁 없음. 기본 서비스 RECORD 구현과 프레임워크 비용은 다르므로 과거 결과와 직접 성능 배율 계산 금지.
+relay.prepare.lua=true/relay.profile.enabled=true, 동일 외부 관측, Consumer 상세 trace는 부하 중OFF(메모리 span만ON).
+재고100000, 고유사용자/requestId, 100/s20초→1200/s10초→100/s30초, 클라이언트5초/재시도0.
+AOFalways, MySQL1CPU/1GiB, Redis0.5CPU/256MiB, Kafka1CPU/1GiB. 앱host JVM 별도 제한 없음.
+DB 결과250ms 목표 조회의 실제 간격과 요청별 관측 지연 보존. Java nano/wall anchor로 요청→DB커밋·정리 반환 지연도 별도 계산.
+부하 전후 DB/Kafka/Redis 원시상태·CPU·쓰기 카운터·두 큐를 기존 sampler로 측정. 큐 샘플은 순차 조회여서 정확한 동시합계 아님.
+결과 검증은 requestId/user/coupon/이력/수량/재고/예약/offset 증가량 대조. lag0만으로 판정하지 않음.
+해당 테스트만 컨테이너를 생성/정리하고 기존 앱/컨테이너는 유지한다.

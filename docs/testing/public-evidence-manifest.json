@@ -1,0 +1,465 @@
+{
+  "description": "Public result summaries and aggregates; raw local logs/snapshots not implied to be published.",
+  "artifacts": [
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-01-burst-recovery/RESULTS.txt",
+      "bytes": 6873,
+      "sha256": "6d174c5b0cc9b7cf657988e62642ca822b29ff1386900eba6302b612476cdc4c"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-01-burst-recovery/analysis.json",
+      "bytes": 3943,
+      "sha256": "0c73b9a0fda47305bff323c3e010e287fd3af1f64bc8e533a1433cc3951b7bf7"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-01-sync-current/RESULTS.txt",
+      "bytes": 3948,
+      "sha256": "93821e68ba5fbd98b1044dedf98ea21cbc62bf799f6f2f06b8771dd9540de44c"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-01-sync-main/RESULTS.txt",
+      "bytes": 5176,
+      "sha256": "d68a0ef2c26f12627e6698ff1a180f8835933ff4ff900ca2f58f1255b6e83092"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-01-sync-main/summary.json",
+      "bytes": 3080,
+      "sha256": "e44706f66d4b33453cd1c40e5d7ab2ccd98d840fb381aac9023fede30aab8317"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-02-kafka-recovery/RESULTS.txt",
+      "bytes": 4338,
+      "sha256": "b8c67b49d80a72b2c12b6a9191ba43bcc426c73d3c6f69f5515feca0ab7cac67"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-02-kafka-recovery/summary.json",
+      "bytes": 1861,
+      "sha256": "c4a2a5acb121cea9dc706575d6dc8d9c2432770f65237af34f9afbe26db9d29a"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-02-kafka-smoke/RESULTS.txt",
+      "bytes": 2517,
+      "sha256": "2cd7728a8e9db95ab30d021b234ac5dd1c7b908814468b7811ea891c4ed7ca01"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-02-kafka-smoke/result.json",
+      "bytes": 4260,
+      "sha256": "b25ce58effd0647bd87bd6a2de3af206afb4831aa6efa06ed76b64964c621793"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-03-consumer-cost/RESULTS.txt",
+      "bytes": 27920,
+      "sha256": "964164e886b0f1453dbab694a70cd9fbee0aa92ce23dd2146d7878180e9b1790"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-03-consumer-cost/comparison.json",
+      "bytes": 73541,
+      "sha256": "d09852082c2be637156f12a134010cf8f81648946c036060b6aeec93b0290bcd"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-03-kafka-burst-recovery-run3/RESULTS.txt",
+      "bytes": 8253,
+      "sha256": "f9d7289d1a2136e15c411fde26c8f139228a6f42b9c468ef777dc2c7819d4f8b"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-03-kafka-burst-recovery-run3/analysis.json",
+      "bytes": 5649,
+      "sha256": "98fbf7db9f2fbf3ba9f3c3c7e5611eca6830a7dd0a0a22619fc18926db75aa4a"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-03-redis-claim-lookup/RESULTS.txt",
+      "bytes": 1440,
+      "sha256": "38340423bbdac9dda61e39af89ece5e084fcee1be2a84d6222eb3c7eff829883"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-03-redis-reservation/RESULTS.txt",
+      "bytes": 7182,
+      "sha256": "f61d4857a89aa340d5b2c5f3414358d534b19c85dde55affa1147976403268fc"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-03-redis-reservation/summary.json",
+      "bytes": 5193,
+      "sha256": "8133d08dfbfdda2d929766238e4a715cba9dc7a46c8e63586dc30eff9a4e8def"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-04-redis-policy-after-fix/RESULTS.txt",
+      "bytes": 1193,
+      "sha256": "5bf03ecd19103766b53209394e09c59c24af9a67e9e94abf5d0fd44ddeaae581"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-04-redis-policy-before-fix/RESULTS.txt",
+      "bytes": 978,
+      "sha256": "8ccb734518aee53e3b3a22fb057efeea6c99873be265f1aa1ce9f7edc360759e"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-04-redis-relay/RESULTS.txt",
+      "bytes": 1639,
+      "sha256": "63ae029453c093d2fe9f42a5145fb805989d6d293073d282f39b463a85c440ce"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-05-redis-approval/RESULTS.txt",
+      "bytes": 1247,
+      "sha256": "811fe40050aa8b8b89b32c8b5a58e917d2eab78d9a16942f2f8889480b869b52"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-08-relay-runner/RESULTS.txt",
+      "bytes": 2001,
+      "sha256": "e6b33883394209c1752be989081a6b4500e15248ac8f959ae38386670dcb441e"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-08-reservation-api-regression/RESULTS.txt",
+      "bytes": 1881,
+      "sha256": "458a7fd1c12a6aaaf8f5751967dfd84a5912f42b00d76d9f60c9b14bab0b8f07"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-08-reservation-api/RESULTS.txt",
+      "bytes": 899,
+      "sha256": "851254b5c2babd0774a7e4dc574116fdb6e91766e2997b57a5c1220b0f8bf3b0"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-08-reserved-db/RESULTS.txt",
+      "bytes": 2643,
+      "sha256": "a6e2a3762e49e9f170d06b5448fc9523a2f2e3148d0f5017b880b3fad1b9aa8a"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-13-legacy-guard/RESULTS.txt",
+      "bytes": 2269,
+      "sha256": "b95f318c84ae4ce29403c0efa30643fbc60809ca6bd347be89397a2a90580214"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-13-result-query/RESULTS.txt",
+      "bytes": 1873,
+      "sha256": "133f820f4d9bd6601e361bae7cd9d6aa02b83f36e7a082d7d1c291ee9fc4dfe3"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/REPRODUCE.txt",
+      "bytes": 2402,
+      "sha256": "257bad75520f4f1d35c22ee9ac6a1c420ab691931d4789b02060335cba025ca1"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/RESULTS.txt",
+      "bytes": 17679,
+      "sha256": "53b5247c16641e30462169d1ad93c06203e4b91739d1fb26a9b16caf341da8bb"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-comparison.json",
+      "bytes": 124360,
+      "sha256": "eb4b66a0fd878fb5b23723cea0c561d5c3201e61171e35c4c06c2179fcb70ec9"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-1/analysis.json",
+      "bytes": 4060,
+      "sha256": "42d972e3ecd2e7b4d5f78ab0f32aff709ab14df40ee7d6d6f9b2bac07ac6b1e2"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-1/batch-analysis.json",
+      "bytes": 4867,
+      "sha256": "f74505d4efe3fa5b22222827b5b3334d0de7abdf4ba0543982120f0b690e3901"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-1/relay-analysis.json",
+      "bytes": 10739,
+      "sha256": "c694ee45ea2aab6dab6c654d3e0f04b344d50fd68876347f416a9c0a8f4cd852"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-1/reservation-analysis.json",
+      "bytes": 11425,
+      "sha256": "000e59305811d3a849216cb92e7006513a883c97faf07d613b29cedc08f099b3"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-2/analysis.json",
+      "bytes": 4062,
+      "sha256": "5e4dcab51262541807796d448adb424a9fe65ce33469f721089d29a7f71b5513"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-2/batch-analysis.json",
+      "bytes": 4989,
+      "sha256": "dc24dff7886061eb602e1aee6fb3080a2a9647c5d2d6bd722ceaa5dd76b6ab13"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-2/relay-analysis.json",
+      "bytes": 10982,
+      "sha256": "8d234f685b6dc9013f03a67b10f368a3146a6cbc01c78e4375e7a393b22a1b02"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-one-2/reservation-analysis.json",
+      "bytes": 11732,
+      "sha256": "f7f40c39b916e6b12f704cfe64092154fd16714a662a1255e41e717a56c0d2f6"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-1/analysis.json",
+      "bytes": 4050,
+      "sha256": "d2ad1f64f33e43eb4847006dc2abc5afd75081d5b1c59715bec17ad84f6888ef"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-1/batch-analysis.json",
+      "bytes": 5039,
+      "sha256": "6404838227639110963b8dda15d4d9bf7f666a5065435c6161da1c2d73579b09"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-1/relay-analysis.json",
+      "bytes": 10994,
+      "sha256": "937f2a41f60dff992baf1b172b57f7f814fb69791f472a96ce63e19086d27a5b"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-1/reservation-analysis.json",
+      "bytes": 10062,
+      "sha256": "92c7e36a78bdcece7510f63426d85fdbb6852ea30a9da7f62e00f30e631190ec"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-2/analysis.json",
+      "bytes": 4103,
+      "sha256": "5a13a1890e71c9869256fb5c51ae2c0dea79583b53c98f563126dd7c369462b7"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-2/batch-analysis.json",
+      "bytes": 5049,
+      "sha256": "8363c39ddda2e30d89bfbd5f9b1eeb6742114400faba2b509e9e587f7a63b26f"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-2/relay-analysis.json",
+      "bytes": 11130,
+      "sha256": "1b1c7ec48e05978aca91097b7591f770634018d944a17e7462bfe56e91c0e3cd"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/batch-ten-2/reservation-analysis.json",
+      "bytes": 10147,
+      "sha256": "bdbbc29d825c19f0c3fef12d86d68100a14106ee0fda4ec923a78da7a0f116ca"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-batch-consumer/comparison.json",
+      "bytes": 102040,
+      "sha256": "0b9f780b836920edbebcf7d2e018e4097fb500b1e2aa6e8e610a887f1860ff33"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-db-batch/REPRODUCE.txt",
+      "bytes": 2116,
+      "sha256": "6ab3407cdf08ea683d5fa0307847c5e7705865e9c31693e2b356770df4e71177"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-db-batch/RESULTS.txt",
+      "bytes": 5976,
+      "sha256": "109394751f03ed06b117672c1b3296d55c858184a123b5ce8a4a0945553063cd"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-db-batch/comparison.json",
+      "bytes": 9813,
+      "sha256": "af917e63d670921287c23f25cf6556aa1b1c0b3ef2d655c4a7c9f991f0c04600"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-lua-relay/REPRODUCE.txt",
+      "bytes": 2684,
+      "sha256": "12b7a4180c28b392ca02dc1230c7bfcb49cf95ba41b4e1007e82e73e95f7188e"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-lua-relay/RESULTS.txt",
+      "bytes": 11701,
+      "sha256": "a4744c188e4d753ce0ac11341bf5b7a10226011a487d55e55ef4c825a37ad52e"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-relay-cost/REPRODUCE.txt",
+      "bytes": 2578,
+      "sha256": "3795019cfda10c2e9f7780ed8bf4827ce4a41cbb651dc4fcb86599fb98a9585d"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-relay-cost/RESULTS.txt",
+      "bytes": 11478,
+      "sha256": "9a40c8b57c3c14166e06206e0c2755105b47a914461e234302ee7f2c6df2fd09"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reservation-e2e/RESULTS.txt",
+      "bytes": 2648,
+      "sha256": "1bbd4036e3262891fd7328f8966785677e9f15b2b9921c5fffd65cf8f5192ee4"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reservation-failure-recovery/RESULTS.txt",
+      "bytes": 3393,
+      "sha256": "fac27aaa875beccea51fbbc9fac3c637e6fb4dfc68375ebeb0fa647113482a61"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reservation-load/REPRODUCE.txt",
+      "bytes": 2422,
+      "sha256": "03e5a098b6afc230d808b59b91ef906e4fb25b92072378ff071ffa5eb1850cf9"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reservation-load/RESULTS.txt",
+      "bytes": 10228,
+      "sha256": "215371126612f0ed6649f910298c5c9c3ba371cb999fa46a02e59ffb80b1ac9d"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/REPRODUCE.txt",
+      "bytes": 2501,
+      "sha256": "4becdd3fdc3f897eec92d874b5124034b12e5265b38fba4e589abc083bd7c7f3"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/RESULTS.txt",
+      "bytes": 14544,
+      "sha256": "7e1ee445829ee1f0f1a5298f6379e7cd90ffd45761d82df5f0af279442fc8886"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/comparison.json",
+      "bytes": 105977,
+      "sha256": "49a8ae26b7c5a9c7ecb0ce0ec1fc7ad828d53cce4683d3eedbc8efe4f4ffa07f"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-1/analysis.json",
+      "bytes": 4044,
+      "sha256": "e11e2dbb885dbe1bdc99e42394095d4ac56288e5946888852e8006b52b115cd4"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-1/consumer-analysis.json",
+      "bytes": 417,
+      "sha256": "920cdc0bf11cf4111845c743c29b4c6db3d4dc18e2dc5143edbba969d99c8610"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-1/relay-analysis.json",
+      "bytes": 11129,
+      "sha256": "f409a2091f3dbfbc8d6b463c0021297c4ed52cd00d3bd211d1673a83d99cec00"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-1/reservation-analysis.json",
+      "bytes": 11486,
+      "sha256": "ed43ed2afd3b9985caa92b480e71da0d73e884570936b5dad4203128f2b6d395"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-2/analysis.json",
+      "bytes": 4069,
+      "sha256": "eeac8ffbdf1fd99d5d52c0e81cb4bcbb68f8dfcf983e3864f1ccfb5c194b6282"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-2/consumer-analysis.json",
+      "bytes": 416,
+      "sha256": "191a67805f6f232917ce8b91c5cf394cc240d3cb86847a6944c9bc42695590ac"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-2/relay-analysis.json",
+      "bytes": 10898,
+      "sha256": "38b015dd2c684a784d979003d056fc45abe4f8954f56d7b23027936bc1841b33"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-off-2/reservation-analysis.json",
+      "bytes": 11485,
+      "sha256": "1133608c858f780e5cf1a9617fd0fe2560a9f588a85ce10d0e0684fea4ce8203"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-1/analysis.json",
+      "bytes": 4096,
+      "sha256": "f002a8c55a7b99fcab7f3b859898c32941a6c9682630dad30eabbf5deb863f3f"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-1/consumer-analysis.json",
+      "bytes": 5515,
+      "sha256": "7937099f03e35c5472fa55f4ebc3569374984b5c6bac6778cc667d703df1071b"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-1/relay-analysis.json",
+      "bytes": 10885,
+      "sha256": "e909e41212994c9f10f5bb51a3dbdca7d3f443ed0dbfa95361ade9a2ae83361b"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-1/reservation-analysis.json",
+      "bytes": 11715,
+      "sha256": "b7e4f8d20a7a5d810afd2c9c5398fc819ca6151491447ca66fc1c70e2aafe0b9"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-2/analysis.json",
+      "bytes": 4082,
+      "sha256": "f49f26ace5c92f21bd2e4532aa0941e8084caa3fabe314163e465d699587f0cc"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-2/consumer-analysis.json",
+      "bytes": 5494,
+      "sha256": "c692e1f043d39588b144c20060a715ce4f435177c8d0504fde0d4c7cde9bd390"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-2/relay-analysis.json",
+      "bytes": 11009,
+      "sha256": "f6f3961227c9b854d3c06dd226580049729ba47c92d9b68eab2ebed8398ca236"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-14-reserved-consumer-cost/consumer-on-2/reservation-analysis.json",
+      "bytes": 12060,
+      "sha256": "754761e5aa32d7e0f0cb58089482a99af4abd67bab0135bf0692b0d2a2e047ba"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/REPRODUCE.txt",
+      "bytes": 1866,
+      "sha256": "deb100cc1ae45bf585b187ef24521bddb6fa323d66d3293a5380543374351332"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/RESULTS.txt",
+      "bytes": 23207,
+      "sha256": "dab633b70c3b5d7e29263efdb624fddfd4aa8e303a0059e093e30be7d29a2d8b"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/cleanup-and-mode-checks.json",
+      "bytes": 864,
+      "sha256": "33e791f513e96a9db552929910e07bc6b6ac475141ed66a524a1c1ad687cb342"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/comparison.json",
+      "bytes": 65219,
+      "sha256": "13a6852c014f7d0b31e3df6c7ad47b2bcac8bce5e00a358d3f0b2ff803a4393f"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-batch-1/analysis.json",
+      "bytes": 4152,
+      "sha256": "d11f5eaa595f3801cf3aa469b8ea16f2d98d7543d9f3d2aafea5b83867f86eb3"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-batch-1/reservation-analysis.json",
+      "bytes": 11668,
+      "sha256": "bf2cc1a2d81ee48aa06ea6384f8585f44bf24ca4f5af4570dec8d89eff663604"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-batch-2/analysis.json",
+      "bytes": 4064,
+      "sha256": "5059a002452e373422ac5b698ac2a0501727b875103a3e59ef3c59e4514a8a62"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-batch-2/reservation-analysis.json",
+      "bytes": 11344,
+      "sha256": "99f940b3e6304e18931cbb273c9306acb5912101cf664725f30163266122b7b3"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-single-1/analysis.json",
+      "bytes": 4031,
+      "sha256": "df175c1efb82c19943b45f768273ee3b8db7f71e9c08ace00c2d683bba823066"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-single-1/reservation-analysis.json",
+      "bytes": 11737,
+      "sha256": "d0ce6183b8cdef7fc458f31f9f8c2df5c3a3bc5ee1c0beb01a4ebefaf038cd86"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-single-2/analysis.json",
+      "bytes": 4103,
+      "sha256": "110f79067c423e1f121d6b1823782a92be2db26f948af39e0288e649b74538c6"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/production-single-2/reservation-analysis.json",
+      "bytes": 12641,
+      "sha256": "ab8724bda362d8f5d7dbef6f2400610da61889005fceac4174fc607644a22a11"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/timing-repeat/production-single-repeat/analysis.json",
+      "bytes": 4052,
+      "sha256": "6e86a9aba19035ce5247051170469edff337f208f805fafa3f75ad6127bccec3"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch-load/timing-repeat/production-single-repeat/reservation-analysis.json",
+      "bytes": 12783,
+      "sha256": "4ce55f0a51acdd53e99809daaa4ec53c3053dd2ae9446cc1165cdf92023b8387"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch/REPRODUCE.txt",
+      "bytes": 788,
+      "sha256": "299e7de4f6e639459f68bb33acaee69b075ac7dfab5912ab79de597f419a7b55"
+    },
+    {
+      "path": "선착순_쿠폰발급_부하테스트/results/2026-10-15-production-batch/RESULTS.txt",
+      "bytes": 3398,
+      "sha256": "d41b5ed8d2ae211202c0c3f0db1006144f0ea7ef2bbdc9f61fb08b2d61ba116e"
+    }
+  ]
+}

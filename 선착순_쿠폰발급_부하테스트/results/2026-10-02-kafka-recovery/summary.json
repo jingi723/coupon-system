@@ -1,0 +1,73 @@
+{
+  "automated_tests": {
+    "tests": 52,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "scenarios": {
+    "stop-resume": {
+      "finalLag": 0,
+      "issued": 2,
+      "appPid": 41533,
+      "rejected": 1,
+      "stopped": {
+        "lag": 3,
+        "dbResults": 0,
+        "accepted": 3
+      },
+      "couponId": 1,
+      "consumerGroup": "recovery-885aa5e1-08d0-4db1-96fc-26516e5581ef"
+    },
+    "crash-recovery": {
+      "firstDelivery": {
+        "topic": "coupon-issue-requests",
+        "requestId": "501c7fb5-6e30-45fe-b497-fc76e0ce2c31",
+        "offset": 3,
+        "partition": 0
+      },
+      "restartedPid": 41688,
+      "issuedCouponId": 3,
+      "resultId": 4,
+      "redelivery": {
+        "partition": 0,
+        "offset": 3,
+        "requestId": "501c7fb5-6e30-45fe-b497-fc76e0ce2c31",
+        "topic": "coupon-issue-requests"
+      },
+      "offsetAfterRestart": 4,
+      "offsetBeforeCrash": 3,
+      "requestId": "501c7fb5-6e30-45fe-b497-fc76e0ce2c31",
+      "couponId": 2,
+      "crashedPid": 41654,
+      "consumerGroup": "recovery-885aa5e1-08d0-4db1-96fc-26516e5581ef"
+    },
+    "db-failure": {
+      "accepted": 2,
+      "couponId": 3,
+      "finalLag": 0,
+      "deliveries": [
+        {
+          "topic": "coupon-issue-requests",
+          "requestId": "3e85989f-3362-46f0-abd5-3b67eecc57da",
+          "offset": 4,
+          "partition": 0
+        },
+        {
+          "topic": "coupon-issue-requests",
+          "requestId": "3e85989f-3362-46f0-abd5-3b67eecc57da",
+          "offset": 4,
+          "partition": 0
+        },
+        {
+          "topic": "coupon-issue-requests",
+          "requestId": "4dc1b1da-315f-43c2-a384-034629d0a76a",
+          "offset": 5,
+          "partition": 0
+        }
+      ],
+      "issued": 2,
+      "consumerGroup": "recovery-885aa5e1-08d0-4db1-96fc-26516e5581ef"
+    }
+  }
+}

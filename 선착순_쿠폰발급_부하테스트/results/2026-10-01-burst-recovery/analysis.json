@@ -1,0 +1,183 @@
+{
+  "origin_ms": 1790830396240,
+  "cohorts_by_send_time": [
+    {
+      "phase": "baseline",
+      "nominal_planned": 2000,
+      "started": 2000,
+      "responded": 2000,
+      "dropped_by_scheduled_scenario": 0,
+      "outcomes": {
+        "completed": 2000
+      },
+      "p95_ms": 9.0
+    },
+    {
+      "phase": "burst",
+      "nominal_planned": 3600,
+      "started": 3599,
+      "responded": 3599,
+      "dropped_by_scheduled_scenario": 0,
+      "outcomes": {
+        "completed": 3599
+      },
+      "p95_ms": 2435.1
+    },
+    {
+      "phase": "recovery",
+      "nominal_planned": 3000,
+      "started": 3002,
+      "responded": 3002,
+      "dropped_by_scheduled_scenario": 0,
+      "outcomes": {
+        "completed": 3002
+      },
+      "p95_ms": 1325.5999999999985
+    },
+    {
+      "phase": "late",
+      "nominal_planned": 0,
+      "started": 1,
+      "responded": 1,
+      "dropped_by_scheduled_scenario": 0,
+      "outcomes": {
+        "completed": 1
+      },
+      "p95_ms": 4.0
+    }
+  ],
+  "baseline_windows": [
+    {
+      "start_s": 5,
+      "end_s": 10,
+      "requests": 500,
+      "p95_ms": 9.0,
+      "p99_ms": 11.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 19,
+      "max_row_lock_waits": 0
+    },
+    {
+      "start_s": 10,
+      "end_s": 15,
+      "requests": 500,
+      "p95_ms": 7.050000000000011,
+      "p99_ms": 11.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 20,
+      "max_row_lock_waits": 0
+    },
+    {
+      "start_s": 15,
+      "end_s": 20,
+      "requests": 500,
+      "p95_ms": 8.0,
+      "p99_ms": 9.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 20,
+      "max_row_lock_waits": 0
+    }
+  ],
+  "scenario_start_offset_ms": {
+    "baseline": [
+      0
+    ],
+    "burst": [
+      1
+    ],
+    "recovery": [
+      0
+    ]
+  },
+  "normal_p95_threshold_ms": 18.0,
+  "recovery_windows": [
+    {
+      "start_s": 23,
+      "end_s": 28,
+      "requests": 502,
+      "p95_ms": 2369.5499999999997,
+      "p99_ms": 2535.91,
+      "max_pool_waiting": 190,
+      "pool_samples": 20,
+      "max_row_lock_waits": 8,
+      "meets_rule": false
+    },
+    {
+      "start_s": 28,
+      "end_s": 33,
+      "requests": 500,
+      "p95_ms": 10.0,
+      "p99_ms": 12.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 20,
+      "max_row_lock_waits": 0,
+      "meets_rule": true
+    },
+    {
+      "start_s": 33,
+      "end_s": 38,
+      "requests": 500,
+      "p95_ms": 8.0,
+      "p99_ms": 11.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 19,
+      "max_row_lock_waits": 0,
+      "meets_rule": true
+    },
+    {
+      "start_s": 38,
+      "end_s": 43,
+      "requests": 500,
+      "p95_ms": 8.0,
+      "p99_ms": 10.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 20,
+      "max_row_lock_waits": 0,
+      "meets_rule": true
+    },
+    {
+      "start_s": 43,
+      "end_s": 48,
+      "requests": 500,
+      "p95_ms": 8.0,
+      "p99_ms": 11.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 20,
+      "max_row_lock_waits": 0,
+      "meets_rule": true
+    },
+    {
+      "start_s": 48,
+      "end_s": 53,
+      "requests": 500,
+      "p95_ms": 9.0,
+      "p99_ms": 11.0,
+      "max_pool_waiting": 0,
+      "pool_samples": 19,
+      "max_row_lock_waits": 0,
+      "meets_rule": true
+    }
+  ],
+  "stable_window_start_after_burst_s": 5,
+  "recovery_confirmed_after_burst_s": 15,
+  "pool_sustained_zero_after_burst_s": 3.062999999999999,
+  "row_lock_sustained_zero_after_burst_s": 3.693689208984374,
+  "burst_pending_at_burst_end": 1731,
+  "last_burst_response_after_burst_s": 2.558,
+  "last_send_s": 53.0,
+  "last_response_s": 53.004,
+  "started_without_response_record": 0,
+  "timeouts": 0,
+  "verification": {
+    "coupon_id": 14,
+    "success_responses": 8602,
+    "db_rows": 8602,
+    "db_unique_users": 8602,
+    "issued_quantity": 8602,
+    "redis_remaining": 91398,
+    "redis_users": 8602,
+    "stock": 100000,
+    "user_sets_equal": true,
+    "all_counts_equal": true
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "enabled": true,
+  "counters": {
+    "spans": 102884,
+    "counters": {
+      "db_tx_begins": 17003
+    },
+    "dump_nano": 1149355899616583,
+    "enabled": true
+  },
+  "settings": {
+    "enabled": true,
+    "pid": 98274,
+    "anchor_wall_ms": 1791956412823,
+    "anchor_nano": 1149208571762541,
+    "containers": [
+      {
+        "ackMode": "RECORD",
+        "syncCommits": true,
+        "pollTimeout": 5000
+      }
+    ]
+  },
+  "raw_spans": {
+    "poll": {
+      "count": 866,
+      "p50_ms": 0.19989600000000002,
+      "p95_ms": 70.19524949999999,
+      "p99_ms": 4067.4656437500325,
+      "cumulative_s": 57.293712585,
+      "mean_ms": 66.15902146073903
+    },
+    "redis_lookup": {
+      "count": 17003,
+      "p50_ms": 0.202667,
+      "p95_ms": 1.5919505999999999,
+      "p99_ms": 2.534768519999999,
+      "cumulative_s": 7.539569397,
+      "mean_ms": 0.44342583055931306
+    },
+    "approval": {
+      "count": 17003,
+      "p50_ms": 0.208708,
+      "p95_ms": 1.5982127999999998,
+      "p99_ms": 2.5401914999999997,
+      "cumulative_s": 7.629752042,
+      "mean_ms": 0.4487297560430512
+    },
+    "db_commit_callbacks": {
+      "count": 17003,
+      "p50_ms": 1.356166,
+      "p95_ms": 3.2750253,
+      "p99_ms": 4.750847499999999,
+      "cumulative_s": 28.10847673,
+      "mean_ms": 1.6531480756337116
+    },
+    "db_proxy": {
+      "count": 17003,
+      "p50_ms": 3.703583,
+      "p95_ms": 7.8038,
+      "p99_ms": 11.360236859999999,
+      "cumulative_s": 72.634484649,
+      "mean_ms": 4.271862885902488
+    },
+    "listener_method": {
+      "count": 17003,
+      "p50_ms": 4.001209,
+      "p95_ms": 8.914483299999999,
+      "p99_ms": 12.805885519999995,
+      "cumulative_s": 80.286012686,
+      "mean_ms": 4.721873356819385
+    },
+    "commitSync": {
+      "count": 17003,
+      "p50_ms": 0.295792,
+      "p95_ms": 0.6752576999999998,
+      "p99_ms": 1.1105741599999988,
+      "cumulative_s": 6.038551457,
+      "mean_ms": 0.3551462363700523
+    }
+  },
+  "disjoint": {
+    "approval": {
+      "count": 17003,
+      "p50_ms": 0.208708,
+      "p95_ms": 1.5982127999999998,
+      "p99_ms": 2.5401914999999997,
+      "cumulative_s": 7.629752042,
+      "mean_ms": 0.4487297560430512,
+      "percent_of_record_processing_span": 8.832950542394356
+    },
+    "db_proxy": {
+      "count": 17003,
+      "p50_ms": 3.703583,
+      "p95_ms": 7.8038,
+      "p99_ms": 11.360236859999999,
+      "cumulative_s": 72.634484649,
+      "mean_ms": 4.271862885902488,
+      "percent_of_record_processing_span": 84.08881534356408
+    },
+    "db_to_commit_gap": {
+      "count": 17003,
+      "p50_ms": 0.003667,
+      "p95_ms": 0.010328899999999985,
+      "p99_ms": 0.01591517999999998,
+      "cumulative_s": 0.07550645900000001,
+      "mean_ms": 0.004440772745986003,
+      "percent_of_record_processing_span": 0.08741369500698737
+    },
+    "commitSync": {
+      "count": 17003,
+      "p50_ms": 0.295792,
+      "p95_ms": 0.6752576999999998,
+      "p99_ms": 1.1105741599999988,
+      "cumulative_s": 6.038551457,
+      "mean_ms": 0.3551462363700523,
+      "percent_of_record_processing_span": 6.990820419034578
+    }
+  },
+  "approval_except_lookup": {
+    "count": 17003,
+    "p50_ms": 0.004751,
+    "p95_ms": 0.009376,
+    "p99_ms": 0.015416,
+    "cumulative_s": 0.09018264499999999,
+    "mean_ms": 0.005303925483738163
+  },
+  "record_span_total_s": 86.378294607,
+  "between_records_unattributed_s": 9.056487101,
+  "unattributed_commits": {
+    "commitSync": {
+      "count": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p99_ms": null,
+      "cumulative_s": 0.0,
+      "mean_ms": null
+    },
+    "commitAsync": {
+      "count": 0,
+      "p50_ms": null,
+      "p95_ms": null,
+      "p99_ms": null,
+      "cumulative_s": 0.0,
+      "mean_ms": null
+    }
+  },
+  "request_start_to_listener_entry": {
+    "count": 17003,
+    "p50_ms": 36709.181396484375,
+    "p95_ms": 52779.72563476562,
+    "p99_ms": 54059.21341796875,
+    "cumulative_s": 514835.40180981444,
+    "mean_ms": 30279.09203139531
+  },
+  "consumer_record_span": {
+    "count": 17003,
+    "p50_ms": 4.325417,
+    "p95_ms": 9.5128878,
+    "p99_ms": 13.455864999999994,
+    "cumulative_s": 86.378294607,
+    "mean_ms": 5.080179651061577
+  },
+  "pre_listener_scope": "HTTP + Redis reservation + Relay wait/work + Kafka wait; cannot isolate Kafka-only queue time.",
+  "db_proxy_returns_per_s_while_sampled_lag": 185.2867431591577,
+  "backlog_rate_scope": "Proxy returns timestamp mapped via JVM monotonic anchor; lag sampled sequentially, selection approximate at boundaries.",
+  "validation": "All request IDs exactly once per span; one transaction and offset per request; monotonic nested boundaries and serial record cycles checked; no failures/dropped spans.",
+  "limits": [
+    "DB proxy includes transaction begin, queries, flush, commit and cleanup; not SQL-only time.",
+    "DB commit callbacks are nested within DB proxy; may include ORM flush and synchronization, not pure fsync.",
+    "Redis lookup nested inside approval; approval residual includes proxy/instrumentation bookkeeping.",
+    "Offset measured synchronous client call wall time, not broker-only latency.",
+    "Listener span excludes offset commit; do not add nested listener/poll/callback spans to disjoint stages.",
+    "Between-record gaps include polling/framework/probe overhead; poll spans include idle waits and overlap these gaps.",
+    "Percentages describe serial per-record processing span only, not end-to-end latency or total application CPU."
+  ]
+}

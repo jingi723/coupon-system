@@ -40,3 +40,12 @@ out/
 # Local assistant state
 .claude/
 .agents/
+# Local caches, credentials and generated runtime output
+.DS_Store
+__pycache__/
+*.pyc
+.env
+.env.*
+!.env.example
+*.pem
+*.key

@@ -1,0 +1,182 @@
+{
+  "mode": "kafka",
+  "origin_ms": 1791993612286,
+  "planned": 17000,
+  "attempted": 17002,
+  "response_records": 17002,
+  "dropped_by_scenario": {
+    "baseline": 0,
+    "burst": 0,
+    "recovery": 0
+  },
+  "matrix": {
+    "accepted / ISSUED": 17002
+  },
+  "status_codes": {
+    "202": 17002
+  },
+  "error_codes": {},
+  "timeouts": 0,
+  "scenarios": {
+    "baseline": {
+      "attempted": 2001,
+      "outcomes": {
+        "accepted": 2001
+      },
+      "issued": 2001,
+      "not_issued": 0,
+      "response_p95_ms": 5.0,
+      "response_p99_ms": 7.0,
+      "final_observed_p95_ms": 2022.0,
+      "first_sent_s": 0.001,
+      "last_sent_s": 20.0
+    },
+    "burst": {
+      "attempted": 12000,
+      "outcomes": {
+        "accepted": 12000
+      },
+      "issued": 12000,
+      "not_issued": 0,
+      "response_p95_ms": 9.0,
+      "response_p99_ms": 23.0,
+      "final_observed_p95_ms": 63638.0999999999,
+      "first_sent_s": 20.095,
+      "last_sent_s": 30.001
+    },
+    "recovery": {
+      "attempted": 3001,
+      "outcomes": {
+        "accepted": 3001
+      },
+      "issued": 3001,
+      "not_issued": 0,
+      "response_p95_ms": 7.0,
+      "response_p99_ms": 9.0,
+      "final_observed_p95_ms": 64788.0,
+      "first_sent_s": 30.018,
+      "last_sent_s": 60.001
+    }
+  },
+  "scenario_origin_offsets_ms": {
+    "baseline": [
+      0
+    ],
+    "burst": [
+      1
+    ],
+    "recovery": [
+      0
+    ]
+  },
+  "nominal_burst_send_window": {
+    "attempted": 11999,
+    "outcomes": {
+      "accepted": 11999
+    },
+    "issued": 11999,
+    "not_issued": 0,
+    "response_p95_ms": 9.0,
+    "response_p99_ms": 23.0,
+    "final_observed_p95_ms": 63630.1
+  },
+  "after_burst_windows": [
+    {
+      "start_after_burst_s": 0,
+      "attempted": 502,
+      "outcomes": {
+        "accepted": 502
+      },
+      "issued": 502,
+      "not_issued": 0,
+      "response_p95_ms": 6.0,
+      "response_p99_ms": 7.0,
+      "final_observed_p95_ms": 65472.95
+    },
+    {
+      "start_after_burst_s": 5,
+      "attempted": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "issued": 500,
+      "not_issued": 0,
+      "response_p95_ms": 6.0,
+      "response_p99_ms": 7.009999999999991,
+      "final_observed_p95_ms": 62382.5
+    },
+    {
+      "start_after_burst_s": 10,
+      "attempted": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "issued": 500,
+      "not_issued": 0,
+      "response_p95_ms": 5.0,
+      "response_p99_ms": 7.0,
+      "final_observed_p95_ms": 59254.35
+    },
+    {
+      "start_after_burst_s": 15,
+      "attempted": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "issued": 500,
+      "not_issued": 0,
+      "response_p95_ms": 5.0,
+      "response_p99_ms": 6.009999999999991,
+      "final_observed_p95_ms": 56164.1
+    },
+    {
+      "start_after_burst_s": 20,
+      "attempted": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "issued": 500,
+      "not_issued": 0,
+      "response_p95_ms": 6.0,
+      "response_p99_ms": 7.009999999999991,
+      "final_observed_p95_ms": 53434.15
+    },
+    {
+      "start_after_burst_s": 25,
+      "attempted": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "issued": 500,
+      "not_issued": 0,
+      "response_p95_ms": 9.0,
+      "response_p99_ms": 11.009999999999991,
+      "final_observed_p95_ms": 50493.4
+    }
+  ],
+  "max_pool_waiting": 0,
+  "max_http_busy": 7,
+  "max_row_lock_waits": 0,
+  "max_lag": 8747,
+  "initial_offset": 51009,
+  "final_offset": 68011,
+  "final_lag": 0,
+  "max_clock_step_error_ms": 0.9838330000000042,
+  "timing_valid": true,
+  "drain_completed": true,
+  "observation_after_k6_exit_s": 84.12030308297835,
+  "final_db": {
+    "history": 17002,
+    "unique_users": 17002,
+    "issued_quantity": 17002,
+    "total_quantity": 100000,
+    "results": 17002,
+    "completed_response_missing_history": 0,
+    "issued_users_not_attempted": 0,
+    "accepted_missing_result": 0,
+    "accepted_user_map_matches_results": true
+  },
+  "last_request_sent_s": 60.001,
+  "first_sample_all_final_history_s": 108.552,
+  "last_kafka_result_observed_s": 107.774
+}

@@ -1,0 +1,32 @@
+작업 위치: <repository-root>
+
+정합성/장애 검증(17개):
+GRADLE_USER_HOME=/tmp/coupon-gradle-home LOAD_LUA_RECOVERY=true ./gradlew --no-daemon -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle test --tests '*LuaReservationPreparationTest' --tests '*ReservationFailureRecoveryTest' writeConsumerProfileClasspath
+Gradle UP-TO-DATE이면 테스트 재실행 시 --rerun-tasks 추가. 환경 변수만 변경하면 Gradle 입력 추적에 반영되지 않을 수 있다.
+
+부하 비교:
+python3 - <<'PY'
+from pathlib import Path
+import subprocess,os
+out=Path('선착순_쿠폰발급_부하테스트/results/NEW-lua-relay')
+out.mkdir(exist_ok=False)
+with (out/'environment.log').open('w') as log:
+    subprocess.run(['java','-cp',Path('build/consumer-profile-classpath.txt').read_text().strip(),
+        'com.assignment.coupon_system.issuerequest.profiling.ReservationLoadEnvironment',str(out)],
+        env=dict(os.environ,LOAD_LUA_COMPARISON='true'),stdout=log,stderr=subprocess.STDOUT,check=True)
+subprocess.run(['python3','선착순_쿠폰발급_부하테스트/analyze-relay-cost.py',str(out)],check=True)
+PY
+
+실행 순서: 기존1→통합1→통합2→기존2. 모든 실행에서 relay.profile.enabled=true.
+Lua 모드만 relay.prepare.lua=true. AOF always와 서비스 설정·부하·외부 관측은 동일하다.
+서비스 src/main은 변경하지 않았다. LuaReservationPreparation은 src/test의 후보 어댑터다.
+Relay의 peekProcessingReservation 호출에서 Lua prepare를 실행하고 findReservation 호출에는 반환 스냅샷을 전달한다.
+성공 경로의 별도 claim 호출은 없다. 준비 결과가 없을 때의 claim 요청도 로컬 null 반환으로 처리한다.
+원래 relayOne, Producer.send, completeDelivery는 그대로 실행된다. 해시 조회는 단일 Redis의 동적 키 접근이며 Cluster 호환 시험이 아니다.
+첫 EVALSHA의 스크립트 캐시 미스에는 Spring Redis의 EVAL 재호출이 있을 수 있다. 정상 캐시 상태는 Lua 호출 하나다.
+
+자료: junit/ 및 recovery-evidence/, sources/ 코드, 각 회차의 요청별 k6 원시 gzip·DB/Redis 최종 스냅샷·큐 시계열·relay-spans.csv.
+Lua peek_ns는 Lua 전체 실행/응답/Java 디코딩, lookup_ns는 준비된 스냅샷 반환, claim_ns는0이다.
+legacy와 Lua의 prepare_ns 합계를 비교한다. 구성 항목을 그룹 합계와 중복 합산하지 않는다.
+relay-spans.csv는 부하 종료·전량 처리·안정35초 이후 프로세스 종료 때 메모리에서 파일로 쓴다.
+결과 정합성·원시 계측 건수/ID/호출 횟수를 검증하고 비용과 최종 완료 개선을 구분한다.

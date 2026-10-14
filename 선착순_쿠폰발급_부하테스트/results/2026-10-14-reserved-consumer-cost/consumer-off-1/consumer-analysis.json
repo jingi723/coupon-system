@@ -1,0 +1,23 @@
+{
+  "enabled": false,
+  "counters": {
+    "counters": {},
+    "dump_nano": 1149063181941500,
+    "enabled": false,
+    "spans": 0
+  },
+  "settings": {
+    "enabled": false,
+    "pid": 90795,
+    "anchor_wall_ms": 1791956131770,
+    "anchor_nano": 1148927522244583,
+    "containers": [
+      {
+        "pollTimeout": 5000,
+        "ackMode": "RECORD",
+        "syncCommits": true
+      }
+    ]
+  },
+  "raw_spans": {}
+}

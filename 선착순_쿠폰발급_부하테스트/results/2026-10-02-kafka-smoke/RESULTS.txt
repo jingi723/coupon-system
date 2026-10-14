@@ -1,0 +1,47 @@
+Kafka 접수 API 실제 연결 테스트 — 2026-10-02
+
+대상: 사용자 작업 코드의 POST /api/coupons/{couponId}/issue-requests.
+로컬 실제 Kafka, Consumer, MySQL을 연결하고 새 쿠폰 ID 15(재고 1개)로 실행.
+앱은 현재 소스에서 다시 컴파일하여 실행했다. Redis 재고 초기화/선차감은 사용하지 않았다.
+
+7개 확인 항목 — 모두 통과
+1. 정상 신청: HTTP 202 / ACCEPTED → DB ISSUED.
+2. 같은 성공 요청 ID 재전송: HTTP 202 → 기존 ISSUED 유지, 추가 발급 없음.
+3. 다른 사용자에게 재고 소진 상태로 신청: HTTP 202 → DB REJECTED.
+4. 거절된 요청 ID 재전송: HTTP 202 → 기존 REJECTED 유지, 결과 추가 없음.
+5. UUID 형식 오류: HTTP 400.
+6. userId=0: HTTP 400.
+7. requestId 누락: HTTP 400.
+
+최종 대조
+쿠폰 ID: 15
+발급 수량: 1
+발급 이력: 1건
+처리 결과: 2건 (ISSUED 1, REJECTED 1)
+Kafka end offset: 0 → 4
+Consumer committed offset: 0 → 4
+lag: 0
+재전송을 포함해 4개 메시지를 모두 소비했고, 결과 행은 고유 신청 2개에만 대응한다.
+잘못된 형식의 3개 요청은 Kafka에 추가되지 않았다.
+
+전체 자동 테스트
+최초 실행 49개 중 3개 실패: test 프로필에서 Kafka 자동 구성을 제외해
+새 Producer에 필요한 KafkaTemplate 빈이 없었다.
+src/test/java/com/assignment/coupon_system/TestcontainersConfig.java에
+기존 DB/Redis 테스트의 컨텍스트 구성용 KafkaTemplate 대역을 추가했다.
+재실행: 49개 통과, 실패/오류/건너뛰기 0건.
+위 7개 실제 API 테스트에서는 대역을 사용하지 않았다.
+
+범위와 한계
+같은 요청 ID를 API로 다시 접수하는 재처리를 확인했다.
+Consumer 강제 중단, DB 커밋 직후 중단에 따른 Kafka 자체 재전달,
+브로커 장애, 요청 ID 내용 충돌, 부하/성능은 이번 테스트 범위에 포함하지 않았다.
+최종 결과는 조회 API 대신 DB를 직접 조회하여 확인했다.
+테스트 데이터는 보존한다. 원래 실행 중이던 MySQL/Redis/Kafka 컨테이너는 유지한다.
+
+결과 파일
+result.json, http-events.json: HTTP 요청·응답과 DB/offset 대조.
+automated-tests.json, automated-tests.log: 전체 테스트 결과.
+application.log: 실제 연결 테스트 서버 로그.
+executed-smoke-script.py, CouponKafkaProgress.java: 이번 실행 코드의 사본.
+사본은 당시 /tmp 클래스패스 파일과 offset-before.json을 사용하므로 독립 실행 도구가 아니다.

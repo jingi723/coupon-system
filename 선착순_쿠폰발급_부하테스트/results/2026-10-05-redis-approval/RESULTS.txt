@@ -1,0 +1,12 @@
+Redis 승인 근거 저장 — 2026-10-05
+실제 격리 redis:7-alpine Testcontainers: 예약/정책48 + 전달 작업자9 = 총57 통과.
+실패/오류/건너뜀0. 서비스 로직 변경 없음(then은 사용자 코드에서 이미 수정됨).
+테스트의 Hash 필드와 CouponReservation 생성자를 새 형식으로 변경했다.
+승인 시각이 Redis TIME 전후 범위에 있고 정책 버전7이 저장/조회됨을 확인.
+버전 누락/빈 문자열/0/음수/소수/문자/선행0/상한 초과는 쓰기 전에 거절.
+정책/기간/상태를 바꾼 뒤 같은 requestId 재시도에도 최초 승인 Hash가 그대로 유지됨.
+이 변경 주입은 방어 검증이며 행사 중 정책 변경 기능은 범위 밖.
+전달 작업자는 Producer 대역 사용. Kafka 정책 버전 전달 및 DB 새 발급 규칙은 미연결.
+기존 Hash의 마이그레이션/Redis 장애 내구성/정확한 시간 경계 일치 테스트는 이번 범위 밖.
+명령: ./gradlew test --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest
+실제 환경은 GRADLE_USER_HOME=/tmp/coupon-gradle-home 및 로컬 Gradle8.14.4 --no-daemon 사용.

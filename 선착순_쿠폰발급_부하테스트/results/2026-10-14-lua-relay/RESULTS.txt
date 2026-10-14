@@ -1,0 +1,107 @@
+Relay 준비 호출 Lua 통합 비교 — 2026-10-14
+
+가설: Redis 왕복 횟수를 줄이면 Relay 준비 시간이 줄어드는가. fsync 원인 확정 또는 전체 지연 개선을 전제하지 않는다.
+서비스 src/main 변경 없음. src/test 후보 어댑터로 기존 Relay의 준비 호출만 바꾼다. 실제 Producer.send 성공 확인 이후 processing 제거는 별도 유지.
+기존: processing LINDEX → 필요하면 claim Lua/LMOVE → HGETALL. 통합: processing 우선/없으면 pending 선택/필드 검증/LMOVE/예약 반환 Lua.
+Lua는 큐 자료형·Hash·필수필드·requestId·정확한 signed-long 범위를 쓰기 전에 검증한다. Lua 오류의 자동 롤백에 의존하지 않는다.
+통합은 첫 스크립트 캐시 미스를 제외한 정상 준비 경로의 Redis 호출1회. 내부 Redis 명령 횟수와 네트워크 왕복 횟수는 다르다.
+
+정합성·복구 사전 검증
+- 신규 실제 Redis13개: 빈 큐/processing 우선/재처리/손상·자료형·누락·충돌·숫자 오류 시 전체 키 DUMP 동일/64bit 정밀도/어댑터 연결.
+- 기존 실제 장애4개를 Lua 모드로 실행: Lua 준비 후 전송 전 종료, Kafka ack 후 제거 전 종료, DB 실패 롤백 후 재개, DB 커밋 후 offset 전 종료.
+- 선택17개 성공(실패/오류/건너뜀0). 전체 JUnit 회귀 실행은 아니다. 실제 Redis AOF always/격리 MySQL/Kafka·별도 앱 JVM 사용.
+- Lua 준비 완료 경계 marker 후 앱 강제 종료했으며 Lua 내부 중간 명령에서 멈춘 실험은 아니다. 재전송/동일 레코드 재전달과 DB 결과ID 보존을 기존 기준으로 검증.
+
+성능 조건
+- 기존1→통합1→통합2→기존2(ABBA), 전부 계측 ON. AOF always/동일 자원/동일 외부 관측 유지.
+- 재고100000, 고유requestId/쿠폰별 사용자, 100/s20초→1200/s10초→100/s30초, timeout5초/자동재시도0.
+- MySQL8 1CPU/1GiB, Redis7-alpine0.5CPU/256MiB, Kafka3.7 1CPU/1GiB. host JVM Java17 별도 CPU/heap 제한없음. Hikari10/Tomcat200, 단일Relay/Consumer, 1partition/RECORD.
+- 매회 새 JVM/쿠폰, 동일 격리 DB/Redis/Kafka 재사용. 순서를 바꿨지만 캐시·데이터 증가·공유 호스트/디스크 영향을 완전히 제거하지 못했다.
+- 관측은 DB 최종결과/큐/lag 약250ms, DB/Redis 지표1초, Docker약2초. 실제 간격/누락 및 단조시계-벽시계 변동은 회차별 JSON.
+- 성공 Relay 구간은 System.nanoTime 및 메모리 기록, 안정35초·전량 처리 후 종료 시 CSV 기록. 상세 per-request 파일 쓰기는 부하 중 없음.
+
+회차별 결과: p50/p95/p99
+legacy-1:
+  예정17000, 실제전송/승인/발급 17002, 미전송0, 응답 {'accepted': 17002}
+  준비(ms) 1.096/3.862/6.212, 평균 1.536539, 누적 26.124231s
+  Relay 전체(ms) 2.424/5.859/8.952, 평균 2.871670, 누적 48.824132s
+  Kafka 확인(ms) 0.305/0.876/1.476, 제거(ms) 0.692/1.898/2.794
+  전달/완료 관측률(건/s) {'relay_when_pending': 275.928321756847, 'relay_during_burst': 166.27989640711604, 'consumer_when_lag': 210.2627716109885}
+  HTTP 응답(ms) 3.000/6.000/10.000, 최종 발급 관측(s) 29.390/46.119/47.477
+  마지막 요청 후 전량관측 27.783s, 모든 큐 해소 27.785s
+  최대 pending/processing/lag 10320/1/7051, DB 연결대기/행락대기 max 0/0
+  DB조회 간격(ms) 253.000/256.000/257.070 max291, 누락0
+  최종 정합성 {'reservations': 17002, 'results': 17002, 'history': 17002, 'issued_quantity': 17002, 'redis_remaining': 82998, 'redis_users': 17002, 'kafka_records': 17002}, 검사통과 True, 계측ID 17002, counters {'enabled': 'true', 'empty': '823', 'failed': '0', 'dropped': '0'}
+  앱CPU p95 127.50%, 컨테이너CPU p95 mysql 25.52%, redis 9.40%, kafka 26.83%
+  Redis 최대 사용메모리 6583960bytes, AOF delayed fsync 증가0.0, 자원 표본 오류0
+  DB 쓰기 증가(bytes) {'Innodb_os_log_written': 39263744, 'Innodb_data_written': 540372992}
+
+lua-1:
+  예정17000, 실제전송/승인/발급 17002, 미전송0, 응답 {'accepted': 17002}
+  준비(ms) 0.704/2.075/2.820, 평균 0.945604, 누적 16.077153s
+  Relay 전체(ms) 2.028/3.933/5.202, 평균 2.223442, 누적 37.802961s
+  Kafka 확인(ms) 0.292/0.678/1.190, 제거(ms) 0.699/1.968/2.662
+  전달/완료 관측률(건/s) {'relay_when_pending': 288.77315281120445, 'relay_during_burst': 314.7335614412225, 'consumer_when_lag': 222.97299355164176}
+  HTTP 응답(ms) 3.000/5.000/9.000, 최종 발급 관측(s) 27.131/42.310/43.482
+  마지막 요청 후 전량관측 23.512s, 모든 큐 해소 23.520s
+  최대 pending/processing/lag 8823/1/8253, DB 연결대기/행락대기 max 0/0
+  DB조회 간격(ms) 253.000/257.000/258.000 max266, 누락0
+  최종 정합성 {'reservations': 17002, 'results': 17002, 'history': 17002, 'issued_quantity': 17002, 'redis_remaining': 82998, 'redis_users': 17002, 'kafka_records': 17002}, 검사통과 True, 계측ID 17002, counters {'enabled': 'true', 'empty': '901', 'failed': '0', 'dropped': '0'}
+  앱CPU p95 125.55%, 컨테이너CPU p95 mysql 25.07%, redis 9.41%, kafka 12.58%
+  Redis 최대 사용메모리 11673792bytes, AOF delayed fsync 증가0.0, 자원 표본 오류0
+  DB 쓰기 증가(bytes) {'Innodb_os_log_written': 38888448, 'Innodb_data_written': 648538624}
+
+lua-2:
+  예정17000, 실제전송/승인/발급 17002, 미전송0, 응답 {'accepted': 17002}
+  준비(ms) 0.759/2.157/2.980, 평균 0.993959, 누적 16.899286s
+  Relay 전체(ms) 2.099/4.155/5.624, 평균 2.336472, 누적 39.724695s
+  Kafka 확인(ms) 0.304/0.695/1.252, 제거(ms) 0.734/2.049/2.910
+  전달/완료 관측률(건/s) {'relay_when_pending': 287.6476403802786, 'relay_during_burst': 315.5391497134704, 'consumer_when_lag': 178.50615877740606}
+  HTTP 응답(ms) 3.000/5.000/8.000, 최종 발급 관측(s) 30.625/54.488/55.903
+  마지막 요청 후 전량관측 40.731s, 모든 큐 해소 40.734s
+  최대 pending/processing/lag 8878/1/8338, DB 연결대기/행락대기 max 0/0
+  DB조회 간격(ms) 254.000/261.000/262.000 max291, 누락0
+  최종 정합성 {'reservations': 17002, 'results': 17002, 'history': 17002, 'issued_quantity': 17002, 'redis_remaining': 82998, 'redis_users': 17002, 'kafka_records': 17002}, 검사통과 True, 계측ID 17002, counters {'enabled': 'true', 'empty': '1061', 'failed': '0', 'dropped': '0'}
+  앱CPU p95 114.45%, 컨테이너CPU p95 mysql 24.63%, redis 9.43%, kafka 9.99%
+  Redis 최대 사용메모리 16374472bytes, AOF delayed fsync 증가0.0, 자원 표본 오류0
+  DB 쓰기 증가(bytes) {'Innodb_os_log_written': 39634432, 'Innodb_data_written': 783715328}
+
+legacy-2:
+  예정17000, 실제전송/승인/발급 17003, 미전송0, 응답 {'accepted': 17003}
+  준비(ms) 1.049/3.789/6.271, 평균 1.508479, 누적 25.648676s
+  Relay 전체(ms) 2.298/5.698/9.073, 평균 2.769642, 누적 47.092231s
+  Kafka 확인(ms) 0.301/0.736/1.277, 제거(ms) 0.667/1.867/2.746
+  전달/완료 관측률(건/s) {'relay_when_pending': 277.516381786931, 'relay_during_burst': 169.12416282428347, 'consumer_when_lag': 212.56601927958448}
+  HTTP 응답(ms) 3.000/7.000/17.000, 최종 발급 관측(s) 28.794/44.563/46.025
+  마지막 요청 후 전량관측 27.087s, 모든 큐 해소 27.088s
+  최대 pending/processing/lag 10284/1/7144, DB 연결대기/행락대기 max 0/0
+  DB조회 간격(ms) 253.000/257.000/260.120 max294, 누락0
+  최종 정합성 {'reservations': 17003, 'results': 17003, 'history': 17003, 'issued_quantity': 17003, 'redis_remaining': 82997, 'redis_users': 17003, 'kafka_records': 17003}, 검사통과 True, 계측ID 17003, counters {'enabled': 'true', 'empty': '883', 'failed': '0', 'dropped': '0'}
+  앱CPU p95 115.42%, 컨테이너CPU p95 mysql 27.27%, redis 9.77%, kafka 9.40%
+  Redis 최대 사용메모리 21612248bytes, AOF delayed fsync 증가0.0, 자원 표본 오류0
+  DB 쓰기 증가(bytes) {'Innodb_os_log_written': 39315456, 'Innodb_data_written': 701402112}
+
+결론과 다음 실험
+- 준비 p95: 기존3.789~3.862ms → 통합2.075~2.157ms. 성공 요청당 평균 준비: 기존1.508~1.537ms → 통합0.946~0.994ms. 준비 비용 절감은 두 번 반복됐다.
+- 동일한20~30초 폭주 구간의 Relay 전달률: 기존166.28/169.12건/s → 통합314.73/315.54건/s. 전체 pending 적체 표본의 평균은 기존275.93/277.52 → 통합288.77/287.65건/s로 차이가 작다. 서로 다른 집계 구간을 구분한다.
+- 최종p95: 기존46.119/44.563s, 통합42.310/54.488s. 전량관측까지: 기존27.783/27.087s, 통합23.512/40.731s. 전체 지연 개선은 일관되게 입증되지 않았다.
+- 최대 Kafka lag는 기존7051/7144 → 통합8253/8338로 증가, Redis pending은 기존10320/10284 → 통합8823/8878로 감소했다. 더 빠른 전달과 함께 적체 위치가 바뀌었다.
+- 통합 두 실행의 Consumer 완료관측률은222.97/178.51건/s로 차이가 컸다. 이것은 동반 관측이며 DB/fsync/offset 중 어느 원인인지 분리한 결과는 아니다.
+- 다음 실험 하나: 현재 Redis 예약 구조의 Consumer에서 Redis 승인조회/트랜잭션 프록시 반환까지의 DB 처리/offset 커밋을 분리 계측한다. 기존 구조의 DB92%를 재사용하지 않고 OFF/ON 반복으로 비용과 관측 영향을 다시 확인한다.
+- 이번 산출물은 테스트 후보 및 근거다. 기본 서비스에 Lua 경로를 적용하지 않았고 최종 지연 개선을 주장하지 않는다.
+
+해석 시 주의
+- 준비 구간은 동일한 바깥 계측의 peek+claim+lookup 합계다. Lua 모드 peek에는 Lua와 디코딩, lookup에는 준비된 값 반환이 포함된다. 별도 claim 호출은0이다.
+- 테스트 후보는 추가 내부 프록시/ThreadLocal 스냅샷 전달 및 Lua 검증 비용도 포함한다. 순수 네트워크 왕복 시간만 차감하는 실험은 아니다.
+- 전체 준비 경로의 유효 입력은 동일하나, 통합은 손상 필드를 이동 전에 검증한다. processing이 존재해도 잘못된 pending 자료형을 발견하면 중단하는 보수적 정책이다.
+- 성공 Relay 누적시간에는 빈 큐 확인·sleep이 빠진다. 이를 전체 발급/큐 대기시간으로 해석하지 않는다. DB 최종 관측에는 조회 주기가 포함된다.
+- 각 큐/offset 조회는 순차 표본이다. pending+processing+lag를 단순 합산하지 않는다. 최대치 및 초별/5초별 추이는 원시 JSON/CSV 참조.
+- 명목17000 대비 몇 건 추가된 k6 경계 반복은 실제 전송으로 집계하고 dropped_iterations와 구분한다.
+- Redis 왕복 감소 결과로 fsync 자체가 원인이었다고 결론 내리지 않는다. DB 연결대기0도 DB 여력 증명이 아니다. 이전 구조의 DB92%를 적용하지 않는다.
+- 현재 단일Redis/단일Relay용 후보이며 Redis Cluster/다중 Relay 안전성까지 검증한 것은 아니다. 서비스 반영은 하지 않았다.
+- 불완전한 표본으로 주원인을 단정하지 않고 두 회차 수치와 순서 편차를 함께 남긴다.
+- lua-2에서 전량 처리/최종 스냅샷 이후 앱 종료 중 LettuceConnectionFactory STOPPED 오류가 발생했다(application.log391행). 부하 중 실패와 구분하며 서비스 종료 순서는 수정하지 않았다. 종료 훅 counters 파일 이후의 정리 오류는 counters에 포함되지 않을 수 있다.
+
+재현·원시 자료
+REPRODUCE.txt, plan-readme.md, sources/, junit/, recovery-evidence/, 각 run-meta/metrics.json.gz/progress.jsonl/observed-results.csv/relay-spans.csv/최종 DB·Redis 스냅샷.
+모든 계측ID/예약ID/DB결과/이력/사용자/수량을 대조했다. lag0만으로 통과하지 않는다. cleanup-verification.json은 시험 자원 정리 확인이다.

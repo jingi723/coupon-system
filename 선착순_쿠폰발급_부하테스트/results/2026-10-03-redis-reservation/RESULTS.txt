@@ -1,0 +1,82 @@
+Redis 예약 서비스 직접 호출 성능 — 2026-10-03
+
+결론: 두 실행 모두 100/s 20초 → 1200/s 10초 → 100/s 30초를 수용했다.
+각 17000건 신규 예약, 미전송·오류·거절0. 최대 처리량 또는 HTTP/최종 DB 성능 측정이 아니다.
+
+측정 경계와 조건
+- stock100000, 단일 쿠폰1, 사용자1..17000, 매 실행 고유 UUID. 자동 재시도 없음.
+- 실제 CouponIssueRedisService.reserve() 진입 직전 nanoTime → 정상/예외 반환 직후.
+  UUID 사전 생성 비용 제외, 서비스의 UUID 정규화/Instant 생성/Lettuce 직렬화/네트워크/Lua/반환 포함.
+  Redis 서버 Lua만의 실행시간과 다르다. 예정 시각→서비스 진입 지연은 별도 기록.
+- 매 실행 신규 Java17 JVM, 워밍업1000건 후 격리 Redis flushDb. 동일 컨테이너를 두 실행에서 재사용.
+  64 작업 스레드, Semaphore로 진행 작업64 제한. worker 부족 또는 scheduler100ms 이상 지연은 미전송.
+  fixed arrival schedule, 60초 총17000개 slot. 자동 재시도 없음, Lettuce command timeout5초.
+- 기존 Redis와 동일 이미지 digest, CPU0.5, 메모리256MiB. 기존 앱/DB/Kafka 미사용·유지.
+  단독 Redis, 호스트 랜덤 포트, 별도 JVM의 기본 Lettuce 공유 연결(기존 앱 설정 전체 재현은 아님).
+  기존 Redis는 지속 볼륨, 실험 Redis는 삭제하는 컨테이너. 로컬 호스트의 다른 작업 영향은 통제하지 않음.
+- 동일 Redis 설정: appendonly=no, save='3600 1 300 100 60 10000', maxmemory=0, noeviction.
+  appendfsync=everysec은 AOF 비활성 상태에서 쓰기 내구성 보장이 아니다.
+  RDB 기본 설정 유지; snapshot 배경 작업 비용은 분리하지 않았다. 데이터 영속성/장애 복구 시험 아님.
+- 요청별 로그는 종료 후 CSV 출력. INFO는 별도 연결1초 주기로 수집.
+  CPU는 Redis user+sys 차분/샘플 실제 간격, 한 코어100% 기준(컨테이너 quota 비율과 다름).
+  CPU child process나 전체 Docker 자원 사용량과 같지 않음. 계측 OFF 비교는 하지 않았다.
+
+실행별 결과 (단위 ms, percentile nearest rank)
+
+run1: 예정=17000, 실제=17000, 미전송=0, RESERVED=17000
+  baseline: 호출2000, p50=1.115459, p95=1.917292, p99=2.772000
+  burst: 호출12000, p50=0.422292, p95=0.775417, p99=1.530416
+  recovery: 호출3000, p50=0.683542, p95=1.416416, p99=2.196875
+  전체 지연: {'p50': 0.462, 'p95': 1.370375, 'p99': 1.959083}
+  전체 예정→실제 진입 지연: {'p50': 0.195876, 'p95': 2.174292, 'p99': 2.451709}
+  폭주 완료율 평균=1200.0/s, 1초 완료수 min/max=[1200, 1200]
+  Redis 폭주 CPU 평균=5.830%, 샘플 최대=6.650% (완전히 폭주 안에 있는 샘플 구간만)
+  used_memory 첫/마지막 샘플=1472328/6918544 bytes, RSS 최대=14520320 bytes
+  INFO 샘플=60, 수집오류=0, 최대 샘플간격=1.004801s
+  마지막 호출 완료=59.995838s, 정합성={'valid': 'true', 'stock': '83000', 'reservations': '17000', 'users': '17000', 'pending': '17000', 'missing_success': '0', 'unexpected_stored': '0', 'field_mismatches': '0', 'error_but_stored': '0'}
+
+run2: 예정=17000, 실제=17000, 미전송=0, RESERVED=17000
+  baseline: 호출2000, p50=0.926208, p95=1.849084, p99=2.576292
+  burst: 호출12000, p50=0.365709, p95=0.804875, p99=1.572083
+  recovery: 호출3000, p50=0.744083, p95=1.489250, p99=2.156333
+  전체 지연: {'p50': 0.421375, 'p95': 1.333792, 'p99': 2.011709}
+  전체 예정→실제 진입 지연: {'p50': 0.188376, 'p95': 2.216459, 'p99': 2.498125}
+  폭주 완료율 평균=1200.0/s, 1초 완료수 min/max=[1199, 1201]
+  Redis 폭주 CPU 평균=6.206%, 샘플 최대=7.549% (완전히 폭주 안에 있는 샘플 구간만)
+  used_memory 첫/마지막 샘플=1546400/6993328 bytes, RSS 최대=14995456 bytes
+  INFO 샘플=60, 수집오류=0, 최대 샘플간격=1.004878s
+  마지막 호출 완료=59.996853s, 정합성={'valid': 'true', 'stock': '83000', 'reservations': '17000', 'users': '17000', 'pending': '17000', 'missing_success': '0', 'unexpected_stored': '0', 'field_mismatches': '0', 'error_but_stored': '0'}
+
+정합성
+- 각 실행 202/발급 성공이 아니라 Redis RESERVED17000건.
+- 재고100000→83000, 예약17000=사용자17000=pending17000.
+- 각 requestId의 Hash requestId/couponId/userId/reservedAt 존재 확인, 사용자 집합과 pending ID 전량 대응.
+- pending 중복·성공 예약 누락·필드 불일치·예상 외 저장0. ERROR 요청0이므로 응답 불명 대조 대상0.
+- reservations.csv는 전 요청의 최종 저장 내용을 보존한다. Kafka와 DB 확인은 하지 않았다.
+
+해석과 한계
+- 현재 신규 예약 경로는 이 조건의 순간1200/s를 따라갔다. 여유 CPU만으로 최대 수용량을 추정하지 않는다.
+- 평상시보다 폭주 p95가 낮다. 호출 빈도/JIT/스케줄링 효과를 분리하지 않았으므로 부하가 늘수록 빨라진다는 결론은 아니다.
+- 요청 시작 기준 phase와 완료 시점의 초당 처리량을 분리했다. run2의1199/1201건은 초 경계 이동이며 전량 처리됨.
+- HTTP 부하 테스트와 직접 지연 배율 비교 금지. DB 커밋 처리량·최종 발급시간·큐 장애 내구성의 근거가 아니다.
+- pending은 작업자가 없어17000개로 누적되는 것이 예상 결과다. 적체 해소 성능을 검증한 것이 아니다.
+- 서비스 지연은 예정된 유입부터의 사용자 대기시간이 아니다. 발생기 schedule delay를 별도 CSV/summary에 보존.
+- CPU/메모리는 약1초 샘플로 짧은 피크를 놓칠 수 있다. 메모리 마지막 샘플은 부하 종료 약1초 전.
+
+다음 작업
+pending→processing 이동과 Kafka 전달 확인/재시도 작업자를 구현하고 장애 복구를 검증한다.
+그 뒤 동일 조건으로 예약→Kafka→DB 완료와 적체 해소를 함께 측정한다.
+
+재현 (프로젝트 루트, Docker 실행 필요; 출력 경로는 새 경로)
+./gradlew testClasses -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle writeConsumerProfileClasspath
+python3 선착순_쿠폰발급_부하테스트/run-redis-reservation.py 선착순_쿠폰발급_부하테스트/results/redis-reservation-new
+python3 선착순_쿠폰발급_부하테스트/analyze-redis-reservation.py 선착순_쿠폰발급_부하테스트/results/redis-reservation-new
+
+이번 환경은 캐시 쓰기 제한 때문에 다음 Gradle 호출을 사용했다.
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon testClasses -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle writeConsumerProfileClasspath
+
+자료
+requests.csv(예정/실제/완료 nanoTime, 결과), per-second.csv(1초별 완료수/진입 기준 지연),
+redis-info.csv, cpu-intervals.json, pending.txt, users.txt, reservations.csv, integrity.txt,
+summary.json, command.json, classpath.txt, 이미지/자원/설정, 소스/미커밋 patch, README.plan.md.
+서비스 코드 수정 없음. 기존 컨테이너 유지, 테스트 컨테이너만 삭제. 커밋·배포 없음.

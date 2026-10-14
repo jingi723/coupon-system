@@ -1,0 +1,425 @@
+{
+  "enabled": true,
+  "lua_preparation": true,
+  "successful_rows": 17003,
+  "counters": {
+    "enabled": "true",
+    "empty": "972",
+    "failed": "0",
+    "dropped": "0"
+  },
+  "all": {
+    "total_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 2.352666,
+        "p95": 4.7404035,
+        "p99": 6.36176684
+      },
+      "cumulative_s": 44.625370838,
+      "percent_of_successful_relay_time": 100.0
+    },
+    "prepare_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 0.895666,
+        "p95": 2.3033541,
+        "p99": 3.2446261599999993
+      },
+      "cumulative_s": 18.695511622,
+      "percent_of_successful_relay_time": 41.89435576875956
+    },
+    "peek_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 0.893875,
+        "p95": 2.3014213999999997,
+        "p99": 3.242601659999999
+      },
+      "cumulative_s": 18.668452267,
+      "percent_of_successful_relay_time": 41.83371906257233
+    },
+    "claim_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 0.0,
+        "p95": 0.0,
+        "p99": 0.0
+      },
+      "cumulative_s": 0.0,
+      "percent_of_successful_relay_time": 0.0
+    },
+    "lookup_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 0.001209,
+        "p95": 0.003042,
+        "p99": 0.009540319999999963
+      },
+      "cumulative_s": 0.027059355,
+      "percent_of_successful_relay_time": 0.06063670618723027
+    },
+    "kafka_ack_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 0.375,
+        "p95": 0.8832502999999998,
+        "p99": 1.8340588399999993
+      },
+      "cumulative_s": 7.714376625,
+      "percent_of_successful_relay_time": 17.286974830987734
+    },
+    "remove_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 0.830834,
+        "p95": 2.2556789,
+        "p99": 3.3374333199999984
+      },
+      "cumulative_s": 18.149915144,
+      "percent_of_successful_relay_time": 40.671740768022346
+    },
+    "residual_ns": {
+      "count": 17003,
+      "ms": {
+        "p50": 0.003084,
+        "p95": 0.009291,
+        "p99": 0.01725098
+      },
+      "cumulative_s": 0.065567447,
+      "percent_of_successful_relay_time": 0.14692863223036148
+    }
+  },
+  "phases": {
+    "baseline": {
+      "total_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 2.151646,
+          "p95": 3.82434105,
+          "p99": 4.823219579999999
+        },
+        "cumulative_s": 4.720176358,
+        "percent_of_successful_relay_time": 100.0
+      },
+      "prepare_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 0.750292,
+          "p95": 1.8528478999999998,
+          "p99": 2.38234676
+        },
+        "cumulative_s": 1.827580179,
+        "percent_of_successful_relay_time": 38.71847237026477
+      },
+      "peek_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 0.749167,
+          "p95": 1.8450374999999997,
+          "p99": 2.3790295899999996
+        },
+        "cumulative_s": 1.824017099,
+        "percent_of_successful_relay_time": 38.64298620767762
+      },
+      "claim_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "cumulative_s": 0.0,
+        "percent_of_successful_relay_time": 0.0
+      },
+      "lookup_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 0.0013124999999999999,
+          "p95": 0.0035,
+          "p99": 0.01116824
+        },
+        "cumulative_s": 0.00356308,
+        "percent_of_successful_relay_time": 0.07548616258714798
+      },
+      "kafka_ack_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 0.48272950000000003,
+          "p95": 0.9377687499999999,
+          "p99": 1.19282675
+        },
+        "cumulative_s": 1.101298241,
+        "percent_of_successful_relay_time": 23.33171808577581
+      },
+      "remove_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 0.745417,
+          "p95": 1.68250385,
+          "p99": 2.3299725
+        },
+        "cumulative_s": 1.778091449,
+        "percent_of_successful_relay_time": 37.670021502192355
+      },
+      "residual_ns": {
+        "count": 2000,
+        "ms": {
+          "p50": 0.004999,
+          "p95": 0.01624905,
+          "p99": 0.028252229999999996
+        },
+        "cumulative_s": 0.013206489,
+        "percent_of_successful_relay_time": 0.27978804176706146
+      }
+    },
+    "burst": {
+      "total_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 2.393917,
+          "p95": 4.8699006,
+          "p99": 6.645624500000002
+        },
+        "cumulative_s": 31.955192384,
+        "percent_of_successful_relay_time": 100.0
+      },
+      "prepare_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 0.942125,
+          "p95": 2.3777616000000004,
+          "p99": 3.371776020000002
+        },
+        "cumulative_s": 13.609784882,
+        "percent_of_successful_relay_time": 42.59021419259061
+      },
+      "peek_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 0.940084,
+          "p95": 2.3771079999999998,
+          "p99": 3.3692968400000027
+        },
+        "cumulative_s": 13.591229992,
+        "percent_of_successful_relay_time": 42.5321488560499
+      },
+      "claim_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "cumulative_s": 0.0,
+        "percent_of_successful_relay_time": 0.0
+      },
+      "lookup_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 0.001125,
+          "p95": 0.003,
+          "p99": 0.010000840000000018
+        },
+        "cumulative_s": 0.01855489,
+        "percent_of_successful_relay_time": 0.058065336540707085
+      },
+      "kafka_ack_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 0.35925,
+          "p95": 0.7891416,
+          "p99": 1.9162000000000043
+        },
+        "cumulative_s": 5.141250422,
+        "percent_of_successful_relay_time": 16.08893590818821
+      },
+      "remove_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 0.855333,
+          "p95": 2.353970800000001,
+          "p99": 3.4830236600000024
+        },
+        "cumulative_s": 13.161884436,
+        "percent_of_successful_relay_time": 41.18856265309224
+      },
+      "residual_ns": {
+        "count": 11999,
+        "ms": {
+          "p50": 0.002916,
+          "p95": 0.007624,
+          "p99": 0.01499902
+        },
+        "cumulative_s": 0.042272644,
+        "percent_of_successful_relay_time": 0.1322872461289451
+      }
+    },
+    "recovery": {
+      "total_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 2.389834,
+          "p95": 4.718725300000001,
+          "p99": 6.30229148
+        },
+        "cumulative_s": 7.947304804,
+        "percent_of_successful_relay_time": 100.0
+      },
+      "prepare_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 0.862834,
+          "p95": 2.257158300000001,
+          "p99": 3.09046066
+        },
+        "cumulative_s": 3.257241102,
+        "percent_of_successful_relay_time": 40.98548101943417
+      },
+      "peek_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 0.862167,
+          "p95": 2.2549167000000008,
+          "p99": 3.0880503400000006
+        },
+        "cumulative_s": 3.252302009,
+        "percent_of_successful_relay_time": 40.92333299413742
+      },
+      "claim_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "cumulative_s": 0.0,
+        "percent_of_successful_relay_time": 0.0
+      },
+      "lookup_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 0.001417,
+          "p95": 0.002917,
+          "p99": 0.004995820000000004
+        },
+        "cumulative_s": 0.004939093,
+        "percent_of_successful_relay_time": 0.06214802529675317
+      },
+      "kafka_ack_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 0.370042,
+          "p95": 1.2899244000000003,
+          "p99": 1.9431605
+        },
+        "cumulative_s": 1.471097837,
+        "percent_of_successful_relay_time": 18.510650758727337
+      },
+      "remove_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 0.840084,
+          "p95": 2.1559714,
+          "p99": 3.0700775000000005
+        },
+        "cumulative_s": 3.208881551,
+        "percent_of_successful_relay_time": 40.37697848690692
+      },
+      "residual_ns": {
+        "count": 3003,
+        "ms": {
+          "p50": 0.002917,
+          "p95": 0.0062499,
+          "p99": 0.011624180000000001
+        },
+        "cumulative_s": 0.010084314,
+        "percent_of_successful_relay_time": 0.12688973493157593
+      }
+    },
+    "late": {
+      "total_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 2.697292,
+          "p95": 2.697292,
+          "p99": 2.697292
+        },
+        "cumulative_s": 0.002697292,
+        "percent_of_successful_relay_time": 100.0
+      },
+      "prepare_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 0.905459,
+          "p95": 0.905459,
+          "p99": 0.905459
+        },
+        "cumulative_s": 0.000905459,
+        "percent_of_successful_relay_time": 33.569187169946744
+      },
+      "peek_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 0.903167,
+          "p95": 0.903167,
+          "p99": 0.903167
+        },
+        "cumulative_s": 0.000903167,
+        "percent_of_successful_relay_time": 33.48421305516792
+      },
+      "claim_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 0.0,
+          "p95": 0.0,
+          "p99": 0.0
+        },
+        "cumulative_s": 0.0,
+        "percent_of_successful_relay_time": 0.0
+      },
+      "lookup_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 0.002292,
+          "p95": 0.002292,
+          "p99": 0.002292
+        },
+        "cumulative_s": 2.292e-06,
+        "percent_of_successful_relay_time": 0.08497411477882261
+      },
+      "kafka_ack_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 0.730125,
+          "p95": 0.730125,
+          "p99": 0.730125
+        },
+        "cumulative_s": 0.000730125,
+        "percent_of_successful_relay_time": 27.06881568625125
+      },
+      "remove_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 1.057708,
+          "p95": 1.057708,
+          "p99": 1.057708
+        },
+        "cumulative_s": 0.001057708,
+        "percent_of_successful_relay_time": 39.21370025937125
+      },
+      "residual_ns": {
+        "count": 1,
+        "ms": {
+          "p50": 0.004,
+          "p95": 0.004,
+          "p99": 0.004
+        },
+        "cumulative_s": 4e-06,
+        "percent_of_successful_relay_time": 0.148296884430755
+      }
+    }
+  },
+  "validation": "requestId sets, one call per stage, zero failed/dropped, non-overlapping relay attempts, nonnegative residual checked",
+  "scope": "Successful relayOne wall times only. Empty polls/sleeps excluded. prepare contains peek/claim/lookup; do not add the grouped and component rows together. Producer.send includes KafkaTemplate work and Future.get, not broker-only commit time."
+}

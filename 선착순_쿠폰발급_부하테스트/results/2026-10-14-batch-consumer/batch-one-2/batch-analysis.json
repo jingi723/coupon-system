@@ -1,0 +1,179 @@
+{
+  "settings": {
+    "commitMode": "explicit sync after DB",
+    "pid": 68281,
+    "batchMax": 1,
+    "waitMs": 10,
+    "maxPollRecords": 10,
+    "port": "50842",
+    "autoCommit": false,
+    "anchorWall": 1791959191518,
+    "anchorNano": 1151987251673791
+  },
+  "requests": 17003,
+  "transactions_and_offset_calls": 17003,
+  "batch_size_histogram": {
+    "1": 17003
+  },
+  "stages": {
+    "collection": {
+      "ms": {
+        "count": 17003,
+        "mean": 0.0012981776745280243,
+        "p50": 0.001084,
+        "p95": 0.00225,
+        "p99": 0.003125,
+        "max": 1.031209
+      },
+      "cumulative_s": 0.022072915
+    },
+    "approval": {
+      "ms": {
+        "count": 17003,
+        "mean": 0.4064191162147856,
+        "p50": 0.194375,
+        "p95": 1.4916493999999998,
+        "p99": 2.4265411599999998,
+        "max": 13.48625
+      },
+      "cumulative_s": 6.910344233
+    },
+    "db_transaction": {
+      "ms": {
+        "count": 17003,
+        "mean": 4.181162635476092,
+        "p50": 3.843708,
+        "p95": 6.853070499999999,
+        "p99": 9.434973519999996,
+        "max": 116.487666
+      },
+      "cumulative_s": 71.092308291
+    },
+    "offset_commit": {
+      "ms": {
+        "count": 17003,
+        "mean": 0.28071837005234374,
+        "p50": 0.246834,
+        "p95": 0.458958,
+        "p99": 0.69266366,
+        "max": 13.840625
+      },
+      "cumulative_s": 4.773054446
+    }
+  },
+  "all": {
+    "count": 17003,
+    "request_to_committed_return_ms": {
+      "count": 17003,
+      "mean": 26281.496879227194,
+      "p50": 29184.6318359375,
+      "p95": 48393.284375,
+      "p99": 50238.789931640626,
+      "max": 50556.521484375
+    },
+    "fetched_to_committed_return_ms": {
+      "count": 17003,
+      "mean": 24.484037680115275,
+      "p50": 21.637334,
+      "p95": 54.9478211,
+      "p99": 72.26554366,
+      "max": 153.004541
+    }
+  },
+  "phases": {
+    "baseline": {
+      "count": 2000,
+      "request_to_committed_return_ms": {
+        "count": 2000,
+        "mean": 79.59601342773436,
+        "p50": 81.4151611328125,
+        "p95": 109.26807861328125,
+        "p99": 132.5078540039062,
+        "max": 160.412841796875
+      },
+      "fetched_to_committed_return_ms": {
+        "count": 2000,
+        "mean": 10.756181205499999,
+        "p50": 8.5334375,
+        "p95": 24.562414299999993,
+        "p99": 39.41076667,
+        "max": 77.145125
+      }
+    },
+    "burst": {
+      "count": 11999,
+      "request_to_committed_return_ms": {
+        "count": 11999,
+        "mean": 26894.751184974237,
+        "p50": 27664.41943359375,
+        "p95": 48054.49035644531,
+        "p99": 50236.862900390624,
+        "max": 50549.102783203125
+      },
+      "fetched_to_committed_return_ms": {
+        "count": 11999,
+        "mean": 27.25576086023835,
+        "p50": 25.379167,
+        "p95": 57.59543750000001,
+        "p99": 75.94831534000002,
+        "max": 153.004541
+      }
+    },
+    "recovery": {
+      "count": 3003,
+      "request_to_committed_return_ms": {
+        "count": 3003,
+        "mean": 41279.35924695422,
+        "p50": 40741.960693359375,
+        "p95": 49551.03459472656,
+        "p99": 50376.93918945312,
+        "max": 50556.521484375
+      },
+      "fetched_to_committed_return_ms": {
+        "count": 3003,
+        "mean": 22.541582887112888,
+        "p50": 20.846,
+        "p95": 51.015592000000005,
+        "p99": 64.35180197999999,
+        "max": 95.281792
+      }
+    },
+    "late": {
+      "count": 1,
+      "request_to_committed_return_ms": {
+        "count": 1,
+        "mean": 33064.12353515625,
+        "p50": 33064.12353515625,
+        "p95": 33064.12353515625,
+        "p99": 33064.12353515625,
+        "max": 33064.12353515625
+      },
+      "fetched_to_committed_return_ms": {
+        "count": 1,
+        "mean": 55.482292,
+        "p50": 55.482292,
+        "p95": 55.482292,
+        "p99": 55.482292,
+        "max": 55.482292
+      }
+    }
+  },
+  "low_load_collection_ms": {
+    "count": 2000,
+    "mean": 0.001304316,
+    "p50": 0.001083,
+    "p95": 0.002252049999999998,
+    "p99": 0.00404101,
+    "max": 0.106
+  },
+  "collection_over_11ms": 0,
+  "validation": "Exact IDs/offsets, batch sizes, sequential nonoverlapping boundaries, zero failures/transaction-during-collection violations.",
+  "limits": [
+    "Both controls use same test-only manual consumer, not production Spring RECORD listener.",
+    "10ms deadline is enforced before poll; runtime scheduling/client calls may overrun, observed separately.",
+    "Request-to-DB-return uses wall clock mapped from JVM monotonic anchor, quantized by wall ms. DB commit+cleanup upper boundary, not SQL-only commit timestamp.",
+    "External DB observation remains250ms; do not use it alone to identify10ms gathering cost.",
+    "Transaction counts inferred from successful TransactionTemplate boundaries, not JDBC interception in this whole-path experiment.",
+    "Per-request latency shares batch DB time; do not sum request latencies as serial CPU time."
+  ]
+}

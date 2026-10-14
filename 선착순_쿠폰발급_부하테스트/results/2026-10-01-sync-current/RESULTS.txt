@@ -1,0 +1,56 @@
+동기 발급 부하 테스트 — 2026-10-01 (Asia/Seoul)
+
+서비스 구현 및 기존 k6 스크립트는 수정하지 않음. 테스트 전부터 존재한 미커밋 코드 기준.
+HEAD: 870c575c0d854545ad71e430ec3615dddf3b0de2
+코드 상태: Redis 판정 미사용, 엔티티 issuedQuantity를 읽고 증가시켜 저장.
+실제 MySQL에는 (coupon_id, user_id) UNIQUE와 coupon 외래키가 남아 있음.
+따라서 2026-08-17 Redis/atomic UPDATE 결과와 동일 구현 비교가 아님.
+
+환경: 로컬 앱·k6·Docker MySQL·Redis, Java 17.0.19.
+MySQL 컨테이너 CPU 1개/메모리 1GiB. 앱 옵션 --spring.jpa.show-sql=false.
+각 단계 30초, constant-arrival-rate, preAllocatedVUs=600, maxVUs=1500.
+클라이언트 timeout=60초, gracefulStop=65초. 재시도 없음.
+실행별 새 쿠폰, 재고 100000, 사용자 ID는 iterationInTest 기반으로 쿠폰 내 고유.
+발급 기간 2026-09-01 ~ 2026-12-31. 순서대로 각 1회, 별도 워밍업 없음.
+
+목표 요청/초 | 쿠폰 ID | 완료 요청 | 성공/DB 이력 | 5xx | p95(ms) | p99(ms) | 미전송
+300          | 8       | 9001      | 8935         | 66    | 4.711   | 8.235   | 0
+700          | 9       | 21000     | 19747        | 1253  | 5.074   | 7.565   | 0
+1200         | 10      | 35769     | 7992         | 27777 | 668.650 | 688.567 | 231
+
+전 단계 timeout/네트워크 오류/기타 응답은 0건.
+300 단계의 9001회는 k6가 보고한 실제 실행 수. 명목 rate×30과 구분.
+미전송은 dropped_iterations이며 서버 오류 건수에 합산하지 않음.
+지연 통계는 발급 요청만 포함하고 성공과 실패 모두 포함. 쿠폰 생성/초기화 제외.
+완료 요청과 성공 건수에는 gracefulStop 중 완료도 포함하므로 고정 구간의 DB 처리량과 동일하지 않음.
+
+최종 정합성:
+쿠폰 8: 발급 이력 8935, issued_quantity 8628, 차이 307
+쿠폰 9: 발급 이력 19747, issued_quantity 10137, 차이 9610
+쿠폰 10: 발급 이력 7992, issued_quantity 3795, 차이 4197
+각 쿠폰의 DISTINCT user_id 수는 이력 수와 일치. 재고 소진 없음.
+Redis 재고는 각각 100000으로 유지: 현재 발급 경로가 Redis를 사용하지 않음.
+
+관측 근거:
+- 애플리케이션의 SQL Error 1213 / SQLState 40001은 총 29096회로 전체 HTTP 5xx 수와 일치.
+- InnoDB 진단에서 동일 coupon 행에 공유 락(S)을 보유한 두 트랜잭션이
+  배타 락(X)을 기다리는 데드락과 피해 트랜잭션 롤백을 확인.
+- 1200 단계 스레드 덤프에서 요청 스레드 190개가 HikariPool.getConnection /
+  ConcurrentBag.borrow 경로에서 대기. 700 단계의 단일 덤프에서는 0개.
+- db-samples.jsonl에 주기적 DB 이력 수·락 대기 상태 기록.
+  모니터링은 첫 단계 도중 시작. DB 쿼리마다 시점이 달라 각 지표는 동일 순간의 원자적 스냅샷이 아님.
+
+해석:
+부하 증가에 따른 연결 대기, 응답 지연, 데드락 오류, 수량 불일치를 실제 확인했다.
+DB 다운이나 타임아웃은 관측하지 않았다.
+현재 측정은 동시성 문제가 있는 구현의 동작이다. 정상 발급의 처리 한계만 분리한 결과가 아니며,
+이 결과만으로 Kafka 도입의 효과나 정상 처리 가능한 최대 RPS를 판단할 수 없다.
+특히 대량 데드락 오류 로그 기록 비용도 이번 결과에 포함된다.
+
+재현 (로컬 실행):
+docker compose up -d mysql redis
+./gradlew bootRun --args='--spring.jpa.show-sql=false'
+k6 run --quiet -e RATE=300 -e DURATION=30s -e RESULT_PATH=/tmp/result-300.json 선착순_쿠폰발급_부하테스트/results/2026-10-01-sync-current/arrival.js
+RATE를 700, 1200으로 바꾸고 이전 실행 완료 후 순차 실행.
+쿠폰은 setup에서 매번 새로 생성하므로 기존 쿠폰 초기화/삭제는 수행하지 않음.
+이번 실험 쿠폰 ID 8,9,10 및 이력은 DB에 보존. 테스트로 시작한 앱과 MySQL·Redis는 종료.

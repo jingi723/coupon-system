@@ -1,0 +1,10 @@
+Docker 실행 필요. 테스트가 전용 컨테이너/그룹/Redis 볼륨을 생성·정리함.
+최종 선택 테스트 재현:
+./gradlew --no-daemon test --tests '*CouponBatchConsumerTest' --tests '*ProductionBatchConsumerRecoveryTest' --tests '*ReservedCouponIssueIntegrationTest' --tests '*ReservationFailureRecoveryTest'
+
+실제 실행은 Gradle8.14.4 설치본 ./gradlew,
+GRADLE_USER_HOME=/tmp/coupon-gradle-home 사용. 선택 클래스 묶음은 RESULTS.txt의3회 실행 참조.
+서비스 실행 (기존 인프라 및 사전 예약 초기화 필요):
+COUPON_BATCH_ENABLED=true COUPON_RELAY_ENABLED=true ./gradlew bootRun
+기본 단건으로 복귀: COUPON_BATCH_ENABLED=false (앱 재시작).
+실패 재처리: 원인 제거 후 기존 Consumer group 유지하여 앱 재시작.

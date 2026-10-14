@@ -1,0 +1,91 @@
+{
+  "date": "2026-10-15",
+  "scope": "Selected production batch, reserved DB integration and single-consumer recovery regression; not full project suite.",
+  "tests": [
+    {
+      "suite": "com.assignment.coupon_system.issuerequest.consumer.CouponBatchConsumerTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "singleRecordFlushesAtDeadlineWithoutFurtherTraffic()",
+        "processingFailureRollsBackAndDoesNotAdvanceOffset()",
+        "fullBatchCommitsDatabaseBeforeOffsetAndClosesBeforeStopCallback()",
+        "rebalanceDuringCollectionStopsWithoutProcessingStaleRecords()",
+        "commitFailureStopsAfterDatabaseCommit()",
+        "batchSettingDisablesSingleListenerAndStartupSettingIsRespected()",
+        "batchBeanIsOptInAndDoesNotStartWhenAutoStartupIsDisabled()",
+        "validationFailureDoesNotOpenTransactionOrAdvanceOffset()"
+      ]
+    },
+    {
+      "suite": "승인 예약 Consumer→DB 연결: 실제 Redis/MySQL, Kafka 전송 제외",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "missingApprovalTimeIsNotIssued()",
+        "[1] path=init",
+        "[2] path=issue",
+        "[3] path=issueCoupon",
+        "[4] path=createIssued",
+        "[5] path=process",
+        "[6] path=httpInit",
+        "[7] path=httpIssue",
+        "processorIncludesExactStartBoundary()",
+        "reservationMadeDuringEventIsIssuedAfterActualEventEnd()",
+        "dbLimitViolationStopsWithoutRejectingOrRefundingReservation()",
+        "[1] boundary=beforeStart",
+        "[2] boundary=atEnd",
+        "committedReservationReplayDoesNotIssueAgain()",
+        "[1] field=coupon",
+        "[2] field=user",
+        "[3] field=time",
+        "dbResultInsertFailureRollsBackAndSameReservationCanBeRetried()",
+        "messageWithoutReservationCannotBypassRedisApproval()"
+      ]
+    },
+    {
+      "suite": "com.assignment.coupon_system.issuerequest.recovery.ReservationFailureRecoveryTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "dbFailureRollsBackThenExplicitResumeProcessesFailedAndFollowingRequests()",
+        "[1] boundary=after-claim",
+        "[2] boundary=after-kafka-ack",
+        "committedDbResultSurvivesSameKafkaRecordRedeliveryAfterKill()"
+      ]
+    },
+    {
+      "suite": "com.assignment.coupon_system.issuerequest.recovery.ProductionBatchConsumerRecoveryTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "cases": [
+        "partialTailAndSingleRequestFlushWithoutFurtherTraffic()",
+        "failedBatchRollsBackAndRestartReplaysFailedAndFollowingRecords()",
+        "killAfterBatchCommitBeforeOffsetReplaysWithoutAdditionalIssuance()"
+      ]
+    }
+  ],
+  "total": 34,
+  "result": "passed",
+  "performance_rerun": false,
+  "performance_evidence_reconciled": {
+    "total_requests": 85012,
+    "runs": 5,
+    "excluded_latency_run": "production-single-1",
+    "reason": "wall/monotonic clock difference about 1994.7ms"
+  },
+  "secret_scan": {
+    "history_blobs": 195,
+    "selected_paths": 223,
+    "flags": [],
+    "scope": "Known credential/key formats; local example DB passwords and generated test IDs reviewed separately."
+  }
+}

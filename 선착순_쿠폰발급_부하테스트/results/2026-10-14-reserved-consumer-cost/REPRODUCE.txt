@@ -1,0 +1,31 @@
+작업 위치: <repository-root>
+
+1. 테스트 classpath 생성
+./gradlew --no-daemon -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle testClasses writeConsumerProfileClasspath
+
+2. 격리 컨테이너 + OFF1/ON1/ON2/OFF2 실행
+python3 - <<'PY'
+from pathlib import Path
+import subprocess,os
+out=Path('선착순_쿠폰발급_부하테스트/results/NEW-reserved-consumer-cost').resolve()
+out.mkdir(exist_ok=False)
+with (out/'environment.log').open('w') as log:
+    subprocess.run(['java','-cp',Path('build/consumer-profile-classpath.txt').read_text().strip(),
+        'com.assignment.coupon_system.issuerequest.profiling.ReservationLoadEnvironment',str(out)],
+        env=dict(os.environ,LOAD_RESERVED_CONSUMER='true'),stdout=log,stderr=subprocess.STDOUT,check=True)
+subprocess.run(['python3','선착순_쿠폰발급_부하테스트/analyze-reserved-consumer.py',str(out)],check=True)
+PY
+
+모든 회차 relay.prepare.lua=true, relay.profile.enabled=true. Consumer만 OFF→ON→ON→OFF.
+stock100000, 100/s20s→1200/s10s→100/s30s, timeout5s, 자동재시도0.
+자원/연결풀/브로커/Redis AOF 설정은 infrastructure.json, docker-inspect 및 각 run-meta.json/redis-config.txt/application.log 참조.
+각 회차 새 앱 JVM, 같은 격리 인프라/Consumer 그룹, 새 쿠폰·고유 사용자/requestId. 회차 사이 적체0 확인.
+Redis 승인 검증: consume 진입부터 processReserved 외부 advice 진입까지. Redis 조회는 그 안의 중첩 구간.
+DB: TransactionInterceptor 앞 advice 진입→트랜잭션 commit/cleanup 반환. DB 콜백은 중첩 보조 지표.
+DB 반환→commitSync 시작을 별도로 기록. commitSync 호출 시간에는 Kafka client/broker 왕복 대기 포함.
+각 요청 시간축/ID·트랜잭션 횟수·offset 연속성·누락0을 분석 스크립트에서 assert 검증.
+단일 Consumer의 서로 겹치지 않는 승인/DB/DB→커밋간격/커밋 호출 합계에 한해서만 비율 계산.
+poll은 idle wait 포함이며 위 합계에 넣지 않음. 쓰레드 스케줄링·GC 등 wall time 포함.
+최종 지연은 250ms 목표 DB 외부 조회로 관측하므로 실제 커밋보다 늦다. 실제 조회 간격도 저장.
+OFF도 Relay 계측·외부 관측은 ON. 완전 무계측 비교가 아니며 DB/Redis/Kafka는 동일 호스트 공유.
+서비스 src/main 변경 없음. 이전 부하/장애 테스트는 재실행하지 않음. 이번 검증은 네 번 실제 전체 경로 부하와 계측 경계 검사.

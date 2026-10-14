@@ -1,0 +1,34 @@
+DB 트랜잭션당 1건 vs10건 — 2026-10-14
+서비스 변경 없음. 테스트 전용 TransactionTemplate으로 기존 processReserved 호출. Redis/Kafka/HTTP 제외.
+17,000개 동일 requestId/userId/예약시각/쿠폰, 한도100,000, 동시성1, 500건 워밍업 뒤 1→10→10→1. 회차 사이 DB 이력/결과 삭제·수량0. 같은 JVM/DB/테이블, auto_increment와 cache는 누적.
+MySQL8.0.46 1CPU/1GiB, Hikari10. innodb_flush_log_at_trx_commit=1/sync_binlog=1/log_bin=1 실제 조회 확인. JVM 옵션 test-jvm.txt, DB docker inspect 참조.
+계측은 전 실행 동일하게 ON. JDBC 실제 commit 호출/반환과 Hibernate StatementInspector·SessionEventListener·Statistics 집계. 파일은 측정 종료 후 출력. 무계측 처리량 아님.
+
+run | 처리량/s | 전체 s | 실제 commits | SQL | flush / partialFlush | 호출 시작→커밋완료 p50/p95/p99 ms | JDBC commit 누적s/평균ms
+one-1 | 360.37 | 47.173 | 17000 | 102000 | 34000/51000 | 2.415/3.835/5.700 | 16.246/0.956
+ten-1 | 848.18 | 20.043 | 1700 | 86700 | 18700/51000 | 6.961/12.489/17.097 | 3.571/2.100
+ten-2 | 840.81 | 20.219 | 1700 | 86700 | 18700/51000 | 6.962/12.826/18.654 | 3.536/2.080
+one-2 | 236.28 | 71.948 | 17000 | 102000 | 34000/51000 | 3.789/6.470/9.879 | 34.734/2.043
+
+정합성: 배치1 실패1번째/배치10 실패5번째 DB INSERT CHECK 오류. 해당 트랜잭션 성공commit0/rollback1, 수량/이력/결과0. 원인 제거 후 같은 요청 재시도 성공, 묶음 재전달 후 issued ID/수량 유지(correctness.json).
+네 부하 실행 각17,000건(총68,000회 신규 발급 처리), 모든 요청ID/user/coupon/ISSUED/발급이력 대응과 issuedQuantity 검증. 매 회차 데이터 초기화이므로 동시 보존된 고유 쿠폰68,000개라는 뜻은 아니다. 원시 최종 결과와 monotonic ns 시각을 보존.
+실제 commit 성공횟수=17,000/batch, Hibernate 성공 트랜잭션 수와 일치. SQL 합계=prepare=execute 이벤트 수 및 요청별 커밋 경계·중복누락 검증.
+
+해석과 한계:
+처리량은 준비된 입력을 순차 처리한 DB 전용 값. 요청마다 processReserved의 논리적 작업은 동일하지만 트랜잭션 공유로 영속성 컨텍스트도 공유된다. coupon findById SELECT 감소와 flush 감소가 동반되므로 개선을 커밋만의 효과로 볼 수 없다.
+INSERT/UPDATE 횟수와 상세 SQL별 횟수는 각 summary.json/sql 및 comparison.json 참조. JDBC executeBatch는 사용하지 않았다. saveAndFlush 호출을 제거한 실험도 아니다.
+건당 완료시간=그 건의 서비스 호출 직전→해당 묶음 외부 TransactionTemplate 반환(실제 commit/정리 이후). 묶음 앞 요청은 뒤 요청 처리를 기다리므로 이 값이 늘 수 있다. 메서드 몸체/내부 프록시 반환을 커밋으로 간주하지 않는다.
+전체 입력을 미리 준비한 시점→완료 분포는 comparison.json/preloaded_ready_to_completion_s. 실제 HTTP 유입/묶음 채우기 대기는 없고 Kafka offset/Redis 승인 조회도 제외. 기존 전체 발급 p95와 직접 비교 불가.
+JDBC commit 시간은 드라이버+DB 왕복 wall time이며 순수 fsync가 아니다. Hibernate flush/partialFlush 이벤트는 비어 있는 검사도 포함할 수 있고 DB 쓰기 횟수가 아니다. flushEntities는 동일 entity를 여러 번 셀 수 있다.
+동일 계측이지만 ON/OFF 대조는 이번에 하지 않음. 순서/GC/JIT/cache/공유 호스트 디스크 편차는 남는다. 기존 Consumer 계측 실험과 JVM/동시실행 자원 부하가 다르다.
+
+다음: 결과가 반복 개선이면 전체 예약 경로에 테스트 전용 묶음 후보를 연결한 비교를 별도로 설계한다. 최대 대기시간·묶음 실패 재처리 범위·DB commit 이후 offset 경계와 정합성을 먼저 정의한다. 이번에는 서비스 배치/offset 변경을 구현하지 않는다.
+Relay 종료 중 Redis 접근은 별도 미해결 과제 유지. 이번 DB-only 실험은 Redis/Relay를 실행하지 않아 종료 오류를 수정하거나 재검증하지 않는다.
+
+판정: 두10건 실행 848.18/840.81건/s, 두1건 실행360.37/236.28건/s. 이번 DB-only 비교에서 묶음 처리 이득은 반복됐다. 1건 실행 편차가 커 단일 배율로 일반화하지 않는다.
+실제 커밋17,000→1,700, coupon SELECT17,000→1,700, flush34,000→18,700. INSERT34,000/UPDATE17,000/partialFlush51,000은 동일. 총SQL102,000→86,700. flushEntities85,000→222,700은 같은 entity 재검사를 포함하며 저장건수 증가라는 뜻이 아니다.
+건당 call→commit p95는1건3.835/6.470ms, 10건12.489/12.826ms. 미리 준비된 전체17,000건 처리시간은1건47.173/71.948초, 10건20.043/20.219초. 대량 drain과 개별 건의 트랜잭션 완료 대기는 서로 다른 지표다.
+1건 JDBC commit 평균0.956→2.043ms로 편차가 컸다. 10건은2.100/2.080ms. 개별 commit이 빨라진 시험이 아니라 횟수가 줄었고 조회/flush/컨텍스트 비용도 함께 달라졌다. 호스트/스토리지·실행별 편차 원인은 이번에 분리하지 않았다.
+검증 범위: 최초 JUnit2개 통과(전체 회귀 아님), 성능4회/정합성. 최초 종료 때 MySQL 컨테이너가 먼저 정리되어 Hibernate create-drop 오류 발생; 측정 후이며 gradle.log 보존. 테스트에 DirtiesContext(AFTER_CLASS)를 추가한 뒤 rollbackRetryAndRedelivery1개 재실행 통과, JPA/풀 정상 종료와 스키마 정리 오류 없음 확인(cleanup-validation/). 성능4회는 재실행하지 않았으며 변경은 테스트 종료 순서만이다.
+실제 성능 실행 소스는 DbBatchExperimentTest-measured.java, 종료 순서 수정된 현재 소스는 sources/에 보존. 기존 Relay/Redis 종료 문제와 별개이며 해당 서비스는 수정하지 않았다.
+시험 MySQL2개 정리 확인, 기존 개발 MySQL/Redis 유지(cleanup.json). 서비스 코드·배포·커밋 없음.

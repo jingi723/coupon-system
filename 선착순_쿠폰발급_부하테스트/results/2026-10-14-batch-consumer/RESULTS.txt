@@ -1,0 +1,93 @@
+최대10건/10ms Consumer 전체 경로 비교 — 2026-10-14
+시험 후보: 동일 manual Kafka consumer에서 크기1↔최대10. 서비스 변경/적용/배포/커밋 없음. Spring RECORD listener는 비활성.
+고정조건: Lua Relay 후보/Relay 계측ON, AOFalways, 1partition/1consumer, max.poll.records10, 동일 외부관측. DB1CPU1GiB/Redis0.5CPU256MiB/Kafka1CPU1GiB, host 앱JVM.
+부하: stock100000, 고유user/requestId, 100/s20초→1200/s10초→100/s30초, timeout5초/재시도0. 첫20초 저부하. 실제 전송시각으로 분류.
+1건→10건→10건→1건 순서, 새 앱/쿠폰, 동일 격리 인프라 재사용. 호스트/디스크/캐시/순서 편차 남음.
+
+run | 전송/미전송 | HTTP p50/p95/p99 ms | 최종 관측 p95/p99 s | 전량 관측drain s | 최대pending/lag | 적체중DB관측/s
+batch-one-1 | 17003/0 | 3.0/5.0/9.0 | 46.064/47.722 | 29.132 | 8791/8403 | 205.01
+batch-ten-1 | 17001/0 | 3.0/7.0/15.0 | 20.686/21.373 | 0.201 | 9358/1678 | 344.65
+batch-ten-2 | 17003/0 | 2.0/5.0/9.0 | 17.652/18.302 | 0.120 | 8618/1367 | 374.62
+batch-one-2 | 17003/0 | 3.0/5.0/9.0 | 48.547/50.353 | 33.084 | 8859/8315 | 193.16
+각 예정17000. 실제 총68010건 승인/발급. 경계 스케줄링 추가분은 미전송과 구분. 모든 ID/사용자/이력/수량/Redis재고 대응 및 offset/큐0 검사 통과.
+
+저부하(실제 전송0~20초) — 최종 외부 관측에는250ms 조회지연이 포함되어 커밋 반환 시각도 병기
+run | 요청→DB커밋정리 반환 p50/p95/p99 ms | poll수신→DB반환 p95 ms | 수집 p95 ms | 외부 관측p95 ms
+batch-one-1 | 84.329/211.667/356.995 | 30.873 | 0.002 | 353.000
+batch-ten-1 | 87.514/129.968/153.789 | 36.280 | 10.691 | 338.000
+batch-ten-2 | 89.543/132.636/167.358 | 47.246 | 10.729 | 342.050
+batch-one-2 | 81.415/109.268/132.508 | 24.562 | 0.002 | 327.000
+
+batch-one-1
+  묶음수/성공transaction 경계/commitSync호출수=17003; batch크기분포={'1': 17003}
+  실제 수집11ms 초과 묶음수=0
+  collection: {"ms": {"count": 17003, "mean": 0.001279640298770805, "p50": 0.001166, "p95": 0.002333, "p99": 0.003125, "max": 0.098458}, "cumulative_s": 0.021757724}
+  approval: {"ms": {"count": 17003, "mean": 0.3912887173439981, "p50": 0.189459, "p95": 1.3731125, "p99": 2.244091159999998, "max": 76.024083}, "cumulative_s": 6.653082061}
+  db_transaction: {"ms": {"count": 17003, "mean": 3.952241596012468, "p50": 3.570041, "p95": 6.5762455, "p99": 9.064649179999996, "max": 58.558709}, "cumulative_s": 67.199963857}
+  offset_commit: {"ms": {"count": 17003, "mean": 0.32172386878786097, "p50": 0.256, "p95": 0.6445369, "p99": 1.0780181399999986, "max": 48.525583}, "cumulative_s": 5.470270941}
+  요청→DB반환 및 poll수신→DB반환 단계별 지연: {"baseline": {"count": 2000, "request_to_committed_return_ms": {"count": 2000, "mean": 92.60902490234375, "p50": 84.3292236328125, "p95": 211.66680908203114, "p99": 356.9949462890625, "max": 368.376708984375}, "fetched_to_committed_return_ms": {"count": 2000, "mean": 12.4649534465, "p50": 8.970188, "p95": 30.873433, "p99": 70.78472708, "max": 100.706916}}, "burst": {"count": 12002, "request_to_committed_return_ms": {"count": 12002, "mean": 25986.792892956968, "p50": 27252.347778320312, "p95": 45063.025476074225, "p99": 47376.45642333984, "max": 47973.82958984375}, "fetched_to_committed_return_ms": {"count": 12002, "mean": 26.139413696050656, "p50": 24.300583, "p95": 55.25509825, "p99": 72.15134257999999, "max": 123.517667}}, "recovery": {"count": 3001, "request_to_committed_return_ms": {"count": 3001, "mean": 38883.64449797659, "p50": 38933.176513671875, "p95": 47328.753662109375, "p99": 47827.486328125, "max": 47973.573486328125}, "fetched_to_committed_return_ms": {"count": 3001, "mean": 19.960488634788405, "p50": 19.026375, "p95": 42.146833, "p99": 54.660542, "max": 71.940583}}, "late": {"count": 0, "request_to_committed_return_ms": {"count": 0, "mean": null, "p50": null, "p95": null, "p99": null, "max": null}, "fetched_to_committed_return_ms": {"count": 0, "mean": null, "p50": null, "p95": null, "p99": null, "max": null}}}
+  observation: {"target_interval_ms": 250, "actual_interval_ms": {"p50": 253.0, "p95": 257.0, "p99": 258.0, "max": 261}, "query_duration_ms": {"p50": 2.0, "p95": 3.0, "p99": 5.029999999999973}, "missing_result_observations": 0, "max_wall_vs_monotonic_step_ms": 0.9784999999999968}
+  db_pool_waiting_max: 0
+  row_lock_waits_max: 0
+  db_write_bytes: {"Innodb_os_log_written": 39181824, "Innodb_data_written": 544263680}
+  container_cpu_percent: {"mysql": {"p50": 16.43, "p95": 24.655, "p99": 26.324800000000003, "max": 26.92}, "redis": {"p50": 0.87, "p95": 9.889000000000001, "p99": 11.301400000000001, "max": 11.63}, "kafka": {"p50": 4.49, "p95": 28.671999999999997, "p99": 41.05340000000001, "max": 43.49}}
+  app_cpu_single_core_percent: {"p50": 27.108786407265896, "p95": 123.76517642646837, "p99": 169.65739270781359, "max": 191.78425498792987}
+  resource_sample_errors: 0
+batch-ten-1
+  묶음수/성공transaction 경계/commitSync호출수=1849; batch크기분포={'3': 9, '10': 1465, '1': 10, '5': 60, '4': 14, '9': 20, '6': 129, '7': 96, '8': 40, '2': 6}
+  실제 수집11ms 초과 묶음수=1
+  collection: {"ms": {"count": 1849, "mean": 2.0068860838290967, "p50": 0.002167, "p95": 10.4086416, "p99": 10.67461632, "max": 11.007375}, "cumulative_s": 3.710732369}
+  approval: {"ms": {"count": 1849, "mean": 4.510271038939968, "p50": 3.6585, "p95": 11.5652578, "p99": 19.25356016, "max": 49.046125}, "cumulative_s": 8.339491151}
+  db_transaction: {"ms": {"count": 1849, "mean": 18.513293164413195, "p50": 15.830083, "p95": 35.950025, "p99": 48.13842515999999, "max": 104.509292}, "cumulative_s": 34.231079061}
+  offset_commit: {"ms": {"count": 1849, "mean": 0.4714255543537047, "p50": 0.404083, "p95": 0.791558, "p99": 1.1395286799999997, "max": 19.45525}, "cumulative_s": 0.87166585}
+  요청→DB반환 및 poll수신→DB반환 단계별 지연: {"baseline": {"count": 2000, "request_to_committed_return_ms": {"count": 2000, "mean": 87.23086352539063, "p50": 87.5142822265625, "p95": 129.968115234375, "p99": 153.78898437499998, "max": 243.46044921875}, "fetched_to_committed_return_ms": {"count": 2000, "mean": 26.6126539455, "p50": 25.778667, "p95": 36.2798896, "p99": 55.067, "max": 71.402083}}, "burst": {"count": 11998, "request_to_committed_return_ms": {"count": 11998, "mean": 13259.846227260208, "p50": 14033.541015625, "p95": 20706.13681640625, "p99": 21262.11962890625, "max": 21385.666259765625}, "fetched_to_committed_return_ms": {"count": 11998, "mean": 25.666993635522587, "p50": 20.450667, "p95": 52.465416, "p99": 69.27083251000015, "max": 115.825833}}, "recovery": {"count": 3002, "request_to_committed_return_ms": {"count": 3002, "mean": 9267.651587418284, "p50": 8993.70361328125, "p95": 20157.350830078125, "p99": 21153.786474609373, "max": 21381.666259765625}, "fetched_to_committed_return_ms": {"count": 3002, "mean": 20.412465091938707, "p50": 17.538875, "p95": 38.80175, "p99": 47.52275, "max": 71.718584}}, "late": {"count": 1, "request_to_committed_return_ms": {"count": 1, "mean": 104.695556640625, "p50": 104.695556640625, "p95": 104.695556640625, "p99": 104.695556640625, "max": 104.695556640625}, "fetched_to_committed_return_ms": {"count": 1, "mean": 17.1875, "p50": 17.1875, "p95": 17.1875, "p99": 17.1875, "max": 17.1875}}}
+  observation: {"target_interval_ms": 250, "actual_interval_ms": {"p50": 253.0, "p95": 257.0, "p99": 258.19, "max": 299}, "query_duration_ms": {"p50": 2.0, "p95": 4.0, "p99": 4.0}, "missing_result_observations": 0, "max_wall_vs_monotonic_step_ms": 0.9808329999999899}
+  db_pool_waiting_max: 0
+  row_lock_waits_max: 0
+  db_write_bytes: {"Innodb_os_log_written": 17129984, "Innodb_data_written": 135566336}
+  container_cpu_percent: {"mysql": {"p50": 9.47, "p95": 31.650000000000002, "p99": 34.0856, "max": 34.22}, "redis": {"p50": 2.68, "p95": 14.318, "p99": 15.662000000000004, "max": 16.31}, "kafka": {"p50": 5.08, "p95": 13.588, "p99": 14.974800000000002, "max": 15.33}}
+  app_cpu_single_core_percent: {"p50": 34.74972647480908, "p95": 144.7543776624259, "p99": 184.26409212129354, "max": 207.23154762527062}
+  resource_sample_errors: 0
+batch-ten-2
+  묶음수/성공transaction 경계/commitSync호출수=1885; batch크기분포={'4': 19, '10': 1415, '1': 12, '9': 20, '5': 79, '8': 44, '6': 153, '7': 125, '3': 9, '2': 9}
+  실제 수집11ms 초과 묶음수=3
+  collection: {"ms": {"count": 1885, "mean": 2.372665422811671, "p50": 0.002125, "p95": 10.42885, "p99": 10.72858656, "max": 11.305542}, "cumulative_s": 4.472474322}
+  approval: {"ms": {"count": 1885, "mean": 4.372645003183024, "p50": 3.73575, "p95": 10.706925, "p99": 15.631472720000012, "max": 31.797917}, "cumulative_s": 8.242435831}
+  db_transaction: {"ms": {"count": 1885, "mean": 16.668455534217507, "p50": 15.035917, "p95": 26.864000599999997, "p99": 39.60432556000002, "max": 73.24}, "cumulative_s": 31.420038682}
+  offset_commit: {"ms": {"count": 1885, "mean": 0.4390177628647215, "p50": 0.387458, "p95": 0.6844584, "p99": 1.365004000000003, "max": 14.888959}, "cumulative_s": 0.827548483}
+  요청→DB반환 및 poll수신→DB반환 단계별 지연: {"baseline": {"count": 2000, "request_to_committed_return_ms": {"count": 2000, "mean": 89.40809924316406, "p50": 89.5426025390625, "p95": 132.63551025390626, "p99": 167.35828857421873, "max": 211.584228515625}, "fetched_to_committed_return_ms": {"count": 2000, "mean": 28.231529604, "p50": 26.168625, "p95": 47.246416, "p99": 65.621417, "max": 83.086125}}, "burst": {"count": 12000, "request_to_committed_return_ms": {"count": 12000, "mean": 10880.701487426757, "p50": 11451.236328125, "p95": 17679.8205078125, "p99": 18191.262441406252, "max": 18342.41552734375}, "fetched_to_committed_return_ms": {"count": 12000, "mean": 23.167034413249997, "p50": 20.100958, "p95": 38.8695, "p99": 54.926625, "max": 85.393875}}, "recovery": {"count": 3002, "request_to_committed_return_ms": {"count": 3002, "mean": 6748.5101889267835, "p50": 5770.2763671875, "p95": 17116.623046875, "p99": 18112.517421874996, "max": 18341.41552734375}, "fetched_to_committed_return_ms": {"count": 3002, "mean": 18.799581907728182, "p50": 16.498583, "p95": 33.3755, "p99": 40.67082216999996, "max": 46.212583}}, "late": {"count": 1, "request_to_committed_return_ms": {"count": 1, "mean": 81.662353515625, "p50": 81.662353515625, "p95": 81.662353515625, "p99": 81.662353515625, "max": 81.662353515625}, "fetched_to_committed_return_ms": {"count": 1, "mean": 14.72075, "p50": 14.72075, "p95": 14.72075, "p99": 14.72075, "max": 14.72075}}}
+  observation: {"target_interval_ms": 250, "actual_interval_ms": {"p50": 253.0, "p95": 256.0, "p99": 258.0, "max": 264}, "query_duration_ms": {"p50": 1.0, "p95": 3.0, "p99": 5.0}, "missing_result_observations": 0, "max_wall_vs_monotonic_step_ms": 0.9462080000000128}
+  db_pool_waiting_max: 0
+  row_lock_waits_max: 0
+  db_write_bytes: {"Innodb_os_log_written": 16580096, "Innodb_data_written": 134541312}
+  container_cpu_percent: {"mysql": {"p50": 7.88, "p95": 29.656000000000002, "p99": 31.4616, "max": 31.74}, "redis": {"p50": 2.72, "p95": 12.292000000000002, "p99": 13.508800000000004, "max": 14.2}, "kafka": {"p50": 4.18, "p95": 10.270000000000001, "p99": 17.066000000000034, "max": 22.25}}
+  app_cpu_single_core_percent: {"p50": 34.48445505640353, "p95": 136.05097275596856, "p99": 176.18615423866282, "max": 209.0055435125833}
+  resource_sample_errors: 0
+batch-one-2
+  묶음수/성공transaction 경계/commitSync호출수=17003; batch크기분포={'1': 17003}
+  실제 수집11ms 초과 묶음수=0
+  collection: {"ms": {"count": 17003, "mean": 0.0012981776745280243, "p50": 0.001084, "p95": 0.00225, "p99": 0.003125, "max": 1.031209}, "cumulative_s": 0.022072915}
+  approval: {"ms": {"count": 17003, "mean": 0.4064191162147856, "p50": 0.194375, "p95": 1.4916493999999998, "p99": 2.4265411599999998, "max": 13.48625}, "cumulative_s": 6.910344233}
+  db_transaction: {"ms": {"count": 17003, "mean": 4.181162635476092, "p50": 3.843708, "p95": 6.853070499999999, "p99": 9.434973519999996, "max": 116.487666}, "cumulative_s": 71.092308291}
+  offset_commit: {"ms": {"count": 17003, "mean": 0.28071837005234374, "p50": 0.246834, "p95": 0.458958, "p99": 0.69266366, "max": 13.840625}, "cumulative_s": 4.773054446}
+  요청→DB반환 및 poll수신→DB반환 단계별 지연: {"baseline": {"count": 2000, "request_to_committed_return_ms": {"count": 2000, "mean": 79.59601342773436, "p50": 81.4151611328125, "p95": 109.26807861328125, "p99": 132.5078540039062, "max": 160.412841796875}, "fetched_to_committed_return_ms": {"count": 2000, "mean": 10.756181205499999, "p50": 8.5334375, "p95": 24.562414299999993, "p99": 39.41076667, "max": 77.145125}}, "burst": {"count": 11999, "request_to_committed_return_ms": {"count": 11999, "mean": 26894.751184974237, "p50": 27664.41943359375, "p95": 48054.49035644531, "p99": 50236.862900390624, "max": 50549.102783203125}, "fetched_to_committed_return_ms": {"count": 11999, "mean": 27.25576086023835, "p50": 25.379167, "p95": 57.59543750000001, "p99": 75.94831534000002, "max": 153.004541}}, "recovery": {"count": 3003, "request_to_committed_return_ms": {"count": 3003, "mean": 41279.35924695422, "p50": 40741.960693359375, "p95": 49551.03459472656, "p99": 50376.93918945312, "max": 50556.521484375}, "fetched_to_committed_return_ms": {"count": 3003, "mean": 22.541582887112888, "p50": 20.846, "p95": 51.015592000000005, "p99": 64.35180197999999, "max": 95.281792}}, "late": {"count": 1, "request_to_committed_return_ms": {"count": 1, "mean": 33064.12353515625, "p50": 33064.12353515625, "p95": 33064.12353515625, "p99": 33064.12353515625, "max": 33064.12353515625}, "fetched_to_committed_return_ms": {"count": 1, "mean": 55.482292, "p50": 55.482292, "p95": 55.482292, "p99": 55.482292, "max": 55.482292}}}
+  observation: {"target_interval_ms": 250, "actual_interval_ms": {"p50": 253.0, "p95": 256.0, "p99": 258.0, "max": 261}, "query_duration_ms": {"p50": 1.0, "p95": 2.0, "p99": 3.8700000000000045}, "missing_result_observations": 0, "max_wall_vs_monotonic_step_ms": 0.9827089999999998}
+  db_pool_waiting_max: 0
+  row_lock_waits_max: 0
+  db_write_bytes: {"Innodb_os_log_written": 39279616, "Innodb_data_written": 734627840}
+  container_cpu_percent: {"mysql": {"p50": 16.08, "p95": 24.973999999999993, "p99": 26.7084, "max": 26.99}, "redis": {"p50": 0.82, "p95": 10.639999999999997, "p99": 13.055199999999997, "max": 15.66}, "kafka": {"p50": 3.28, "p95": 9.707999999999998, "p99": 11.759599999999997, "max": 15.03}}
+  app_cpu_single_core_percent: {"p50": 27.687235689131022, "p95": 114.37554971532714, "p99": 150.60257643678474, "max": 190.8157600422369}
+  resource_sample_errors: 0
+
+규칙/장애 검증: 선택3개 통과(전체 회귀 아님). 미리 보관된13건은10+3으로 처리, 이후1건도 추가 요청 없이 처리. 수집 중transactionActive=false. DB5번째 INSERT 오류에서10건 전체 롤백/offset유지, 재시작 시 실패10건과후속3건 완료. DB10건 실제커밋 후 offset전 강제종료, 동일offset/요청ID 묶음 재전달에도 기존결과ID·발급ID·수량 유지.
+첫 장애시험은1통과/2실패: 오류주입 CHECK가 이전 쿠폰 데이터에도 적용된 fixture충돌과 Kafka session timeout45초보다 짧은30초 관찰 한도. CHECK를 해당쿠폰으로 한정하고 관찰90초로 수정한 뒤3개 통과. Consumer session설정/서비스로직은 변경하지 않음. 실패로그/성공XML/복구증거 모두 보존.
+계측경계: 수집→Redis검증→TransactionTemplate 시작/commit/정리→commitSync. 요청별 같은batch의DB시간은 중첩이므로 합산하지 않고 고유batch별 stage 누적만 계산. 성공트랜잭션 횟수는 경계 호출 수이며 이번 전체경로에서 JDBC commit을 별도 가로채지 않았다.
+10ms는 poll 호출 전 남은시간으로 제한한 수집deadline이며 OS/GC/Kafka클라이언트 호출이 지연되면 초과할 수 있다. observed collection max/p95/초과건수 보존. 이미 수신되어 앞 묶음 처리 동안 기다린 레코드는 추가10ms를 기다리지 않는다.
+저부하 지연은 Relay idle/HTTP/예약/DB/스케줄링을 포함한다. 요청→DB반환은 nano/wall anchor 매핑으로 ms단위 오차가 있고 외부조회보다 정확한 커밋 완료 상한이다. pure Kafka queue delay나 broker commit timestamp가 아니다.
+DB연결대기0은 여력 충분의 증거가 아니다. 묶음으로 JPA SELECT재사용/flush/offset호출/트랜잭션 수가 함께 달라진다. 순수commit만의 효과 또는 기존Spring RECORD 대비 개선으로 단정하지 않는다.
+문서: README는현재요약과링크, 상세설계/검증/성능/초기기록은docs하위로분리. 기존원시결과는보존. Relay 종료Redis접근 문제는별도과제로유지.
+
+최종 판정: 동일 수동 Consumer 비교에서 최대10건10ms의 전체경로 p95 개선 반복(46.064/48.547초→20.686/17.652초). 전량 관측drain29.132/33.084초→0.201/0.120초. 기본Spring RECORD와 직접비교 아님.
+저부하 요청→커밋정리 p50은84.329/81.415ms→87.514/89.543ms. 수집 자체 p95약10.7ms, 최대11.306ms로 logical10ms deadline을 실제스케줄링이 초과했다. 저부하 전체p95는단건편차가커 일관된 증감단정불가.
+최종단건앱은전량발급·스냅샷후 종료중 Relay Redis접근ERROR1건. 별도수정과제유지. 부하실패/미완료와구분.
+시험앱4개/격리인프라 및 장애시험컨테이너 종료확인, 기존개발컨테이너유지(cleanup.json). README53줄, 문서는docs하위5개로분리, 기존결과보존.

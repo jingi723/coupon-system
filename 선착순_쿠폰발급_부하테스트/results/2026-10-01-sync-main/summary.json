@@ -1,0 +1,110 @@
+{
+  "runs": [
+    {
+      "rate": 300,
+      "duration": "30s",
+      "success": 9001,
+      "errors_5xx": 0,
+      "transport_errors": 0,
+      "timeouts": 0,
+      "other": 0,
+      "dropped": 0,
+      "completed_iterations": 9001,
+      "latency": {
+        "avg": 3.0371249861126444,
+        "med": 2.687,
+        "p(95)": 4.217,
+        "p(99)": 6.551,
+        "max": 61.906
+      },
+      "test_duration_ms": 30207.108,
+      "coupon_id": 11,
+      "actual_started_per_second": 300.03333333333336,
+      "redis_remaining": 90999,
+      "redis_user_count": 9001,
+      "db_issued_quantity": 9001,
+      "db_history_count": 9001,
+      "db_unique_users": 9001,
+      "consistent": true,
+      "hikari_waiters_single_snapshot": 0,
+      "db_sample_window": {
+        "start_seconds": 12.396434625028633,
+        "end_seconds": 28.26776720804628,
+        "committed_rows_delta": 4763,
+        "estimated_rows_per_second": 300.100824873169
+      },
+      "max_observed_innodb_row_lock_current_waits": 0
+    },
+    {
+      "rate": 700,
+      "duration": "30s",
+      "success": 14965,
+      "errors_5xx": 0,
+      "transport_errors": 0,
+      "timeouts": 0,
+      "other": 0,
+      "dropped": 6036,
+      "completed_iterations": 14965,
+      "latency": {
+        "med": 3306.133,
+        "p(95)": 3450.0274,
+        "p(99)": 3466.29248,
+        "max": 3887.39,
+        "avg": 2728.490052188435
+      },
+      "test_duration_ms": 33381.524,
+      "coupon_id": 12,
+      "actual_started_per_second": 498.8333333333333,
+      "redis_remaining": 85035,
+      "redis_user_count": 14965,
+      "db_issued_quantity": 14965,
+      "db_history_count": 14965,
+      "db_unique_users": 14965,
+      "consistent": true,
+      "hikari_waiters_single_snapshot": 190,
+      "db_sample_window": {
+        "start_seconds": 12.413023750064895,
+        "end_seconds": 28.246556584024802,
+        "committed_rows_delta": 7128,
+        "estimated_rows_per_second": 450.18380135049836
+      },
+      "max_observed_innodb_row_lock_current_waits": 9
+    },
+    {
+      "rate": 1200,
+      "duration": "30s",
+      "success": 14808,
+      "errors_5xx": 0,
+      "transport_errors": 0,
+      "timeouts": 0,
+      "other": 0,
+      "dropped": 21193,
+      "completed_iterations": 14808,
+      "latency": {
+        "avg": 3047.553238722322,
+        "med": 3329.1835,
+        "p(95)": 3812.4805499999998,
+        "p(99)": 4050.86038,
+        "max": 4355.861
+      },
+      "test_duration_ms": 32582.617,
+      "coupon_id": 13,
+      "actual_started_per_second": 493.6,
+      "redis_remaining": 85192,
+      "redis_user_count": 14808,
+      "db_issued_quantity": 14808,
+      "db_history_count": 14808,
+      "db_unique_users": 14808,
+      "consistent": true,
+      "hikari_waiters_single_snapshot": 190,
+      "db_sample_window": {
+        "start_seconds": 12.428485041949898,
+        "end_seconds": 28.175734708900563,
+        "committed_rows_delta": 6651,
+        "estimated_rows_per_second": 422.35946852095066
+      },
+      "max_observed_innodb_row_lock_current_waits": 9
+    }
+  ],
+  "sql_errors": {}
+}
