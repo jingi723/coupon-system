@@ -15,6 +15,8 @@ import com.assignment.coupon_system.issuedcoupon.repository.IssuedCouponReposito
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import com.assignment.coupon_system.common.LegacyCouponGuard;
+import org.mockito.Spy;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import com.assignment.coupon_system.coupon.entity.CouponStatus;
@@ -45,6 +47,9 @@ class IssuedCouponServiceTest {
 
     @Mock
     private CouponIssueRedisService couponIssueRedisService;
+
+    @Spy
+    private LegacyCouponGuard legacyCouponGuard = new LegacyCouponGuard(true);
 
     @InjectMocks
     private IssuedCouponService issuedCouponService;

@@ -1,5 +1,6 @@
 package com.assignment.coupon_system.issuedcoupon.service;
 
+import com.assignment.coupon_system.common.LegacyCouponGuard;
 import com.assignment.coupon_system.common.exception.CouponExhaustedException;
 import com.assignment.coupon_system.common.exception.CouponNotAvailableException;
 import com.assignment.coupon_system.common.exception.CouponNotFoundException;
@@ -31,6 +32,7 @@ public class IssuedCouponService {
     private final IssuedCouponRepository issuedCouponRepository;
     private final CouponRepository couponRepository;
     private final CouponIssueRedisService couponIssueRedisService;
+    private final LegacyCouponGuard legacyCouponGuard;
 
 
     @Transactional
@@ -53,6 +55,8 @@ public class IssuedCouponService {
 
     @Transactional
     public IssuedCouponResponse issueCoupon(Long couponId, IssueCouponRequest request) {
+        legacyCouponGuard.checkEnabled();
+
         Long userId = request.getUserId();
 
         Coupon coupon = couponRepository.findById(couponId)
@@ -93,6 +97,8 @@ public class IssuedCouponService {
 
     @Transactional
     public void createIssued(Long couponId, Long userId) {
+        legacyCouponGuard.checkEnabled();
+
         Coupon coupon = couponRepository.findById(couponId)
                         .orElseThrow(() -> new IllegalArgumentException("coupon not found"));
 

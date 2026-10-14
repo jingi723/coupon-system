@@ -1,5 +1,6 @@
 package com.assignment.coupon_system.coupon.service;
 
+import com.assignment.coupon_system.common.LegacyCouponGuard;
 import com.assignment.coupon_system.common.exception.CouponNotFoundException;
 import com.assignment.coupon_system.coupon.dto.CouponResponse;
 import com.assignment.coupon_system.coupon.dto.CreateCouponRequest;
@@ -24,6 +25,7 @@ public class CouponService {
     private final CouponRepository couponRepository;
     private final IssuedCouponService issuedCouponService;
     private final StringRedisTemplate redisTemplate;
+    private final LegacyCouponGuard legacyCouponGuard;
 
 
 
@@ -62,6 +64,8 @@ public class CouponService {
 
     @Transactional
     public Integer initStock(Long couponId) {
+        legacyCouponGuard.checkEnabled();
+
         Coupon coupon = couponRepository.findById(couponId)
                 .orElseThrow(CouponNotFoundException::new);
 
@@ -77,6 +81,8 @@ public class CouponService {
 
     @Transactional
     public void issue(Long couponId, Long userId) {
+        legacyCouponGuard.checkEnabled();
+
         Coupon coupon = couponRepository.findByIdForUpdate(couponId)
                 .orElseThrow(() -> new IllegalArgumentException("coupon not found"));
 

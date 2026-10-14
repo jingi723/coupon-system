@@ -9,6 +9,8 @@ import com.assignment.coupon_system.coupon.repository.CouponRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import com.assignment.coupon_system.common.LegacyCouponGuard;
+import org.mockito.Spy;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,6 +38,9 @@ class CouponServiceTest {
 
     @Mock
     private ValueOperations<String, String> valueOperations;
+
+    @Spy
+    private LegacyCouponGuard legacyCouponGuard = new LegacyCouponGuard(true);
 
     @InjectMocks
     private CouponService couponService;

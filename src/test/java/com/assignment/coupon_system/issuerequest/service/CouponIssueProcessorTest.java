@@ -1,5 +1,6 @@
 package com.assignment.coupon_system.issuerequest.service;
 
+import com.assignment.coupon_system.common.LegacyCouponGuard;
 import com.assignment.coupon_system.coupon.entity.Coupon;
 import com.assignment.coupon_system.coupon.entity.CouponType;
 import com.assignment.coupon_system.coupon.repository.CouponRepository;
@@ -30,9 +31,9 @@ import static com.assignment.coupon_system.issuerequest.entity.CouponIssueResult
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@DataJpaTest(showSql = false, properties = "spring.jpa.hibernate.ddl-auto=create-drop")
+@DataJpaTest(showSql = false, properties = {"spring.jpa.hibernate.ddl-auto=create-drop", "coupon.legacy.enabled=true"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({CouponIssueProcessor.class, CouponIssueProcessorTest.MySqlConfig.class})
+@Import({LegacyCouponGuard.class, CouponIssueProcessor.class, CouponIssueProcessorTest.MySqlConfig.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 // DataJpaTest의 기본 테스트 트랜잭션을 끄고 서비스 호출마다 실제 커밋/롤백을 확인한다.
 @Transactional(propagation = Propagation.NOT_SUPPORTED)

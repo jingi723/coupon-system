@@ -28,6 +28,17 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
     int tryIncreaseIssueQuantity(@Param("couponId") Long couponId,
                                  @Param("activeStatus") CouponStatus activeStatus);
 
+    @Modifying
+    @Query("""
+            update Coupon c
+            set c.issuedQuantity = c.issuedQuantity + 1
+            where c.id = :couponId
+                and c.issuedQuantity < c.totalQuantity
+            """)
+    int tryIncreaseReservedIssueQuantity(
+            @Param("couponId") Long couponId
+    );
+
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select c from Coupon c where c.id = :couponId")
     Optional<Coupon> findByIdForUpdate(@Param("couponId") Long couponId);
