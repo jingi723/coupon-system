@@ -27,6 +27,16 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    command:
+      - redis-server
+      - --dir
+      - /data
+      - --appendonly
+      - "yes"
+      - --appendfsync
+      - always
+      - --no-appendfsync-on-rewrite
+      - "no"
 
   kafka:
     image: apache/kafka:3.7.0
