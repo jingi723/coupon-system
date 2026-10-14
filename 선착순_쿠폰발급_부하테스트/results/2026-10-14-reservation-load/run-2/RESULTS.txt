@@ -1,0 +1,467 @@
+회차 2: 모든 정합성 검사 통과.
+상세 해석: ../RESULTS.txt
+독립 재분석: reservation-analysis.json 및 requests.csv/observed-completions-per-second.csv
+
+{
+  "planned": 17000,
+  "sent": 17003,
+  "dropped_by_scenario": {
+    "baseline": 0,
+    "burst": 0,
+    "recovery": 0
+  },
+  "scheduling_note": "Boundary scheduling may add a few iterations; report actual counts, not planned-minus-sent as dropped.",
+  "all": {
+    "sent": 17003,
+    "outcomes": {
+      "accepted": 17003
+    },
+    "response_ms": {
+      "p50": 2.0,
+      "p95": 5.0,
+      "p99": 9.0
+    },
+    "final_observed_ms": {
+      "p50": 25477.0,
+      "p95": 41376.0,
+      "p99": 42553.86
+    }
+  },
+  "actual_send_phases": {
+    "baseline": {
+      "sent": 2000,
+      "outcomes": {
+        "accepted": 2000
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 3.0,
+        "p99": 5.0
+      },
+      "final_observed_ms": {
+        "p50": 211.0,
+        "p95": 331.0,
+        "p99": 354.0
+      }
+    },
+    "burst": {
+      "sent": 12000,
+      "outcomes": {
+        "accepted": 12000
+      },
+      "response_ms": {
+        "p50": 3.0,
+        "p95": 5.0,
+        "p99": 9.0
+      },
+      "final_observed_ms": {
+        "p50": 25128.5,
+        "p95": 41394.05,
+        "p99": 42524.01
+      }
+    },
+    "recovery": {
+      "sent": 3002,
+      "outcomes": {
+        "accepted": 3002
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 3.0,
+        "p99": 5.0
+      },
+      "final_observed_ms": {
+        "p50": 32754.0,
+        "p95": 41905.5,
+        "p99": 42685.979999999996
+      }
+    },
+    "after_60s": {
+      "sent": 1,
+      "outcomes": {
+        "accepted": 1
+      },
+      "response_ms": {
+        "p50": 3.0,
+        "p95": 3.0,
+        "p99": 3.0
+      },
+      "final_observed_ms": {
+        "p50": 22891.0,
+        "p95": 22891.0,
+        "p99": 22891.0
+      }
+    }
+  },
+  "recovery_windows": [
+    {
+      "start_after_burst_s": 0,
+      "sent": 502,
+      "outcomes": {
+        "accepted": 502
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 4.0,
+        "p99": 5.990000000000009
+      },
+      "final_observed_ms": {
+        "p50": 41180.5,
+        "p95": 42713.65,
+        "p99": 42843.9
+      }
+    },
+    {
+      "start_after_burst_s": 5,
+      "sent": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 3.0,
+        "p99": 4.0
+      },
+      "final_observed_ms": {
+        "p50": 37832.0,
+        "p95": 39351.05,
+        "p99": 39484.1
+      }
+    },
+    {
+      "start_after_burst_s": 10,
+      "sent": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 4.0,
+        "p99": 5.0
+      },
+      "final_observed_ms": {
+        "p50": 34470.0,
+        "p95": 35948.5,
+        "p99": 36149.09
+      }
+    },
+    {
+      "start_after_burst_s": 15,
+      "sent": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 3.0,
+        "p99": 4.0
+      },
+      "final_observed_ms": {
+        "p50": 31100.0,
+        "p95": 32600.5,
+        "p99": 32700.09
+      }
+    },
+    {
+      "start_after_burst_s": 20,
+      "sent": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 3.0,
+        "p99": 4.009999999999991
+      },
+      "final_observed_ms": {
+        "p50": 27756.0,
+        "p95": 29273.25,
+        "p99": 29453.09
+      }
+    },
+    {
+      "start_after_burst_s": 25,
+      "sent": 500,
+      "outcomes": {
+        "accepted": 500
+      },
+      "response_ms": {
+        "p50": 2.0,
+        "p95": 3.0,
+        "p99": 5.0
+      },
+      "final_observed_ms": {
+        "p50": 24366.5,
+        "p95": 25838.45,
+        "p99": 26037.11
+      }
+    }
+  ],
+  "last_sent_s": 60.0,
+  "last_result_observed_s": 82.891,
+  "final_result_drain_after_last_send_s": 22.891000000000005,
+  "all_queues_empty_observed_s": 82.898,
+  "queues_drain_after_last_send_s": 22.897999999999996,
+  "peak_pending": 9995,
+  "peak_processing": 1,
+  "peak_kafka_lag": 6938,
+  "observed_db_completions_per_second_while_kafka_backlogged": 224.6755482386548,
+  "backlogged_sample_seconds": 69.74946816799999,
+  "throughput_windows": [
+    {
+      "start_s": 0,
+      "sample_duration_s": 4.553688542,
+      "kafka_appended_per_s": 99.91899880797777,
+      "db_results_observed_per_s": 101.01700978388962,
+      "pending_first": 3,
+      "pending_last": 2,
+      "lag_first": 8,
+      "lag_last": 3
+    },
+    {
+      "start_s": 5,
+      "sample_duration_s": 4.808963125,
+      "kafka_appended_per_s": 98.15005599569865,
+      "db_results_observed_per_s": 100.02156130070138,
+      "pending_first": 1,
+      "pending_last": 8,
+      "lag_first": 9,
+      "lag_last": 0
+    },
+    {
+      "start_s": 10,
+      "sample_duration_s": 4.792951291,
+      "kafka_appended_per_s": 100.77298321536396,
+      "db_results_observed_per_s": 99.31250519775,
+      "pending_first": 7,
+      "pending_last": 6,
+      "lag_first": 0,
+      "lag_last": 6
+    },
+    {
+      "start_s": 15,
+      "sample_duration_s": 4.799451875,
+      "kafka_appended_per_s": 100.84484907977122,
+      "db_results_observed_per_s": 101.05320620596909,
+      "pending_first": 10,
+      "pending_last": 5,
+      "lag_first": 1,
+      "lag_last": 0
+    },
+    {
+      "start_s": 20,
+      "sample_duration_s": 4.790543708,
+      "kafka_appended_per_s": 194.75868646014658,
+      "db_results_observed_per_s": 152.80102731921468,
+      "pending_first": 232,
+      "pending_last": 5047,
+      "lag_first": 5,
+      "lag_last": 207
+    },
+    {
+      "start_s": 25,
+      "sample_duration_s": 4.542029083,
+      "kafka_appended_per_s": 208.0567919604402,
+      "db_results_observed_per_s": 164.90427214642298,
+      "pending_first": 5295,
+      "pending_last": 9803,
+      "lag_first": 221,
+      "lag_last": 416
+    },
+    {
+      "start_s": 30,
+      "sample_duration_s": 4.817966292,
+      "kafka_appended_per_s": 436.6987796269123,
+      "db_results_observed_per_s": 218.97205917604205,
+      "pending_first": 9995,
+      "pending_last": 8373,
+      "lag_first": 433,
+      "lag_last": 1482
+    },
+    {
+      "start_s": 35,
+      "sample_duration_s": 4.828011583,
+      "kafka_appended_per_s": 461.26649899547266,
+      "db_results_observed_per_s": 229.07981494790874,
+      "pending_first": 8273,
+      "pending_last": 6527,
+      "lag_first": 1548,
+      "lag_last": 2670
+    },
+    {
+      "start_s": 40,
+      "sample_duration_s": 4.573524875,
+      "kafka_appended_per_s": 431.6145760549733,
+      "db_results_observed_per_s": 214.93268908917872,
+      "pending_first": 6430,
+      "pending_last": 4913,
+      "lag_first": 2732,
+      "lag_last": 3724
+    },
+    {
+      "start_s": 45,
+      "sample_duration_s": 4.835997125,
+      "kafka_appended_per_s": 434.4502169239814,
+      "db_results_observed_per_s": 222.08449927480055,
+      "pending_first": 4821,
+      "pending_last": 3203,
+      "lag_first": 3786,
+      "lag_last": 4813
+    },
+    {
+      "start_s": 50,
+      "sample_duration_s": 4.842723334,
+      "kafka_appended_per_s": 441.9001153700844,
+      "db_results_observed_per_s": 220.5370669230141,
+      "pending_first": 3126,
+      "pending_last": 1471,
+      "lag_first": 4866,
+      "lag_last": 5937
+    },
+    {
+      "start_s": 55,
+      "sample_duration_s": 4.609749333,
+      "kafka_appended_per_s": 399.37095642506165,
+      "db_results_observed_per_s": 204.13257468548778,
+      "pending_first": 1389,
+      "pending_last": 10,
+      "lag_first": 5990,
+      "lag_last": 6890
+    },
+    {
+      "start_s": 60,
+      "sample_duration_s": 4.854859625,
+      "kafka_appended_per_s": 0.0,
+      "db_results_observed_per_s": 290.842600830091,
+      "pending_first": 0,
+      "pending_last": 0,
+      "lag_first": 6856,
+      "lag_last": 5444
+    },
+    {
+      "start_s": 65,
+      "sample_duration_s": 4.604618583,
+      "kafka_appended_per_s": 0.0,
+      "db_results_observed_per_s": 314.68404470016884,
+      "pending_first": 0,
+      "pending_last": 0,
+      "lag_first": 5358,
+      "lag_last": 3910
+    },
+    {
+      "start_s": 70,
+      "sample_duration_s": 4.858341125,
+      "kafka_appended_per_s": 0.0,
+      "db_results_observed_per_s": 308.7473607568057,
+      "pending_first": 0,
+      "pending_last": 0,
+      "lag_first": 3834,
+      "lag_last": 2334
+    },
+    {
+      "start_s": 75,
+      "sample_duration_s": 4.624397834,
+      "kafka_appended_per_s": 0.0,
+      "db_results_observed_per_s": 304.6883184748071,
+      "pending_first": 0,
+      "pending_last": 0,
+      "lag_first": 2255,
+      "lag_last": 847
+    },
+    {
+      "start_s": 80,
+      "sample_duration_s": 4.892312459,
+      "kafka_appended_per_s": 0.0,
+      "db_results_observed_per_s": 156.16336985887514,
+      "pending_first": 0,
+      "pending_last": 0,
+      "lag_first": 763,
+      "lag_last": 0
+    }
+  ],
+  "db_pool_waiting_max": 0,
+  "row_lock_waits_max": 0,
+  "row_lock_wait_count_delta": 0,
+  "db_write_bytes": {
+    "Innodb_os_log_written": 38827008,
+    "Innodb_data_written": 595272704
+  },
+  "app_cpu_single_core_percent": {
+    "p50": 28.147092827076687,
+    "p95": 114.34367782017435,
+    "p99": 150.85798098993698,
+    "max": 205.89388261446538
+  },
+  "container_cpu_percent": {
+    "mysql": {
+      "p50": 19.305,
+      "p95": 25.003,
+      "p99": 25.501099999999997,
+      "max": 25.92
+    },
+    "redis": {
+      "p50": 1.69,
+      "p95": 9.219499999999998,
+      "p99": 10.2023,
+      "max": 10.22
+    },
+    "kafka": {
+      "p50": 4.255,
+      "p95": 12.273499999999999,
+      "p99": 15.981999999999985,
+      "max": 18.46
+    }
+  },
+  "resource_sample_errors": 0,
+  "redis_peak_used_memory_bytes": 11625264.0,
+  "redis_aof_delayed_fsync_delta": 0.0,
+  "observation": {
+    "target_interval_ms": 250,
+    "actual_interval_ms": {
+      "p50": 255.0,
+      "p95": 260.0,
+      "p99": 261.0,
+      "max": 264
+    },
+    "query_duration_ms": {
+      "p50": 1.0,
+      "p95": 4.0,
+      "p99": 9.319999999999993
+    },
+    "missing_result_observations": 0,
+    "max_wall_vs_monotonic_step_ms": 0.9883749999999907
+  },
+  "final": {
+    "reservations": 17003,
+    "results": 17003,
+    "history": 17003,
+    "issued_quantity": 17003,
+    "redis_remaining": 82997,
+    "redis_users": 17003,
+    "kafka_records": 17003
+  },
+  "non_accepted_requests": [],
+  "checks": {
+    "http_records_complete": true,
+    "accepted_has_reservation_and_result": true,
+    "reservation_result_id_sets_equal": true,
+    "all_reserved_ids_were_sent": true,
+    "no_duplicate_reservation_or_result_ids": true,
+    "all_results_issued": true,
+    "request_coupon_user_mapping": true,
+    "result_history_mapping": true,
+    "unique_issuance": true,
+    "users_match": true,
+    "quantities_match": true,
+    "all_results_observed_once": true,
+    "queues_empty": true,
+    "kafka_record_count_matches_reservations": true
+  },
+  "passed": true,
+  "limits": [
+    "Final latency includes DB polling; not exact commit time.",
+    "Pending, processing and lag are sampled sequentially and can overlap in-flight; do not sum as exact backlog.",
+    "CPU and write counters include observation; no uninstrumented control run.",
+    "DB/offset/Relay per-operation time is not measured in this workload; no causal bottleneck attribution."
+  ]
+}

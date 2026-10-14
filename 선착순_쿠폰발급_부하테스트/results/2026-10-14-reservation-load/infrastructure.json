@@ -1,0 +1,19 @@
+{
+  "group" : "reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b",
+  "kafka" : {
+    "cpu" : 1,
+    "memoryMiB" : 1024,
+    "id" : "8f01773c018fac832898db73484541d45483b7fee6f422d4e1d45c6c4250c783"
+  },
+  "redis" : {
+    "memoryMiB" : 256,
+    "id" : "4ff36ef6afea3a143db3aaa625c7a2b86b58a61a957efb5fc1defc726680ca46",
+    "aof" : "always",
+    "cpu" : 0.5
+  },
+  "mysql" : {
+    "cpu" : 1,
+    "memoryMiB" : 1024,
+    "id" : "1496aa5c0b251db690ccc3a99b59d0242c620c4c26ded701e1f1fdaeae0ef417"
+  }
+}

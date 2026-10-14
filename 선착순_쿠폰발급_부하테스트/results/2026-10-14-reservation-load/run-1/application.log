@@ -1,0 +1,400 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.5.14)
+
+2026-10-14T12:58:59.252+09:00  INFO 54032 --- [coupon-system] [           main] c.a.c.CouponSystemApplication            : Starting CouponSystemApplication using Java 17.0.19 with PID 54032 (/Users/jingi723/Desktop/Development/coupon-system/build/classes/java/main started by jingi723 in /Users/jingi723/Desktop/Development/coupon-system)
+2026-10-14T12:58:59.253+09:00  INFO 54032 --- [coupon-system] [           main] c.a.c.CouponSystemApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-10-14T12:58:59.542+09:00  INFO 54032 --- [coupon-system] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-10-14T12:58:59.543+09:00  INFO 54032 --- [coupon-system] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-10-14T12:58:59.605+09:00  INFO 54032 --- [coupon-system] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 59 ms. Found 4 JPA repository interfaces.
+2026-10-14T12:58:59.613+09:00  INFO 54032 --- [coupon-system] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-10-14T12:58:59.613+09:00  INFO 54032 --- [coupon-system] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-10-14T12:58:59.621+09:00  INFO 54032 --- [coupon-system] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.assignment.coupon_system.coupon.repository.CouponRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-10-14T12:58:59.621+09:00  INFO 54032 --- [coupon-system] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.assignment.coupon_system.couponusagehistory.repository.CouponUsageHistoryRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-10-14T12:58:59.622+09:00  INFO 54032 --- [coupon-system] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.assignment.coupon_system.issuedcoupon.repository.IssuedCouponRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-10-14T12:58:59.622+09:00  INFO 54032 --- [coupon-system] [           main] .RepositoryConfigurationExtensionSupport : Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.assignment.coupon_system.issuerequest.repository.CouponIssueResultRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2026-10-14T12:58:59.622+09:00  INFO 54032 --- [coupon-system] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 4 ms. Found 0 Redis repository interfaces.
+2026-10-14T12:58:59.822+09:00  INFO 54032 --- [coupon-system] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 57265 (http)
+2026-10-14T12:58:59.905+09:00  INFO 54032 --- [coupon-system] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-10-14T12:58:59.905+09:00  INFO 54032 --- [coupon-system] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.54]
+2026-10-14T12:58:59.936+09:00  INFO 54032 --- [coupon-system] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-10-14T12:58:59.936+09:00  INFO 54032 --- [coupon-system] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 669 ms
+2026-10-14T12:58:59.997+09:00  INFO 54032 --- [coupon-system] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-10-14T12:59:00.018+09:00  INFO 54032 --- [coupon-system] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.49.Final
+2026-10-14T12:59:00.030+09:00  INFO 54032 --- [coupon-system] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-10-14T12:59:00.130+09:00  INFO 54032 --- [coupon-system] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-10-14T12:59:00.141+09:00  INFO 54032 --- [coupon-system] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-14T12:59:00.263+09:00  INFO 54032 --- [coupon-system] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@59cde35
+2026-10-14T12:59:00.266+09:00  INFO 54032 --- [coupon-system] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-14T12:59:00.299+09:00  INFO 54032 --- [coupon-system] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 8.0.46
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-10-14T12:59:00.679+09:00  INFO 54032 --- [coupon-system] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-10-14T12:59:00.806+09:00  INFO 54032 --- [coupon-system] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-10-14T12:59:00.885+09:00  INFO 54032 --- [coupon-system] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-10-14T12:59:01.205+09:00  WARN 54032 --- [coupon-system] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-10-14T12:59:01.374+09:00  INFO 54032 --- [coupon-system] [           main] o.a.k.clients.admin.AdminClientConfig    : AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [localhost:57248]
+	client.dns.lookup = use_all_dns_ips
+	client.id = coupon-system-admin-0
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+2026-10-14T12:59:01.401+09:00  INFO 54032 --- [coupon-system] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.2
+2026-10-14T12:59:01.401+09:00  INFO 54032 --- [coupon-system] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 5e9866f43ab8e7e4
+2026-10-14T12:59:01.401+09:00  INFO 54032 --- [coupon-system] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1791950341400
+2026-10-14T12:59:01.584+09:00  INFO 54032 --- [coupon-system] [-system-admin-0] o.a.kafka.common.utils.AppInfoParser     : App info kafka.admin.client for coupon-system-admin-0 unregistered
+2026-10-14T12:59:01.586+09:00  INFO 54032 --- [coupon-system] [-system-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2026-10-14T12:59:01.586+09:00  INFO 54032 --- [coupon-system] [-system-admin-0] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2026-10-14T12:59:01.586+09:00  INFO 54032 --- [coupon-system] [-system-admin-0] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2026-10-14T12:59:01.594+09:00  INFO 54032 --- [coupon-system] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 57265 (http) with context path '/'
+2026-10-14T12:59:01.604+09:00  INFO 54032 --- [coupon-system] [           main] o.a.k.clients.consumer.ConsumerConfig    : ConsumerConfig values: 
+	allow.auto.create.topics = true
+	auto.commit.interval.ms = 5000
+	auto.include.jmx.reporter = true
+	auto.offset.reset = earliest
+	bootstrap.servers = [localhost:57248]
+	check.crcs = true
+	client.dns.lookup = use_all_dns_ips
+	client.id = consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1
+	client.rack = 
+	connections.max.idle.ms = 540000
+	default.api.timeout.ms = 60000
+	enable.auto.commit = false
+	enable.metrics.push = true
+	exclude.internal.topics = true
+	fetch.max.bytes = 52428800
+	fetch.max.wait.ms = 500
+	fetch.min.bytes = 1
+	group.id = reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b
+	group.instance.id = null
+	group.protocol = classic
+	group.remote.assignor = null
+	heartbeat.interval.ms = 3000
+	interceptor.classes = []
+	internal.leave.group.on.close = true
+	internal.throw.on.fetch.stable.offset.unsupported = false
+	isolation.level = read_uncommitted
+	key.deserializer = class org.apache.kafka.common.serialization.StringDeserializer
+	max.partition.fetch.bytes = 1048576
+	max.poll.interval.ms = 300000
+	max.poll.records = 500
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partition.assignment.strategy = [class org.apache.kafka.clients.consumer.RangeAssignor, class org.apache.kafka.clients.consumer.CooperativeStickyAssignor]
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	session.timeout.ms = 45000
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	value.deserializer = class org.springframework.kafka.support.serializer.JsonDeserializer
+
+2026-10-14T12:59:01.619+09:00  INFO 54032 --- [coupon-system] [           main] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-10-14T12:59:01.654+09:00  INFO 54032 --- [coupon-system] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.2
+2026-10-14T12:59:01.654+09:00  INFO 54032 --- [coupon-system] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 5e9866f43ab8e7e4
+2026-10-14T12:59:01.654+09:00  INFO 54032 --- [coupon-system] [           main] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1791950341654
+2026-10-14T12:59:01.655+09:00  INFO 54032 --- [coupon-system] [           main] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Subscribed to topic(s): coupon-issue-requests
+2026-10-14T12:59:01.661+09:00  INFO 54032 --- [coupon-system] [           main] c.a.c.CouponSystemApplication            : Started CouponSystemApplication in 2.585 seconds (process running for 2.75)
+2026-10-14T12:59:01.662+09:00  INFO 54032 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 시작합니다
+2026-10-14T12:59:01.665+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] org.apache.kafka.clients.Metadata        : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Cluster ID: Some(4L6g3nShT-eMCtK--X86sw)
+2026-10-14T12:59:01.785+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Discovered group coordinator localhost:57248 (id: 2147483646 rack: null)
+2026-10-14T12:59:01.786+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] (Re-)joining group
+2026-10-14T12:59:01.797+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Request joining group due to: need to re-join with the given member-id: consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1-b1a5511e-e101-4cdf-a8cb-922a104bc60e
+2026-10-14T12:59:01.798+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] (Re-)joining group
+2026-10-14T12:59:01.805+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Successfully joined group with generation Generation{generationId=1, memberId='consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1-b1a5511e-e101-4cdf-a8cb-922a104bc60e', protocol='range'}
+2026-10-14T12:59:01.806+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Finished assignment for group at generation 1: {consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1-b1a5511e-e101-4cdf-a8cb-922a104bc60e=Assignment(partitions=[coupon-issue-requests-0])}
+2026-10-14T12:59:01.817+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Successfully synced group in generation Generation{generationId=1, memberId='consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1-b1a5511e-e101-4cdf-a8cb-922a104bc60e', protocol='range'}
+2026-10-14T12:59:01.817+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Notifying assignor about the new Assignment(partitions=[coupon-issue-requests-0])
+2026-10-14T12:59:01.818+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Adding newly assigned partitions: coupon-issue-requests-0
+2026-10-14T12:59:01.823+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Found no committed offset for partition coupon-issue-requests-0
+2026-10-14T12:59:01.828+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.SubscriptionState    : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Resetting offset for partition coupon-issue-requests-0 to position FetchPosition{offset=0, offsetEpoch=Optional.empty, currentLeader=LeaderAndEpoch{leader=Optional[localhost:57248 (id: 1 rack: null)], epoch=0}}.
+2026-10-14T12:59:01.828+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b: partitions assigned: [coupon-issue-requests-0]
+2026-10-14T12:59:01.994+09:00  INFO 54032 --- [coupon-system] [.1-57265-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-10-14T12:59:01.994+09:00  INFO 54032 --- [coupon-system] [.1-57265-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-10-14T12:59:01.995+09:00  INFO 54032 --- [coupon-system] [.1-57265-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-10-14T12:59:05.588+09:00  INFO 54032 --- [coupon-system] [servation-relay] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
+	acks = -1
+	auto.include.jmx.reporter = true
+	batch.size = 16384
+	bootstrap.servers = [localhost:57248]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = coupon-system-producer-1
+	compression.gzip.level = -1
+	compression.lz4.level = 9
+	compression.type = none
+	compression.zstd.level = 3
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = true
+	enable.metrics.push = true
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 0
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transactional.id = null
+	value.serializer = class org.springframework.kafka.support.serializer.JsonSerializer
+
+2026-10-14T12:59:05.588+09:00  INFO 54032 --- [coupon-system] [servation-relay] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-10-14T12:59:05.592+09:00  INFO 54032 --- [coupon-system] [servation-relay] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=coupon-system-producer-1] Instantiated an idempotent producer.
+2026-10-14T12:59:05.596+09:00  INFO 54032 --- [coupon-system] [servation-relay] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.9.2
+2026-10-14T12:59:05.596+09:00  INFO 54032 --- [coupon-system] [servation-relay] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: 5e9866f43ab8e7e4
+2026-10-14T12:59:05.596+09:00  INFO 54032 --- [coupon-system] [servation-relay] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1791950345596
+2026-10-14T12:59:05.600+09:00  INFO 54032 --- [coupon-system] [stem-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=coupon-system-producer-1] Cluster ID: Some(4L6g3nShT-eMCtK--X86sw)
+2026-10-14T12:59:05.707+09:00  INFO 54032 --- [coupon-system] [stem-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=coupon-system-producer-1] ProducerId set to 0 with epoch 0
+2026-10-14T13:01:39.678+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] k.c.c.i.ConsumerRebalanceListenerInvoker : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Revoke previously assigned partitions coupon-issue-requests-0
+2026-10-14T13:01:39.678+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b: partitions revoked: [coupon-issue-requests-0]
+2026-10-14T13:01:39.678+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Member consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1-b1a5511e-e101-4cdf-a8cb-922a104bc60e sending LeaveGroup request to coordinator localhost:57248 (id: 2147483646 rack: null) due to the consumer unsubscribed from all topics
+2026-10-14T13:01:39.678+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Resetting generation and member id due to: consumer pro-actively leaving the group
+2026-10-14T13:01:39.678+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Request joining group due to: consumer pro-actively leaving the group
+2026-10-14T13:01:39.678+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.i.ClassicKafkaConsumer         : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Unsubscribed all topics or patterns and assigned partitions
+2026-10-14T13:01:39.679+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Resetting generation and member id due to: consumer pro-actively leaving the group
+2026-10-14T13:01:39.679+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.k.c.c.internals.ConsumerCoordinator  : [Consumer clientId=consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1, groupId=reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b] Request joining group due to: consumer pro-actively leaving the group
+2026-10-14T13:01:40.089+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2026-10-14T13:01:40.089+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2026-10-14T13:01:40.089+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter
+2026-10-14T13:01:40.089+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2026-10-14T13:01:40.092+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.a.kafka.common.utils.AppInfoParser     : App info kafka.consumer for consumer-reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b-1 unregistered
+2026-10-14T13:01:40.093+09:00  INFO 54032 --- [coupon-system] [ntainer#0-0-C-1] o.s.k.l.KafkaMessageListenerContainer    : reservation-load-ad67101c-8f9e-4ebf-b126-cada6b4fde0b: Consumer stopped
+2026-10-14T13:01:40.095+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] o.s.b.w.e.tomcat.GracefulShutdown        : Commencing graceful shutdown. Waiting for active requests to complete
+2026-10-14T13:01:40.097+09:00  INFO 54032 --- [coupon-system] [tomcat-shutdown] o.s.b.w.e.tomcat.GracefulShutdown        : Graceful shutdown complete
+2026-10-14T13:01:40.102+09:00 ERROR 54032 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달을 일시 중단합니다. 원인 해결후 재개하거나 앱을 재시작하세요.
+
+java.lang.IllegalStateException: LettuceConnectionFactory is STOPPING
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.assertStarted(LettuceConnectionFactory.java:1463) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory.getConnection(LettuceConnectionFactory.java:1055) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.core.RedisConnectionUtils.fetchConnection(RedisConnectionUtils.java:195) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.core.RedisConnectionUtils.doGetConnection(RedisConnectionUtils.java:144) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.core.RedisConnectionUtils.getConnection(RedisConnectionUtils.java:105) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:401) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.core.RedisTemplate.execute(RedisTemplate.java:381) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.core.AbstractOperations.execute(AbstractOperations.java:117) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at org.springframework.data.redis.core.DefaultListOperations.index(DefaultListOperations.java:45) ~[spring-data-redis-3.5.11.jar:3.5.11]
+	at com.assignment.coupon_system.coupon.redis.CouponIssueRedisService.peekProcessingReservation(CouponIssueRedisService.java:403) ~[main/:na]
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelay.relayOne(CouponReservationRelay.java:24) ~[main/:na]
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunner.runLoop(CouponReservationRelayRunner.java:51) ~[main/:na]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+2026-10-14T13:01:40.109+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=coupon-system-producer-1] Closing the Kafka producer with timeoutMillis = 30000 ms.
+2026-10-14T13:01:40.112+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] o.apache.kafka.common.metrics.Metrics    : Metrics scheduler closed
+2026-10-14T13:01:40.112+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.metrics.JmxReporter
+2026-10-14T13:01:40.112+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] o.apache.kafka.common.metrics.Metrics    : Closing reporter org.apache.kafka.common.telemetry.internals.ClientTelemetryReporter
+2026-10-14T13:01:40.112+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] o.apache.kafka.common.metrics.Metrics    : Metrics reporters closed
+2026-10-14T13:01:40.113+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] o.a.kafka.common.utils.AppInfoParser     : App info kafka.producer for coupon-system-producer-1 unregistered
+2026-10-14T13:01:40.114+09:00  INFO 54032 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 종료합니다.
+2026-10-14T13:01:40.119+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-10-14T13:01:40.121+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-10-14T13:01:40.123+09:00  INFO 54032 --- [coupon-system] [ionShutdownHook] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.

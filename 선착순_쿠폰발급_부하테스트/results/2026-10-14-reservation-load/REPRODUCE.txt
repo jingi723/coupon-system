@@ -1,0 +1,34 @@
+작업 디렉터리: /Users/jingi723/Desktop/Development/coupon-system
+
+1. 테스트 classpath 생성 (서비스 로직 변경 없음)
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon -I 선착순_쿠폰발급_부하테스트/consumer-profile.init.gradle testClasses writeConsumerProfileClasspath
+
+2. 새 결과 디렉터리에서 2회 실행. Docker daemon 및 java/python3/k6가 PATH에 있어야 한다.
+python3 - <<'PY'
+from pathlib import Path
+import subprocess
+out=Path('선착순_쿠폰발급_부하테스트/results/NEW-reservation-load')
+out.mkdir(exist_ok=False)
+with (out/'environment.log').open('w') as log:
+    subprocess.run(['java','-cp',Path('build/consumer-profile-classpath.txt').read_text().strip(),
+        'com.assignment.coupon_system.issuerequest.profiling.ReservationLoadEnvironment',str(out)],
+        stdout=log,stderr=subprocess.STDOUT,check=True)
+for run in ['run-1','run-2']:
+    subprocess.run(['python3','선착순_쿠폰발급_부하테스트/analyze-reservation-load.py',str(out/run)],check=True)
+PY
+
+테스트 환경이 임의 포트의 MySQL/Redis/Kafka를 생성하고 자식 앱 JVM 및 관측 프로세스를 시작한다.
+기존 개발 DB/Redis/Kafka/앱에 접속하지 않는다. 정상·예외 종료 시 생성한 프로세스/컨테이너만 정리한다.
+행사 생성은 실제 HTTP, Redis 정책/재고 초기화는 테스트 fixture의 production initializeReservation 호출이다.
+앱 옵션/부하/관측 주기는 run-reservation-load.py, infrastructure.json, run-*/run-meta.json 참조.
+각 회차의 실제 k6 명령은 드라이버에 보존돼 있다. 원시 metrics.json.gz가 requestId와 전송시각을 포함한다.
+요청/쿠폰 ID는 매번 달라지며 초기화된 전용 DB/Redis/Kafka를 사용해야 한다.
+원문 소스는 sources/ 및 각 run 디렉터리, 서비스 소스는 sources/application-source.tar.gz에 보존했다.
+
+분석만 재실행:
+python3 선착순_쿠폰발급_부하테스트/analyze-overload-comparison.py RESULT/run-1
+python3 선착순_쿠폰발급_부하테스트/analyze-reservation-load.py RESULT/run-1
+run-2도 동일하다. 두 번째 분석기는 부모 디렉터리의 infrastructure.json을 사용한다.
+
+이 실험은 HTTP/전체 완료 지연 및 대기열 위치를 측정한다. DB 트랜잭션/offset 커밋/Relay 내부 구간별
+시간과 계측 비활성 대조 실행은 포함하지 않는다. 이전 Consumer 비용 계측 실험을 재실행한 결과가 아니다.

@@ -1,0 +1,14 @@
+{
+  "task_containers_absent": true,
+  "running_containers": "53c75ba459f76be3529e80a5b6adf57fc4886d00eb4469877aea5f658d74ae5d coupon-redis\n855ff8904d02597f748991d621a7e5340c7db9599f03618510a286711b2161f7 edge-airflow-dash-scheduler-1\n312e724e1b71f43c29b51fa23c3f5cd54653ed9a45a894e913f7fe4ca3540ef0 edge-airflow-dash-dag-processor-1\nd6080451f0ca21119a462b97242a4b6b49db05ef201b628376e2b482a2f08d68 edge-airflow-dash-api-server-1\n5337a3a423dc6ec9e2d91fb677fd521bdf6520549c5f7219624a0c9541b982da edge-airflow-dash-meta-db-1\nb81b6e63191eb2c91c330bb2a97b9aa7be7ac2ef2022cd1996945c0dedca5bea coupon-mysql\n241c02894bbb7cee1ec12e78a04682efe510ddeb80b1c7af89268a66f2f15371 edge-e2e-pg-local\n17241ff857c3edfbe10b763fb8f402119b773534a8459e15c88331c87800dbf7 local-airflow-1\ndac601838b2471e7af0cd566693cc78bffea4a1334d56118342a70cacdb96808 local-fake-aws-1\n6e5966f4f8db146a021d54aaec0c8c2123fbd21908678cd0b808257d80f60847 local-postgres-1\nc09e877542f88228c36b1d7ca14087d1f26a6e63aa28eb3c24f922f12fb07143 local-airflow-db-1\n417f1273319c542486bb51930ab965ec9c96529e1b3df95bccc7875e7bf2c1d2 buildx_buildkit_nbuilder0\n",
+  "apps": {
+    "run-1": {
+      "pid": 54032,
+      "alive": false
+    },
+    "run-2": {
+      "pid": 57520,
+      "alive": false
+    }
+  }
+}

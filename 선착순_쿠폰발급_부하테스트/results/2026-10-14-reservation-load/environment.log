@@ -1,0 +1,53 @@
+12:58:49.029 [main] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+12:58:49.031 [main] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+12:58:49.042 [main] INFO org.testcontainers.DockerClientFactory -- Testcontainers version: 1.21.4
+12:58:49.131 [main] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+12:58:49.235 [main] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+12:58:49.235 [main] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+12:58:49.244 [main] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 29.5.3
+  API Version: 1.54
+  Operating System: Docker Desktop
+  Total Memory: 7935 MB
+  Labels: 
+    com.docker.desktop.address=unix:///Users/jingi723/Library/Containers/com.docker.docker/Data/docker-cli.sock
+12:58:49.491 [main] INFO tc.testcontainers/ryuk:0.12.0 -- Creating container for image: testcontainers/ryuk:0.12.0
+12:58:49.597 [main] INFO org.testcontainers.utility.RegistryAuthLocator -- Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
+12:58:49.650 [main] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 is starting: cb281cd7ed0a667b669d5bf9902c5a4eb597e53e4a971f99eaaf6d95425f7666
+12:58:49.803 [main] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 started in PT0.311544S
+12:58:49.805 [main] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+12:58:49.806 [main] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+12:58:49.806 [main] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+12:58:49.807 [main] INFO tc.mysql:8.0 -- Creating container for image: mysql:8.0
+12:58:49.866 [main] INFO tc.mysql:8.0 -- Container mysql:8.0 is starting: 1496aa5c0b251db690ccc3a99b59d0242c620c4c26ded701e1f1fdaeae0ef417
+12:58:49.953 [main] INFO tc.mysql:8.0 -- Waiting for database connection to become available at jdbc:mysql://localhost:57176/test using query 'SELECT 1'
+12:58:55.618 [main] INFO tc.mysql:8.0 -- Container mysql:8.0 started in PT5.810844S
+12:58:55.618 [main] INFO tc.mysql:8.0 -- Container is started (JDBC URL: jdbc:mysql://localhost:57176/test)
+12:58:55.618 [main] INFO tc.redis:7-alpine -- Creating container for image: redis:7-alpine
+12:58:55.657 [main] INFO tc.redis:7-alpine -- Container redis:7-alpine is starting: 4ff36ef6afea3a143db3aaa625c7a2b86b58a61a957efb5fc1defc726680ca46
+12:58:55.817 [main] INFO tc.redis:7-alpine -- Container redis:7-alpine started in PT0.198351S
+12:58:55.817 [main] INFO tc.apache/kafka:3.7.0 -- Creating container for image: apache/kafka:3.7.0
+12:58:55.850 [main] INFO tc.apache/kafka:3.7.0 -- Container apache/kafka:3.7.0 is starting: 8f01773c018fac832898db73484541d45483b7fee6f422d4e1d45c6c4250c783
+12:58:58.626 [main] INFO tc.apache/kafka:3.7.0 -- Container apache/kafka:3.7.0 started in PT2.809621S
+run-1 load started coupon=1
+run-1 {"history": 1427, "observed_count": 1427, "pending": 2, "processing": 1, "lag": 9, "pool_waiting": 0}
+run-1 {"history": 2905, "observed_count": 2905, "pending": 10517, "processing": 0, "lag": 2, "pool_waiting": 0}
+run-1 {"history": 4821, "observed_count": 4902, "pending": 9060, "processing": 1, "lag": 1484, "pool_waiting": 0}
+run-1 {"history": 6840, "observed_count": 6932, "pending": 7084, "processing": 1, "lag": 2950, "pool_waiting": 0}
+run-1 requests stopped; observing drain
+run-1 {"history": 9241, "observed_count": 9345, "pending": 2873, "processing": 1, "lag": 4785, "pool_waiting": 0}
+run-1 {"history": 11957, "observed_count": 12062, "pending": 0, "processing": 0, "lag": 4940, "pool_waiting": 0}
+run-1 {"history": 15073, "observed_count": 15222, "pending": 0, "processing": 0, "lag": 1778, "pool_waiting": 0}
+run-1 {"history": 17002, "observed_count": 17002, "pending": 0, "processing": 0, "lag": 0, "pool_waiting": 0}
+run-1 {"history": 17002, "observed_count": 17002, "pending": 0, "processing": 0, "lag": 0, "pool_waiting": 0}
+run-1 final DB snapshot and baseline consistency passed
+run-2 load started coupon=2
+run-2 {"history": 1458, "observed_count": 1457, "pending": 1, "processing": 0, "lag": 7, "pool_waiting": 0}
+run-2 {"history": 3535, "observed_count": 3534, "pending": 9803, "processing": 1, "lag": 416, "pool_waiting": 0}
+run-2 {"history": 6674, "observed_count": 6844, "pending": 4913, "processing": 1, "lag": 3724, "pool_waiting": 0}
+run-2 {"history": 9972, "observed_count": 10147, "pending": 0, "processing": 0, "lag": 6856, "pool_waiting": 0}
+run-2 requests stopped; observing drain
+run-2 {"history": 14587, "observed_count": 14747, "pending": 0, "processing": 0, "lag": 2255, "pool_waiting": 0}
+run-2 {"history": 17003, "observed_count": 17003, "pending": 0, "processing": 0, "lag": 0, "pool_waiting": 0}
+run-2 {"history": 17003, "observed_count": 17003, "pending": 0, "processing": 0, "lag": 0, "pool_waiting": 0}
+run-2 final DB snapshot and baseline consistency passed
