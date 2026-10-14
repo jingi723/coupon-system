@@ -1,6 +1,8 @@
 package com.assignment.coupon_system.issuerequest.recovery;
 
 import com.assignment.coupon_system.CouponSystemApplication;
+import com.assignment.coupon_system.coupon.redis.CouponIssueRedisService;
+import com.assignment.coupon_system.issuerequest.producer.CouponIssueProducer;
 import com.assignment.coupon_system.issuerequest.consumer.CouponIssueConsumer;
 import com.assignment.coupon_system.issuerequest.dto.CouponIssueMessage;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -54,12 +56,14 @@ public class RecoveryTestApplication {
         }
 
         @Bean
-        static RecoveryProbe recoveryProbe() {
-            return new RecoveryProbe();
+        static RecoveryProbe recoveryProbe(org.springframework.data.redis.core.StringRedisTemplate template) {
+            return new RecoveryProbe(template);
         }
     }
 
     static class RecoveryProbe implements BeanPostProcessor, Ordered {
+        final org.springframework.data.redis.core.StringRedisTemplate template;
+        RecoveryProbe(org.springframework.data.redis.core.StringRedisTemplate template){this.template=template;}
         @Override
         public int getOrder() {
             // KafkaListener 등록 전에 감싸야 실제 Listener가 이 프록시를 호출한다.
@@ -79,6 +83,39 @@ public class RecoveryTestApplication {
                             return rec;
                         });
             }
+            if (Boolean.getBoolean("relay.prepare.lua") && bean instanceof CouponIssueRedisService service) {
+                bean = new com.assignment.coupon_system.issuerequest.profiling.LuaReservationPreparation(template).wrap(service);
+            }
+            String boundary = System.getProperty("recovery.hold.boundary");
+            if (bean instanceof CouponIssueRedisService && "after-claim".equals(boundary)) {
+                ProxyFactory proxy = new ProxyFactory(bean);
+                proxy.setProxyTargetClass(true);
+                proxy.addAdvice((MethodInterceptor) invocation -> {
+                    Object result = invocation.proceed();
+                    if (invocation.getMethod().getName().equals(Boolean.getBoolean("relay.prepare.lua") ? "peekProcessingReservation" : "claimPendingReservation")
+                            && System.getProperty("recovery.hold.request").equals(result)) {
+                        holdBoundary(boundary, (String) result);
+                    }
+                    return result;
+                });
+                return proxy.getProxy();
+            }
+            if (bean instanceof CouponIssueProducer && "after-kafka-ack".equals(boundary)) {
+                ProxyFactory proxy = new ProxyFactory(bean);
+                proxy.setProxyTargetClass(true);
+                proxy.addAdvice((MethodInterceptor) invocation -> {
+                    Object result = invocation.proceed();
+                    if (invocation.getMethod().getName().equals("send")) {
+                        var message = (CouponIssueMessage) invocation.getArguments()[0];
+                        if (message.requestId().equals(System.getProperty("recovery.hold.request"))) {
+                            // Producer.send의 Future.get 성공 이후이며 Relay의 LREM 이전이다.
+                            holdBoundary(boundary, message.requestId());
+                        }
+                    }
+                    return result;
+                });
+                return proxy.getProxy();
+            }
             if (bean instanceof CouponIssueConsumer) {
                 ProxyFactory proxy = new ProxyFactory(bean);
                 proxy.setProxyTargetClass(true);
@@ -86,7 +123,8 @@ public class RecoveryTestApplication {
                     Object result = invocation.proceed();
                     if (invocation.getMethod().getName().equals("consume")) {
                         CouponIssueMessage message = (CouponIssueMessage) invocation.getArguments()[0];
-                        if (message.requestId().equals(System.getProperty("recovery.hold.request"))) {
+                        if (message.requestId().equals(System.getProperty("recovery.hold.request"))
+                                && (boundary == null || "after-db-commit".equals(boundary))) {
                             // 실제 Consumer 메서드는 DB 서비스의 커밋 이후 반환했다.
                             // Kafka 컨테이너로는 아직 반환하지 않아 RECORD offset 커밋 이전이다.
                             record("after-db-commit.jsonl", Map.of("requestId", message.requestId(),
@@ -100,6 +138,12 @@ public class RecoveryTestApplication {
             }
             return bean;
         }
+    }
+
+    static void holdBoundary(String boundary, String requestId) throws InterruptedException {
+        record("relay-boundary.jsonl", Map.of("boundary", boundary, "requestId", requestId,
+                "pid", ProcessHandle.current().pid()));
+        new CountDownLatch(1).await();
     }
 
     @RestController

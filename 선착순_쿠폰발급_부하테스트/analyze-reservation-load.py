@@ -96,6 +96,7 @@ for s in stats:
         role=next((k for k in ['mysql','redis','kafka'] if infra[k]['id'].startswith(r['ID'])),r['Name'])
         container_cpu[role].append(float(r['CPUPerc'].rstrip('%')))
 result=dict(
+    timing_valid=base['timing_valid'],
     planned=17000, sent=len(requests), dropped_by_scenario=base['dropped_by_scenario'],
     scheduling_note='Boundary scheduling may add a few iterations; report actual counts, not planned-minus-sent as dropped.',
     all=aggregate(requests), actual_send_phases={k:aggregate([r for r in requests if r['phase']==k]) for k in ['baseline','burst','recovery','after_60s']},

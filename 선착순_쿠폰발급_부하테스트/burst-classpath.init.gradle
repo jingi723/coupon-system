@@ -1,0 +1,10 @@
+// ./gradlew -I 선착순_쿠폰발급_부하테스트/burst-classpath.init.gradle classes writeBurstClasspath
+allprojects {
+    tasks.register('writeBurstClasspath') {
+        doLast {
+            def target = file('build/burst-classpath.txt')
+            target.parentFile.mkdirs()
+            target.text = sourceSets.main.runtimeClasspath.asPath
+        }
+    }
+}
