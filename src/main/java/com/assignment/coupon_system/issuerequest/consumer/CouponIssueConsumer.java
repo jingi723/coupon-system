@@ -2,10 +2,8 @@ package com.assignment.coupon_system.issuerequest.consumer;
 
 import com.assignment.coupon_system.coupon.redis.CouponIssueRedisService;
 import com.assignment.coupon_system.coupon.redis.CouponReservation;
-import com.assignment.coupon_system.coupon.redis.CouponReservationStatus;
 import com.assignment.coupon_system.issuerequest.config.CouponKafkaConfig;
 import com.assignment.coupon_system.issuerequest.dto.CouponIssueMessage;
-import com.assignment.coupon_system.issuerequest.entity.CouponIssueResult;
 import com.assignment.coupon_system.issuerequest.service.CouponIssueProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -18,8 +16,19 @@ public class CouponIssueConsumer {
     private final CouponIssueProcessor processor;
     private final CouponIssueRedisService redisService;
 
-    @KafkaListener(topics = CouponKafkaConfig.ISSUE_TOPIC)
+    @KafkaListener(topics = CouponKafkaConfig.ISSUE_TOPIC,
+            autoStartup = "#{!${coupon.consumer.batch-enabled:false} && ${spring.kafka.listener.auto-startup:true}}")
     public void consume(CouponIssueMessage message) {
+        CouponReservation reservation = validateReservation(message);
+        processor.processReserved(
+                reservation.requestId(),
+                reservation.couponId(),
+                reservation.userId(),
+                reservation.reservedAt()
+        );
+    }
+
+    public CouponReservation validateReservation(CouponIssueMessage message) {
         if(message == null
                 || message.requestId() == null
                 || message.receivedAt() == null) {
@@ -35,11 +44,6 @@ public class CouponIssueConsumer {
                     + message.requestId());
         }
 
-        processor.processReserved(
-                reservation.requestId(),
-                reservation.couponId(),
-                reservation.userId(),
-                reservation.reservedAt()
-        );
+        return reservation;
     }
 }

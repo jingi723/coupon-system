@@ -41,6 +41,8 @@ spring:
       concurrency: 1
 
 coupon:
+  consumer:
+    batch-enabled: ${COUPON_BATCH_ENABLED:false}
   relay:
     enabled: ${COUPON_RELAY_ENABLED:false}
   legacy:
