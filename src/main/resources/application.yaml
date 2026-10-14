@@ -39,3 +39,9 @@ spring:
     listener:
       ack-mode: record
       concurrency: 1
+
+coupon:
+  relay:
+    enabled: ${COUPON_RELAY_ENABLED:false}
+  legacy:
+    enabled: false
