@@ -5,5 +5,6 @@ public enum CouponReservationStatus {
     ALREADY_RESERVED,
     DUPLICATE_USER,
     SOLD_OUT,
-    REQUEST_CONFLICT
+    REQUEST_CONFLICT,
+    NOT_AVAILABLE
 }

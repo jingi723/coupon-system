@@ -1,16 +1,12 @@
 package com.assignment.coupon_system.coupon.redis;
 
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.consumer.StickyAssignor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.LongPredicate;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +32,7 @@ public class CouponIssueRedisService {
             """;
 
     private static final DefaultRedisScript<Long> RESERVE_SCRIPT =
+
             new DefaultRedisScript<>("""
                     -- KEYS[1]: 쿠폰 재고 (String)
                     -- KEYS[2]: 신청한 사용자 (Set)
@@ -49,9 +46,9 @@ public class CouponIssueRedisService {
                     
                     -- 쓰기 전에 키자료형을 검사한다.
                     
-                    local expectedTypes = {'string', 'set', 'hash', 'list'}
+                    local expectedTypes = {'string', 'set', 'hash', 'list', 'hash'}
                     
-                    for i = 1, 4 do
+                    for i = 1, 5 do
                         local actualType = redis.call('TYPE', KEYS[i]).ok
                         
                         if actualType ~= 'none'
@@ -70,6 +67,48 @@ public class CouponIssueRedisService {
                         end
                         
                         return -3
+                    end
+                    
+                    -- 신규 신청에만 예약 정책을 정용한다.
+                    if redis.call('EXISTS', KEYS[5]) == 0 then
+                        return -5
+                    end
+                    
+                    local status = redis.call('HGET', KEYS[5], 'status')
+                    local startAt = tonumber(redis.call('HGET', KEYS[5], 'startAtMillis'))
+                    local endAt = tonumber(redis.call('HGET', KEYS[5], 'endAtMillis'))
+                    
+                    local policyVersion = redis.call('HGET', KEYS[5], 'version')
+                    
+                    if not policyVersion
+                        or not string.match(policyVersion, '^[1-9]%d*$')
+                        or tonumber(policyVersion) > 2147483647 then
+                        return redis.error_reply('Invalid reservation policy version')
+                    end
+                    
+                    if not status or not startAt or not endAt then
+                        return redis.error_reply('Missing or invalid reservation policy')
+                    end
+                    
+                    if startAt ~= math.floor(startAt)
+                        or endAt ~= math.floor(endAt)
+                        or startAt >= endAt then
+                        return redis.error_reply('Invalid reservation period')
+                    end
+                    
+                    if status ~= 'ACTIVE' then
+                        return -6
+                    end
+                    
+                    -- Redis 서버의 현재 시각: 초 + 마이크로초
+                    local currentTime = redis.call('TIME')
+                    local nowMillis =
+                        tonumber(currentTime[1]) * 1000
+                        + math.floor(tonumber(currentTime[2]) / 1000)
+                    
+                    -- 시작 시각 이상, 종료 시각 미만
+                    if nowMillis < startAt or nowMillis >= endAt then
+                        return -6
                     end
                     
                     -- 2. 다른 requestId로 같은 사용자가 신청했는지 확인
@@ -103,7 +142,8 @@ public class CouponIssueRedisService {
                         'requestId', ARGV[1],
                         'couponId', ARGV[2],
                         'userId', ARGV[3],
-                        'reservedAt', ARGV[4]
+                        'reservedAtMillis', string.format('%.0f', nowMillis),
+                        'policyVersion', policyVersion
                     )
                     
                     -- 6. Kafka 전달 대기 목록에 등록
@@ -116,6 +156,33 @@ public class CouponIssueRedisService {
             new DefaultRedisScript<>("""
                     return redis.call('LMOVE', KEYS[1], KEYS[2], 'LEFT', 'RIGHT')
                     """, String.class);
+
+    private static final DefaultRedisScript<Long> INITIALIZE_RESERVATION_SCRIPT =
+            new DefaultRedisScript<>("""
+                    -- KEYS[1]: 예약 정책 Hash
+                    -- KEYS[2]: 예약 가능한 재고
+                    -- KEYS[3]: 신청 사용자 SET
+                    
+                    -- ARGV[1]: 초기재고
+                    -- ARGV[2]: 시작 시각(epoch milliseconds)
+                    -- ARGV[3]: 종료 시각(epoch milliseconds
+                    
+                    -- 기존 데이터가 있으면 초기화하지 않는다.
+                    if redis.call('EXISTS', KEYS[1], KEYS[2], KEYS[3]) > 0 then
+                        return 0
+                    end
+                    
+                    redis.call('HSET', KEYS[1],
+                        'status', 'ACTIVE',
+                        'startAtMillis', ARGV[2],
+                        'endAtMillis', ARGV[3],
+                        'version', '1'
+                    )
+                    
+                    redis.call('SET', KEYS[2], ARGV[1])
+                    
+                    return 1
+                    """, Long.class);
 
     public String claimPendingReservation() {
         return redisTemplate.execute(
@@ -177,12 +244,12 @@ public class CouponIssueRedisService {
                         CouponRedisKey.stock(couponId),
                         CouponRedisKey.issueUsers(couponId),
                         CouponRedisKey.reservation(nomalizedRequestId),
-                        CouponRedisKey.pendingReservations()
+                        CouponRedisKey.pendingReservations(),
+                        CouponRedisKey.reservationPolicy(couponId)
                 ),
                 nomalizedRequestId,
                 couponId.toString(),
-                userId.toString(),
-                Instant.now().toString()
+                userId.toString()
         );
 
         if (result == null) {
@@ -200,46 +267,119 @@ public class CouponIssueRedisService {
                     "Redis 재고가 초기화되지 않았습니다. couponId=" + couponId
             );
         }
-
-        throw new IllegalStateException("알 수 없는 Redis 예약 결과: " + result);
-    }
-
-    public CouponReservation findReservation(String requestId) {
-        String key = CouponRedisKey.reservation(requestId);
-
-        Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
-
-        if(values.isEmpty()) {
+        if(result == -5L) {
             throw new IllegalStateException(
-                    "예약 정보가 없습니다. requestId=" + requestId
+                    "Redis 예약 정책이 초기화되지 않았습니다. couponId=" + couponId
             );
         }
+        if(result == -6L) {
+            return CouponReservationStatus.NOT_AVAILABLE;
+        }
 
-        for (String field : List.of(
-                "requestId", "couponId", "userId", "reservedAt"
+            throw new IllegalStateException("알 수 없는 Redis 예약 결과: " + result);
+    }
+
+    // Consumer Relay: 예약이 존재해야 한다.
+    public CouponReservation findReservation(String requestId) {
+        return findReservationIfPresent(requestId)
+                .orElseThrow(()-> new IllegalStateException(
+                        "예약 정보가 없습니다. requestId=" + requestId
+                ));
+    }
+
+    public Optional<CouponReservation> findReservationIfPresent(
+            String requestId
+    ) {
+        String key = CouponRedisKey.reservation(requestId);
+
+        Map<Object, Object> values =
+                redisTemplate.opsForHash().entries(key);
+
+        if(values.isEmpty()) {
+            return Optional.empty();
+        }
+
+        for(String field : List.of(
+                "requestId",
+                "couponId",
+                "userId",
+                "reservedAtMillis",
+                "policyVersion"
         )) {
             if(!values.containsKey(field)) {
                 throw new IllegalStateException(
-                        "예약 필드가 누락됐습니다. requestId=" + requestId + ", field=" + field
+                        "예약 필드가 누락됐습니다. requestId="
+                            + requestId + ", field=" + field
                 );
             }
         }
 
-        String storedRequestId = (String) values.get("requestId");
+        String storeRequestId = (String) values.get("requestId");
 
-        if(!requestId.equals(storedRequestId)) {
+        if(!requestId.equals(storeRequestId)) {
             throw new IllegalStateException(
                     "예약 requestId가 일치하지 않습니다. requestId=" + requestId
             );
         }
 
-        return new CouponReservation(
-                storedRequestId,
-                Long.parseLong((String) values.get("couponId")),
-                Long.parseLong((String) values.get("userId")),
-                Instant.parse((String) values.get("reservedAt"))
-        );
+        try {
+            CouponReservation reservation = new CouponReservation(
+                    storeRequestId,
+                    Long.parseLong((String) values.get("couponId")),
+                    Long.parseLong((String) values.get("userId")),
+                    Instant.ofEpochMilli(
+                            Long.parseLong((String) values.get("reservedAtMillis"))
+                    ),
+                    Long.parseLong((String) values.get("policyVersion"))
+            );
+
+            return Optional.of(reservation);
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException(
+                    "예약 숫자 필드가 잘못됐습니다. requestId=" + requestId, e
+            );
+        }
     }
+
+//    public CouponReservation findReservation(String requestId) {
+//        String key = CouponRedisKey.reservation(requestId);
+//
+//        Map<Object, Object> values = redisTemplate.opsForHash().entries(key);
+//
+//        if(values.isEmpty()) {
+//            throw new IllegalStateException(
+//                    "예약 정보가 없습니다. requestId=" + requestId
+//            );
+//        }
+//
+//        for (String field : List.of(
+//                "requestId", "couponId", "userId", "reservedAtMillis", "policyVersion"
+//        )) {
+//            if(!values.containsKey(field)) {
+//                throw new IllegalStateException(
+//                        "예약 필드가 누락됐습니다. requestId=" + requestId + ", field=" + field
+//                );
+//            }
+//        }
+//
+//        String storedRequestId = (String) values.get("requestId");
+//
+//        if(!requestId.equals(storedRequestId)) {
+//            throw new IllegalStateException(
+//                    "예약 requestId가 일치하지 않습니다. requestId=" + requestId
+//            );
+//        }
+//
+//        return new CouponReservation(
+//                storedRequestId,
+//                Long.parseLong((String) values.get("couponId")),
+//                Long.parseLong((String) values.get("userId")),
+//                Instant.ofEpochMilli(
+//                            Long.parseLong((String) values.get("reservedAtMillis"))
+//                ),
+//                Long.parseLong((String) values.get("policyVersion"))
+//        );
+//    }
 
     public void completeDelivery(String requestId) {
         if(requestId == null || requestId.isBlank()) {
@@ -264,5 +404,57 @@ public class CouponIssueRedisService {
                 CouponRedisKey.processingReservations(),
                 0
         );
+    }
+
+    public boolean initializeReservation(
+            Long couponId,
+            int totalQuantity,
+            Instant startAt,
+            Instant endAt
+    ) {
+        if(couponId == null || couponId <= 0) {
+            throw new IllegalArgumentException("양수인 couponId가 필요합니다.");
+        }
+
+        if(totalQuantity <= 0) {
+            throw new IllegalArgumentException("초기 재고는 양수여야 합니다.");
+        }
+
+        if(startAt == null || endAt == null || !startAt.isBefore((endAt))) {
+            throw new IllegalArgumentException("시작 시각은 종료시각보다 빨라야 합니다.");
+        }
+
+        long startMillis = startAt.toEpochMilli();
+        long endMillis = endAt.toEpochMilli();
+
+        if(startMillis >= endMillis) {
+            throw new IllegalArgumentException("밀리초 기준으로 시작 시각과 종료 시각을 구분해야 합니다.");
+        }
+
+        Long result = redisTemplate.execute(
+                INITIALIZE_RESERVATION_SCRIPT,
+                List.of(
+                        CouponRedisKey.reservationPolicy(couponId),
+                        CouponRedisKey.stock(couponId),
+                        CouponRedisKey.issueUsers(couponId)
+                ),
+                Integer.toString(totalQuantity),
+                Long.toString(startMillis),
+                Long.toString(endMillis)
+        );
+
+        if(result == null) {
+            throw new IllegalStateException("Redis 초기화 결과가 없습니다.");
+        }
+
+        if(result == 1L) {
+            return true;
+        }
+
+        if(result == 0L) {
+            return false;
+        }
+
+        throw new IllegalStateException("알 수 없는 초기화 결과: " + result);
     }
 }

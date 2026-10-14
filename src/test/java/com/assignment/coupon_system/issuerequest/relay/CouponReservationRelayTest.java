@@ -12,6 +12,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.*;
@@ -46,8 +47,9 @@ class CouponReservationRelayTest {
     @BeforeEach
     void setUp() {
         try (var c = factory.getConnection()) { c.serverCommands().flushDb(); }
-        redis.opsForValue().set(CouponRedisKey.stock(1L), "10");
         service = new CouponIssueRedisService(redis);
+        assertThat(service.initializeReservation(1L, 10,
+                Instant.now().minusSeconds(3600), Instant.now().plusSeconds(3600))).isTrue();
         producer = mock(CouponIssueProducer.class);
         relay = new CouponReservationRelay(service, producer);
     }
@@ -188,7 +190,7 @@ class CouponReservationRelayTest {
 
     private void assertReservationPreserved(CouponIssueMessage message) {
         assertThat(service.findReservation(message.requestId())).isEqualTo(new CouponReservation(
-                message.requestId(), message.couponId(), message.userId(), message.receivedAt()));
+                message.requestId(), message.couponId(), message.userId(), message.receivedAt(), 1L));
         assertThat(redis.opsForValue().get(CouponRedisKey.stock(1L))).isEqualTo("9");
         assertThat(redis.opsForSet().members(CouponRedisKey.issueUsers(1L)))
                 .containsExactly(message.userId().toString());

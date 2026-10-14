@@ -6,6 +6,7 @@ public record CouponReservation(
         String requestId,
         Long couponId,
         Long userId,
-        Instant reservedAt
+        Instant reservedAt,
+        long policyVersion
 ) {
 }

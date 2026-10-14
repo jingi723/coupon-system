@@ -26,4 +26,9 @@ public final class CouponRedisKey {
     public static String processingReservations() {
         return "coupon:reservation:processing";
     }
+
+    // 쿠폰 예약 접수 정책을 저장하는 Hash
+    public static String reservationPolicy(Long couponId) {
+        return "coupon:" + couponId + ":reservation-policy";
+    }
 }
