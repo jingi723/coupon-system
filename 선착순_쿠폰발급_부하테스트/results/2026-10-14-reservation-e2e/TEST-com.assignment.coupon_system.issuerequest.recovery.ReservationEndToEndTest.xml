@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.assignment.coupon_system.issuerequest.recovery.ReservationEndToEndTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2026-10-14T02:38:17.113Z" hostname="gimjingiui-MacBookPro.local" time="10.1">
+  <properties/>
+  <testcase name="redisKeepsReservationsAcrossRestartAndCrashRecreation()" classname="com.assignment.coupon_system.issuerequest.recovery.ReservationEndToEndTest" time="1.765"/>
+  <testcase name="httpReservationsSurviveRedisCrashAndReachDbThroughRealRelayAndKafka()" classname="com.assignment.coupon_system.issuerequest.recovery.ReservationEndToEndTest" time="8.333"/>
+  <system-out><![CDATA[11:38:08.975 [Test worker] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+11:38:08.977 [Test worker] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+11:38:09.032 [Test worker] INFO org.testcontainers.DockerClientFactory -- Testcontainers version: 1.21.4
+11:38:09.098 [Test worker] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+11:38:09.185 [Test worker] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+11:38:09.186 [Test worker] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+11:38:09.195 [Test worker] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 29.5.3
+  API Version: 1.54
+  Operating System: Docker Desktop
+  Total Memory: 7935 MB
+  Labels: 
+    com.docker.desktop.address=unix:///Users/jingi723/Library/Containers/com.docker.docker/Data/docker-cli.sock
+11:38:09.435 [Test worker] INFO tc.testcontainers/ryuk:0.12.0 -- Creating container for image: testcontainers/ryuk:0.12.0
+11:38:09.524 [Test worker] INFO org.testcontainers.utility.RegistryAuthLocator -- Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
+11:38:09.576 [Test worker] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 is starting: f68919da8b6a96fc101f123e8f538e85ce7bab3458890007ef5bcc4bbdb3d497
+11:38:09.716 [Test worker] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 started in PT0.281684S
+11:38:09.719 [Test worker] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+11:38:09.719 [Test worker] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+11:38:09.719 [Test worker] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+11:38:09.719 [Test worker] INFO tc.apache/kafka:3.7.0 -- Creating container for image: apache/kafka:3.7.0
+11:38:09.750 [Test worker] INFO tc.apache/kafka:3.7.0 -- Container apache/kafka:3.7.0 is starting: be3399518d47b4567c35da9e44cbd9dd2b1401b2b15c9a48b4fa44729b8ef353
+11:38:11.473 [Test worker] INFO tc.apache/kafka:3.7.0 -- Container apache/kafka:3.7.0 started in PT1.753976S
+11:38:11.474 [Test worker] INFO tc.mysql:8.0 -- Creating container for image: mysql:8.0
+11:38:11.513 [Test worker] INFO tc.mysql:8.0 -- Container mysql:8.0 is starting: de7d52fed76504b0efe07c2b9692cbf52c3ad50e935a77dfefaf1b580f403a55
+11:38:11.633 [Test worker] INFO tc.mysql:8.0 -- Waiting for database connection to become available at jdbc:mysql://localhost:53467/test using query 'SELECT 1'
+11:38:16.847 [Test worker] INFO tc.mysql:8.0 -- Container mysql:8.0 started in PT5.372487S
+11:38:16.847 [Test worker] INFO tc.mysql:8.0 -- Container is started (JDBC URL: jdbc:mysql://localhost:53467/test)
+11:38:16.856 [Test worker] INFO tc.redis:7-alpine -- Creating container for image: redis:7-alpine
+11:38:16.893 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine is starting: d9047001a1eac8d51d1ab93725fa333cf869e185e767113d4ec78d87899f946e
+11:38:17.065 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine started in PT0.209533S
+11:38:17.546 [Test worker] INFO org.apache.kafka.clients.admin.AdminClientConfig -- AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [localhost:53461]
+	client.dns.lookup = use_all_dns_ips
+	client.id = 
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+11:38:17.584 [Test worker] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka version: 3.9.2
+11:38:17.584 [Test worker] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka commitId: 5e9866f43ab8e7e4
+11:38:17.584 [Test worker] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka startTimeMs: 1791945497583
+11:38:18.396 [Test worker] INFO tc.redis:7-alpine -- Creating container for image: redis:7-alpine
+11:38:18.440 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine is starting: c9609d7904a4fd5ace1382673c84bf93780b10f0a56251bf2d1dc2b7d15cf47c
+11:38:18.602 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine started in PT0.20647S
+11:38:18.763 [kafka-admin-client-thread | adminclient-1] INFO org.apache.kafka.common.utils.AppInfoParser -- App info kafka.admin.client for adminclient-1 unregistered
+11:38:18.765 [kafka-admin-client-thread | adminclient-1] INFO org.apache.kafka.common.metrics.Metrics -- Metrics scheduler closed
+11:38:18.765 [kafka-admin-client-thread | adminclient-1] INFO org.apache.kafka.common.metrics.Metrics -- Closing reporter org.apache.kafka.common.metrics.JmxReporter
+11:38:18.765 [kafka-admin-client-thread | adminclient-1] INFO org.apache.kafka.common.metrics.Metrics -- Metrics reporters closed
+11:38:18.997 [Test worker] INFO org.apache.kafka.clients.admin.AdminClientConfig -- AdminClientConfig values: 
+	auto.include.jmx.reporter = true
+	bootstrap.controllers = []
+	bootstrap.servers = [localhost:53461]
+	client.dns.lookup = use_all_dns_ips
+	client.id = 
+	connections.max.idle.ms = 300000
+	default.api.timeout.ms = 60000
+	enable.metrics.push = true
+	metadata.max.age.ms = 300000
+	metadata.recovery.strategy = none
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	receive.buffer.bytes = 65536
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.header.urlencode = false
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+
+11:38:19.002 [Test worker] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka version: 3.9.2
+11:38:19.003 [Test worker] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka commitId: 5e9866f43ab8e7e4
+11:38:19.003 [Test worker] INFO org.apache.kafka.common.utils.AppInfoParser -- Kafka startTimeMs: 1791945499002
+11:38:22.518 [Test worker] INFO tc.redis:7-alpine -- Creating container for image: redis:7-alpine
+11:38:22.569 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine is starting: 53c26ab2b6fbac77f6fda1e0684f3bda9cfe0e3d1ac5989c1ba5a92ec52741df
+11:38:22.726 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine started in PT0.208121S
+11:38:27.106 [kafka-admin-client-thread | adminclient-2] INFO org.apache.kafka.common.utils.AppInfoParser -- App info kafka.admin.client for adminclient-2 unregistered
+11:38:27.108 [kafka-admin-client-thread | adminclient-2] INFO org.apache.kafka.common.metrics.Metrics -- Metrics scheduler closed
+11:38:27.108 [kafka-admin-client-thread | adminclient-2] INFO org.apache.kafka.common.metrics.Metrics -- Closing reporter org.apache.kafka.common.metrics.JmxReporter
+11:38:27.108 [kafka-admin-client-thread | adminclient-2] INFO org.apache.kafka.common.metrics.Metrics -- Metrics reporters closed
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

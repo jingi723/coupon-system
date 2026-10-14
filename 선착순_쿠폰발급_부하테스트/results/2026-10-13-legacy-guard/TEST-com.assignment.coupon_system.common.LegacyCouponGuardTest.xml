@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.assignment.coupon_system.common.LegacyCouponGuardTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2026-10-13T12:56:19.016Z" hostname="gimjingiui-MacBookPro.local" time="0.837">
+  <properties/>
+  <testcase name="[1] path=init" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.671"/>
+  <testcase name="[2] path=issue" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.002"/>
+  <testcase name="[3] path=issueCoupon" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.001"/>
+  <testcase name="[4] path=createIssued" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.001"/>
+  <testcase name="[5] path=process" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.001"/>
+  <testcase name="[1] setting=absent" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.14"/>
+  <testcase name="[2] setting=false" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.006"/>
+  <testcase name="[3] setting=true" classname="com.assignment.coupon_system.common.LegacyCouponGuardTest" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

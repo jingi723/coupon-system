@@ -1,0 +1,12 @@
+{
+  "tests": 2,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "approved": 3,
+  "issued": 3,
+  "lag": 0,
+  "normalRestart": "passed",
+  "crashRecreationSameVolume": "passed",
+  "firstAttempt": "test reconnect failed; refreshed Docker port and readiness wait"
+}

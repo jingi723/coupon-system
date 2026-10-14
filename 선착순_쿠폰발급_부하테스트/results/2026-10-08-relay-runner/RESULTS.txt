@@ -1,0 +1,21 @@
+Relay 반복 작업자 검증 — 2026-10-08
+신규 Runner9개 + 기존 Redis48/Relay9/DB Processor9/승인 DB 연결12 = 선택한87개 전부 통과.
+실패/오류/건너뜀0. 전체 프로젝트 테스트 통과라는 의미는 아니다.
+
+Runner: Relay 대역 + 실제 Java 작업 스레드.
+성공 연속 호출, 빈 큐100ms 대기(최소80ms 허용 오차, 상한 성능 주장은 하지 않음),
+예외 후300ms 동안 추가 호출 없음, resume 후 재시도 및 재실패 시 다시 중단,
+중복 run 호출에도 하나의 worker, 전송 대기 인터럽트 종료, 실행 전 resume 차단,
+Spring 컨텍스트 종료 시 PreDestroy로 worker 종료 확인.
+실제 application.yaml 파싱 후 coupon.relay.enabled 최상위 키 검증,
+환경 변수 대체값 미설정/false/true에 따른 조건부 빈 생성3경우 통과.
+ContextRunner는 ApplicationRunner를 자동 실행하지 않으므로 종료 테스트는 run을 명시 호출했다.
+
+기존 테스트: 실제 격리 Redis/MySQL, Producer 대역/Consumer 직접 호출 범위.
+Runner의 실제 Kafka 전송·HTTP 연결·프로세스 강제 종료·Redis 내구성·전체 부하는 미검증.
+종료 테스트는 인터럽트에 반응하는 대역 기준이며 모든 네트워크 작업이10초 안에 끝난다는 보장은 아니다.
+서비스 코드/설정은 수정하지 않았다. 기존 컨테이너 유지, 테스트 컨테이너만 정리. 커밋/배포 없음.
+
+재현:
+./gradlew test --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest --tests com.assignment.coupon_system.issuerequest.consumer.ReservedCouponIssueIntegrationTest --tests com.assignment.coupon_system.issuerequest.service.CouponIssueProcessorTest --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest
+이번 환경은 GRADLE_USER_HOME=/tmp/coupon-gradle-home, 로컬 Gradle8.14.4 --no-daemon 사용.

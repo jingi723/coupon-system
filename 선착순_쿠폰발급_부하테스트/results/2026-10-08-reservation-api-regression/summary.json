@@ -1,0 +1,58 @@
+{
+  "classes": [
+    {
+      "class": "com.assignment.coupon_system.issuerequest.controller.CouponIssueRequestControllerTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "displayName": "com.assignment.coupon_system.issuerequest.controller.CouponIssueRequestControllerTest"
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "displayName": "단일 Relay 반복 실행·중단·재개·종료"
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.consumer.ReservedCouponIssueIntegrationTest",
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "displayName": "승인 예약 Consumer→DB 연결: 실제 Redis/MySQL, Kafka 전송 제외"
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.service.CouponIssueProcessorTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "displayName": "CouponIssueProcessor MySQL 통합 테스트"
+    },
+    {
+      "class": "com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest",
+      "tests": 48,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "displayName": "실제 Redis 예약 및 동시성 검증"
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "displayName": "Redis 전달 작업자 흐름 검증 — 실제 Redis, Producer 대역"
+    }
+  ],
+  "total": {
+    "tests": 102,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

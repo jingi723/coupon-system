@@ -1,0 +1,1 @@
+Test Redis container stopped and dedicated volume removed: coupon-reservation-test-ac2d0e8c-52b5-4b1b-ba1b-f2778aacdc00

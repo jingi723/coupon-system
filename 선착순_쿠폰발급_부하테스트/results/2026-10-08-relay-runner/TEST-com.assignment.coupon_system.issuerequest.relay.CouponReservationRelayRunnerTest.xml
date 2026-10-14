@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="단일 Relay 반복 실행·중단·재개·종료" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-08T05:31:40.530Z" hostname="gimjingiui-MacBookPro.local" time="1.101">
+  <properties/>
+  <testcase name="failurePausesUntilExplicitResumeAndShutdownStopsPausedWorker()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.731"/>
+  <testcase name="[1] flag=default" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.02"/>
+  <testcase name="[2] flag=false" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.005"/>
+  <testcase name="[3] flag=true" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.006"/>
+  <testcase name="cannotResumeBeforeStartAndShutdownBeforeStartIsSafe()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.001"/>
+  <testcase name="emptyQueueWaitsBeforePollingAgain()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.212"/>
+  <testcase name="continuesAfterEachSuccessfulDelivery()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.001"/>
+  <testcase name="closingSpringContextStopsWorkerThroughPreDestroy()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.11"/>
+  <testcase name="duplicateStartDoesNotCreateSecondWorkerAndShutdownInterruptsSend()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest" time="0.003"/>
+  <system-out><![CDATA[2026-10-08T14:31:40.620+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 시작합니다
+2026-10-08T14:31:40.623+09:00 ERROR 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달을 일시 중단합니다. 원인 해결후 재개하거나 앱을 재시작하세요.
+
+java.util.concurrent.TimeoutException: injected send timeout
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest.lambda$failurePausesUntilExplicitResumeAndShutdownStopsPausedWorker$2(CouponReservationRelayRunnerTest.java:79) ~[test/:na]
+	at org.mockito.internal.stubbing.StubbedInvocationMatcher.answer(StubbedInvocationMatcher.java:42) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.handler.MockHandlerImpl.handle(MockHandlerImpl.java:103) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.handler.NullResultGuardian.handle(NullResultGuardian.java:29) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.handler.InvocationNotifierHandler.handle(InvocationNotifierHandler.java:34) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.creation.bytebuddy.access.MockMethodInterceptor.doIntercept(MockMethodInterceptor.java:84) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.creation.bytebuddy.MockMethodAdvice.handle(MockMethodAdvice.java:136) ~[mockito-core-5.17.0.jar:na]
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelay.relayOne(CouponReservationRelay.java:24) ~[main/:na]
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunner.runLoop(CouponReservationRelayRunner.java:51) ~[main/:na]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+2026-10-08T14:31:41.150+09:00  INFO 92827 --- [coupon-system] [    Test worker] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달을 재개합니다.
+2026-10-08T14:31:41.234+09:00 ERROR 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달을 일시 중단합니다. 원인 해결후 재개하거나 앱을 재시작하세요.
+
+java.util.concurrent.TimeoutException: injected send timeout
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest.lambda$failurePausesUntilExplicitResumeAndShutdownStopsPausedWorker$2(CouponReservationRelayRunnerTest.java:79) ~[test/:na]
+	at org.mockito.internal.stubbing.StubbedInvocationMatcher.answer(StubbedInvocationMatcher.java:42) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.handler.MockHandlerImpl.handle(MockHandlerImpl.java:103) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.handler.NullResultGuardian.handle(NullResultGuardian.java:29) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.handler.InvocationNotifierHandler.handle(InvocationNotifierHandler.java:34) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.creation.bytebuddy.access.MockMethodInterceptor.doIntercept(MockMethodInterceptor.java:84) ~[mockito-core-5.17.0.jar:na]
+	at org.mockito.internal.creation.bytebuddy.MockMethodAdvice.handle(MockMethodAdvice.java:136) ~[mockito-core-5.17.0.jar:na]
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelay.relayOne(CouponReservationRelay.java:24) ~[main/:na]
+	at com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunner.runLoop(CouponReservationRelayRunner.java:51) ~[main/:na]
+	at java.base/java.lang.Thread.run(Thread.java:840) ~[na:na]
+
+2026-10-08T14:31:41.256+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 종료합니다.
+2026-10-08T14:31:41.304+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 시작합니다
+2026-10-08T14:31:41.515+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 종료합니다.
+2026-10-08T14:31:41.516+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 시작합니다
+2026-10-08T14:31:41.517+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 종료합니다.
+2026-10-08T14:31:41.521+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 시작합니다
+2026-10-08T14:31:41.627+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 종료합니다.
+2026-10-08T14:31:41.628+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 시작합니다
+2026-10-08T14:31:41.629+09:00  INFO 92827 --- [coupon-system] [servation-relay] c.a.c.i.r.CouponReservationRelayRunner   : 쿠폰 예약 전달 작업자를 종료합니다.
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

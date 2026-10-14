@@ -1,0 +1,10 @@
+{
+  "redisCommand" : [ "redis-server", "--dir", "/data", "--appendonly", "yes", "--appendfsync", "always", "--no-appendfsync-on-rewrite", "no" ],
+  "group" : "reservation-e2e-26c3dcdb-8338-464f-a80f-c2f6da6d5d84",
+  "mysqlContainer" : "de7d52fed76504b0efe07c2b9692cbf52c3ad50e935a77dfefaf1b580f403a55",
+  "queryPollMillis" : 200,
+  "kafkaContainer" : "be3399518d47b4567c35da9e44cbd9dd2b1401b2b15c9a48b4fa44729b8ef353",
+  "volume" : "coupon-reservation-test-ac2d0e8c-52b5-4b1b-ba1b-f2778aacdc00",
+  "httpTimeoutSeconds" : 5,
+  "redisContainer" : "d9047001a1eac8d51d1ab93725fa333cf869e185e767113d4ec78d87899f946e"
+}

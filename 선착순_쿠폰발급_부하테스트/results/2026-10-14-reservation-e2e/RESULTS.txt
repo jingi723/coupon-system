@@ -1,0 +1,28 @@
+Redis 보존 및 실제 전체 연결 — 2026-10-14
+선택한 신규2개 통과(실패/오류/건너뜀0), BUILD SUCCESSFUL in 22s.
+첫 실행: Redis 정상 재시작 후 테스트의 오래된 공개 포트/즉시 재연결 실패. 서비스 코드는 수정하지 않고 Docker inspect 재조회 및 준비 대기로 수정. attempt-1에 실패 XML/당시 자료 보존.
+
+1. 격리 Redis + 전용 named volume + AOF always
+예약2건 중 processing1/pending1, 재고8, 사용자2 및 정책/예약 Hash.
+정상 재시작, SIGKILL→컨테이너 제거→동일 볼륨 새 컨테이너에서 모든 키 DUMP 일치.
+같은 requestId 재시도 후에도 전체 키 일치.
+2. 별도 앱 JVM과 실제 HTTP/Redis/Relay/Kafka/MySQL
+HTTP 쿠폰 생성 후 테스트 fixture가 신규 initializeReservation 수행(행사 준비 API는 없음).
+HTTP 예약3건+동일ID 재요청, RESERVED 조회. 첫 예약 processing 이동은 fixture 직접 호출.
+앱 정상 종료 후 Redis SIGKILL/동일 볼륨 재생성: 승인 당시 전체 Redis 키 일치.
+Relay 활성 앱 재시작→pending/processing 해소→Kafka3건, Consumer 정지 중 DB0/조회 RESERVED.
+Consumer 재개→requestId 모두 ISSUED, 발급ID의 실제 이력/쿠폰/사용자 대응 확인.
+DB issuedQuantity=이력=ISSUED결과=3. Redis 재고7, 사용자3, 예약3, 두 대기열0. Kafka endOffset=committedOffset=3.
+완료 후 같은ID 재요청3건에도 승인시각 동일/추가 메시지·발급 없음. 기존 초기화/동기API409.
+
+조건: Redis7-alpine, MySQL8.0, Kafka3.7.0, 토픽1/파티션1/고유그룹, RECORD, 단일Relay/Consumer. Redis always 및 /data 전용볼륨.
+HTTP 자동 재시도 없음, 타임아웃5초, 완료 조회200ms. 요청별 HTTP 응답/소요시간은 http.jsonl. 성능 비교 실험은 아님.
+successful-run에 환경ID/승인스냅샷/최종DB/Redis/offset/전달레코드/앱로그/정리기록.
+정상 앱 재시작과 Redis 프로세스 장애 범위. 실제 Relay Kafka확인 직후 종료/DB장애/offset전 종료 및 폭주 시험은 후속.
+디스크/볼륨 유실·호스트 전원 장애는 검증하지 않음. 기존150개 회귀는 이번에 재실행하지 않음.
+테스트용 앱만 종료, Redis/MySQL/Kafka 테스트 컨테이너 및 전용 볼륨 정리. 기존 앱/컨테이너 유지.
+
+재현:
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon test --tests com.assignment.coupon_system.issuerequest.recovery.ReservationEndToEndTest
+
+검증 코드 커밋: 2ebbc89 (이전 기능·설정 커밋 포함).

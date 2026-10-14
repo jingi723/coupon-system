@@ -1,0 +1,14 @@
+사용자 구현 결과 조회 API 검증 — 2026-10-13
+선택한122개 통과, 실패/오류/건너뜀0.BUILD SUCCESSFUL in 52s.
+신규 조회 API14개 + 실제 Redis 조회6개 + 기존102개.
+DB 우선 ISSUED, Redis RESERVED, 없음/쿠폰 불일치404, 입력400, 조회·손상 오류503.
+DB 장애 시 Redis 우회 없음, DB 결과 존재 시 Redis 조회 없음, 재조회 RESERVED→ISSUED 확인.
+과거 DB REJECTED는 기존 저장 결과로만 반환. 조회에서 데이터 변경 없음.
+기존 보존 테스트를 재사용하여 현재 사용자 구현으로 실행했다. 서비스 코드는 변경하지 않았다.
+범위: MockMvc+실제 QueryService+DB/Redis 대역, 실제 격리 Redis/MySQL, Producer 대역과 Consumer 직접 호출.
+전체 프로젝트 또는 실제 HTTP 서버→Kafka→DB 통합/프로세스 장애/부하 시험 아님.
+첫 실행은 /tmp Gradle 캐시 metadata.bin 누락으로 테스트 전에 중단. groovy-dsl/transforms/workerMain을 백업 이름으로 옮기고 재생성해 성공.
+기존 앱/컨테이너 조작 및 커밋 없음.
+
+재현:
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon test --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest --tests com.assignment.coupon_system.issuerequest.consumer.ReservedCouponIssueIntegrationTest --tests com.assignment.coupon_system.issuerequest.controller.CouponIssueQueryControllerTest --tests com.assignment.coupon_system.issuerequest.controller.CouponIssueRequestControllerTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest --tests com.assignment.coupon_system.issuerequest.service.CouponIssueProcessorTest

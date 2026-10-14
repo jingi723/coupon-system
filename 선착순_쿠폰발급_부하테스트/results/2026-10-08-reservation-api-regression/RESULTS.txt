@@ -1,0 +1,18 @@
+예약 API 연결 후 회귀 검증 — 2026-10-08
+
+com.assignment.coupon_system.issuerequest.controller.CouponIssueRequestControllerTest: 15 tests, 0 failures, 0 errors, 0 skipped
+단일 Relay 반복 실행·중단·재개·종료: 9 tests, 0 failures, 0 errors, 0 skipped
+승인 예약 Consumer→DB 연결: 실제 Redis/MySQL, Kafka 전송 제외: 12 tests, 0 failures, 0 errors, 0 skipped
+CouponIssueProcessor MySQL 통합 테스트: 9 tests, 0 failures, 0 errors, 0 skipped
+실제 Redis 예약 및 동시성 검증: 48 tests, 0 failures, 0 errors, 0 skipped
+Redis 전달 작업자 흐름 검증 — 실제 Redis, Producer 대역: 9 tests, 0 failures, 0 errors, 0 skipped
+
+합계: {"tests": 102, "failures": 0, "errors": 0, "skipped": 0}
+BUILD SUCCESSFUL in 25s
+
+범위: API는 MockMvc와 Redis 서비스 대역, Runner는 Relay 대역과 실제 스레드. Redis/MySQL은 격리 Testcontainers이며 Relay의 Producer는 대역, Consumer는 메서드 직접 호출이다.
+전체 프로젝트 테스트 또는 실제 HTTP→Redis→Kafka→DB 통합·장애·부하 테스트 결과가 아니다.
+서비스 코드/설정 수정·커밋·기존 앱/컨테이너 조작 없음.
+
+재현 명령:
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon test --tests com.assignment.coupon_system.issuerequest.controller.CouponIssueRequestControllerTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest --tests com.assignment.coupon_system.issuerequest.consumer.ReservedCouponIssueIntegrationTest --tests com.assignment.coupon_system.issuerequest.service.CouponIssueProcessorTest --tests com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest --tests com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest

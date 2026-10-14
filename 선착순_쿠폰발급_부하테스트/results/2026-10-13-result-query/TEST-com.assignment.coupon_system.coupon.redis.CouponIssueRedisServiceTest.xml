@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="실제 Redis 예약 및 동시성 검증" tests="54" skipped="0" failures="0" errors="0" timestamp="2026-10-13T12:24:20.961Z" hostname="gimjingiui-MacBookPro.local" time="0.407">
+  <properties/>
+  <testcase name="missingStockIsInitializationError()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.187"/>
+  <testcase name="retryPreservesApprovalTimeAndVersionDespiteLaterPolicyChanges()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.019"/>
+  <testcase name="requestIdCannotBeReusedForAnotherUserOrCoupon()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.007"/>
+  <testcase name="retryAfterSoldOutPreservesOriginalReservation()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.004"/>
+  <testcase name="optionalLookupDoesNotHideMissingFields()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[1] scenario=text" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.007"/>
+  <testcase name="[2] scenario=fraction" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.004"/>
+  <testcase name="[3] scenario=reversed" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.004"/>
+  <testcase name="claimMovesOldestPendingAndPreservesReservation()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.007"/>
+  <testcase name="emptyPendingReturnsNullWithoutChangingProcessing()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="optionalLookupDistinguishesMissingAndExistingReservation()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.004"/>
+  <testcase name="differentRequestForSameUserIsRejected()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="concurrentRetriesReserveOnlyOnce()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.005"/>
+  <testcase name="reinitializationDoesNotOverwriteExistingData()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[1] field=couponId" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[2] field=userId" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.001"/>
+  <testcase name="[3] field=reservedAtMillis" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[4] field=policyVersion" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[1] remaining=policy" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[2] remaining=stock" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[3] remaining=users" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="invalidStockFailsWithoutCreatingReservation()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="invalidProcessingTypeDoesNotRemovePending()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.005"/>
+  <testcase name="mismatchedStoredRequestIdFailsWithoutRemovingProcessing()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.004"/>
+  <testcase name="soldOutDoesNotCreateReservation()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="wrongPendingTypeFailsBeforeStockIsChanged()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="missingPolicyFailsWithoutConsumingStock()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[1] field=requestId" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[2] field=couponId" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[3] field=userId" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[4] field=reservedAtMillis" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[5] field=policyVersion" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="retryOfAcceptedRequestStillWorksAfterPolicyExpires()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[1] version=missing" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.004"/>
+  <testcase name="[2] version=" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[3] version=0" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[4] version=-1" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[5] version=1.5" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[6] version=abc" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[7] version=01" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[8] version=2147483648" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="missingReservationFailsAndLeavesProcessingForInvestigation()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="concurrentUniqueRequestsCannotExceedStock()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.019"/>
+  <testcase name="initializesPolicyAndStockForNewCoupon()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.005"/>
+  <testcase name="findsAllReservationFieldsAfterClaimWithoutRemovingProcessing()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="sameMillisecondPeriodIsRejectedBeforeWriting()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.001"/>
+  <testcase name="[1] scenario=future" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[2] scenario=expired" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[3] scenario=inactive" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="createsReservationAndPendingTogether()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[1] field=status" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.003"/>
+  <testcase name="[2] field=startAtMillis" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="[3] field=endAtMillis" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.002"/>
+  <testcase name="concurrentClaimsMoveEachRequestOnlyOnce()" classname="com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest" time="0.007"/>
+  <system-out><![CDATA[21:24:19.873 [Test worker] INFO org.testcontainers.images.PullPolicy -- Image pull policy will be performed by: DefaultPullPolicy()
+21:24:19.875 [Test worker] INFO org.testcontainers.utility.ImageNameSubstitutor -- Image name substitution will be performed by: DefaultImageNameSubstitutor (composite of 'ConfigurationFileImageNameSubstitutor' and 'PrefixingImageNameSubstitutor')
+21:24:19.878 [Test worker] INFO org.testcontainers.DockerClientFactory -- Testcontainers version: 1.21.4
+21:24:19.937 [Test worker] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Loaded org.testcontainers.dockerclient.UnixSocketClientProviderStrategy from ~/.testcontainers.properties, will try it first
+21:24:20.014 [Test worker] INFO org.testcontainers.dockerclient.DockerClientProviderStrategy -- Found Docker environment with local Unix socket (unix:///var/run/docker.sock)
+21:24:20.014 [Test worker] INFO org.testcontainers.DockerClientFactory -- Docker host IP address is localhost
+21:24:20.023 [Test worker] INFO org.testcontainers.DockerClientFactory -- Connected to docker: 
+  Server Version: 29.5.3
+  API Version: 1.54
+  Operating System: Docker Desktop
+  Total Memory: 7935 MB
+  Labels: 
+    com.docker.desktop.address=unix:///Users/jingi723/Library/Containers/com.docker.docker/Data/docker-cli.sock
+21:24:20.275 [Test worker] INFO tc.testcontainers/ryuk:0.12.0 -- Creating container for image: testcontainers/ryuk:0.12.0
+21:24:20.386 [Test worker] INFO org.testcontainers.utility.RegistryAuthLocator -- Credential helper/store (docker-credential-desktop) does not have credentials for https://index.docker.io/v1/
+21:24:20.440 [Test worker] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 is starting: 6f4533c29d368d235004283511fa9cca677555a42fd3cf5eaae2c60f4703fa79
+21:24:20.594 [Test worker] INFO tc.testcontainers/ryuk:0.12.0 -- Container testcontainers/ryuk:0.12.0 started in PT0.318525S
+21:24:20.596 [Test worker] INFO org.testcontainers.utility.RyukResourceReaper -- Ryuk started - will monitor and terminate Testcontainers containers on JVM exit
+21:24:20.597 [Test worker] INFO org.testcontainers.DockerClientFactory -- Checking the system...
+21:24:20.597 [Test worker] INFO org.testcontainers.DockerClientFactory -- ✔︎ Docker server version should be at least 1.6.0
+21:24:20.597 [Test worker] INFO tc.redis:7-alpine -- Creating container for image: redis:7-alpine
+21:24:20.636 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine is starting: 306d2cf45002f2fb5aa1df7960fe4e24de19300805e37bb110be783347d9ba00
+21:24:20.820 [Test worker] INFO tc.redis:7-alpine -- Container redis:7-alpine started in PT0.223491S
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

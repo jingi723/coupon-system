@@ -1,0 +1,8 @@
+dir
+/data
+appendonly
+yes
+appendfsync
+always
+no-appendfsync-on-rewrite
+no

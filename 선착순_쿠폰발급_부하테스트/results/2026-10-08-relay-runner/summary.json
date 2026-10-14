@@ -1,0 +1,42 @@
+{
+  "issuerequest.relay.CouponReservationRelayRunnerTest": {
+    "tests": "9",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T05:31:40.530Z",
+    "time": "1.101"
+  },
+  "issuerequest.consumer.ReservedCouponIssueIntegrationTest": {
+    "tests": "12",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T05:31:37.255Z",
+    "time": "2.757"
+  },
+  "issuerequest.service.CouponIssueProcessorTest": {
+    "tests": "9",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T05:31:48.244Z",
+    "time": "0.264"
+  },
+  "coupon.redis.CouponIssueRedisServiceTest": {
+    "tests": "48",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T05:31:29.112Z",
+    "time": "0.464"
+  },
+  "issuerequest.relay.CouponReservationRelayTest": {
+    "tests": "9",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T05:31:41.857Z",
+    "time": "0.127"
+  }
+}

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Redis 전달 작업자 흐름 검증 — 실제 Redis, Producer 대역" tests="9" skipped="0" failures="0" errors="0" timestamp="2026-10-08T07:46:40.265Z" hostname="gimjingiui-MacBookPro.local" time="0.093">
+  <properties/>
+  <testcase name="missingReservationStopsBeforeSendingAndPreservesProcessing()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.029"/>
+  <testcase name="[1] type=execution" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.013"/>
+  <testcase name="[2] type=timeout" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.009"/>
+  <testcase name="[3] type=interrupted" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.009"/>
+  <testcase name="processingRemainsUntilSendReturns()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.005"/>
+  <testcase name="processingIsDeliveredBeforePending()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.01"/>
+  <testcase name="emptyQueuesReturnFalseWithoutSending()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.003"/>
+  <testcase name="sendSuccessThenCleanupFailureIsRedeliveredByNewRelayInstance()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.008"/>
+  <testcase name="successfulSendPreservesMessageAndReservationButRemovesProcessing()" classname="com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest" time="0.006"/>
+  <system-out><![CDATA[2026-10-08T16:46:40.047+09:00  INFO 68583 --- [coupon-system] [    Test worker] tc.redis:7-alpine                        : Creating container for image: redis:7-alpine
+2026-10-08T16:46:40.091+09:00  INFO 68583 --- [coupon-system] [    Test worker] tc.redis:7-alpine                        : Container redis:7-alpine is starting: f73cdc238553e4a0262c2dfb73717bde65e779bf8425a2ca13cd065a5777b86c
+2026-10-08T16:46:40.265+09:00  INFO 68583 --- [coupon-system] [    Test worker] tc.redis:7-alpine                        : Container redis:7-alpine started in PT0.21811S
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

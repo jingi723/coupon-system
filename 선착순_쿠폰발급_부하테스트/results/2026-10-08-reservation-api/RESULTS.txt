@@ -1,0 +1,9 @@
+예약 신청 API 연결 검증 — 2026-10-08
+선택한 CouponIssueRequestControllerTest: 15개 통과, 실패/오류/건너뜀 0.
+MockMvc + Redis 서비스 대역. 실제 Redis/Kafka/DB 및 HTTP 서버 전체 통합 시험 아님.
+신규/기존 예약 202와 저장된 승인 시각, 업무 거절 4종 409, 예약/조회 타임아웃과 초기화 누락 503, 잘못된 입력 400 검증.
+조회 타임아웃 후 재고 반환이나 추가 서비스 호출 없음 확인.
+API의 직접 Kafka 전송 제거. 기존 사용자 작성 DTO의 reserveAt을 reservedAt으로 수정.
+기존 실행 앱/컨테이너 변경, 커밋 없음.
+재현:
+GRADLE_USER_HOME=/tmp/coupon-gradle-home /Users/jingi723/.gradle/wrapper/dists/gradle-8.14.4-bin/92wwslzcyst3phie3o264zltu/gradle-8.14.4/bin/gradle --no-daemon test --tests com.assignment.coupon_system.issuerequest.controller.CouponIssueRequestControllerTest

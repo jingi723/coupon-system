@@ -1,0 +1,34 @@
+{
+  "com.assignment.coupon_system.issuerequest.consumer.ReservedCouponIssueIntegrationTest": {
+    "tests": "12",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T03:31:09.120Z",
+    "time": "2.76"
+  },
+  "com.assignment.coupon_system.issuerequest.service.CouponIssueProcessorTest": {
+    "tests": "9",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T03:31:19.088Z",
+    "time": "0.298"
+  },
+  "com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest": {
+    "tests": "48",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T03:31:01.070Z",
+    "time": "0.41"
+  },
+  "com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest": {
+    "tests": "9",
+    "failures": "0",
+    "errors": "0",
+    "skipped": "0",
+    "timestamp": "2026-10-08T03:31:12.643Z",
+    "time": "0.194"
+  }
+}

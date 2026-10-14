@@ -1,0 +1,80 @@
+{
+  "classes": [
+    {
+      "class": "com.assignment.coupon_system.common.LegacyCouponGuardTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.coupon.redis.CouponIssueRedisServiceTest",
+      "tests": 54,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.coupon.service.CouponServiceTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest",
+      "tests": 7,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.consumer.ReservedCouponIssueIntegrationTest",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.controller.CouponIssueQueryControllerTest",
+      "tests": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.controller.CouponIssueRequestControllerTest",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayRunnerTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.relay.CouponReservationRelayTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "class": "com.assignment.coupon_system.issuerequest.service.CouponIssueProcessorTest",
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "total": {
+    "tests": 150,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

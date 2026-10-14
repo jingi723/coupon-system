@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="IssuedCouponService 단위 테스트" tests="7" skipped="0" failures="0" errors="0" timestamp="2026-10-13T12:56:22.279Z" hostname="gimjingiui-MacBookPro.local" time="0.013">
+  <properties/>
+  <testcase name="issueCoupon() - 이미 발급받은 사용자면 DuplicateCouponIssueException 발생" classname="com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest" time="0.004"/>
+  <testcase name="issueCoupon() - 발급 기간이 아니면 CouponNotAvailableException 발생" classname="com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest" time="0.002"/>
+  <testcase name="getUsableCoupons() - ISSUED 상태의 쿠폰만 반환한다" classname="com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest" time="0.002"/>
+  <testcase name="issueCoupon() - 재고 소진 시 CouponExhaustedException 발생" classname="com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest" time="0.001"/>
+  <testcase name="issueCoupon() - 존재하지 않는 쿠폰이면 CouponNotFoundException 발생" classname="com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest" time="0.001"/>
+  <testcase name="issueCoupon() - 정상 발급 시 IssuedCouponResponse를 반환한다" classname="com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest" time="0.001"/>
+  <testcase name="getUserCoupons() - 사용자가 보유한 모든 쿠폰 목록을 반환한다" classname="com.assignment.coupon_system.issuedcoupon.service.IssuedCouponServiceTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

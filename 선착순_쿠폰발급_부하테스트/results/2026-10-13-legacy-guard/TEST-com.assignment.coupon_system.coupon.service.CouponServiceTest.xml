@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="CouponService 단위 테스트" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-10-13T12:56:22.210Z" hostname="gimjingiui-MacBookPro.local" time="0.068">
+  <properties/>
+  <testcase name="initStock() - 발급 수량을 0으로 초기화하고 총 수량을 반환한다" classname="com.assignment.coupon_system.coupon.service.CouponServiceTest" time="0.059"/>
+  <testcase name="getCouponStock() - 잔여 수량(totalQuantity - issuedQuantity)을 반환한다" classname="com.assignment.coupon_system.coupon.service.CouponServiceTest" time="0.001"/>
+  <testcase name="initStock() - 존재하지 않는 쿠폰이면 CouponNotFoundException 발생" classname="com.assignment.coupon_system.coupon.service.CouponServiceTest" time="0.002"/>
+  <testcase name="getAvailableCoupons() - 현재 발급 가능한 쿠폰 목록을 반환한다" classname="com.assignment.coupon_system.coupon.service.CouponServiceTest" time="0.003"/>
+  <testcase name="getAvailableCoupons() - 발급 가능한 쿠폰이 없으면 빈 목록을 반환한다" classname="com.assignment.coupon_system.coupon.service.CouponServiceTest" time="0.001"/>
+  <testcase name="getCouponStock() - 존재하지 않는 쿠폰이면 CouponNotFoundException 발생" classname="com.assignment.coupon_system.coupon.service.CouponServiceTest" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,3 @@
+coupon:
+  relay:
+    enabled: ${COUPON_RELAY_ENABLED:false}
