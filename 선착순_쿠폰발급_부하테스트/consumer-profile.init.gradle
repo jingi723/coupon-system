@@ -1,0 +1,7 @@
+allprojects {
+    tasks.register('writeConsumerProfileClasspath') {
+        doLast {
+            file('build/consumer-profile-classpath.txt').text = sourceSets.test.runtimeClasspath.asPath
+        }
+    }
+}
